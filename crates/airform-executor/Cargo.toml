@@ -1,0 +1,15 @@
+[package]
+name = "airform-executor"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airform-core.workspace = true
+airform-compiler.workspace = true
+airform-graph.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tokio.workspace = true
+datafusion.workspace = true
+serde_yaml.workspace = true

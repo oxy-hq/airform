@@ -1,0 +1,13 @@
+[package]
+name = "airform-graph"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airform-core.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+petgraph.workspace = true
+tracing.workspace = true
+regex.workspace = true
+serde.workspace = true

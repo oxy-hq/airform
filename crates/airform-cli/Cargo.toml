@@ -1,0 +1,29 @@
+[package]
+name = "airform"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "airform"
+path = "src/main.rs"
+
+[dependencies]
+airform-core.workspace = true
+airform-loader.workspace = true
+airform-parser.workspace = true
+airform-jinja.workspace = true
+airform-compiler.workspace = true
+airform-graph.workspace = true
+airform-executor.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tokio.workspace = true
+colored.workspace = true
+tabled.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+regex.workspace = true
+datafusion.workspace = true
+dirs.workspace = true

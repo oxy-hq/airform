@@ -1,0 +1,12 @@
+[package]
+name = "airform-jinja"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airform-core.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+minijinja.workspace = true
+tracing.workspace = true

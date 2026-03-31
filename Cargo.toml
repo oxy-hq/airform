@@ -1,0 +1,71 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/airform-cli",
+    "crates/airform-core",
+    "crates/airform-loader",
+    "crates/airform-parser",
+    "crates/airform-jinja",
+    "crates/airform-compiler",
+    "crates/airform-graph",
+    "crates/airform-executor",
+]
+
+[package]
+name = "airform-bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+
+[workspace.dependencies]
+# Internal crates
+airform-core = { path = "crates/airform-core" }
+airform-loader = { path = "crates/airform-loader" }
+airform-parser = { path = "crates/airform-parser" }
+airform-jinja = { path = "crates/airform-jinja" }
+airform-compiler = { path = "crates/airform-compiler" }
+airform-graph = { path = "crates/airform-graph" }
+airform-executor = { path = "crates/airform-executor" }
+
+# External dependencies
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+serde_json = "1"
+clap = { version = "4", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tokio = { version = "1", features = ["full"] }
+minijinja = { version = "2", features = ["loader"] }
+datafusion = "46"
+regex = "1"
+petgraph = "0.7"
+globset = "0.4"
+walkdir = "2"
+dirs = "6"
+tabled = "0.18"
+chrono = "0.4"
+colored = "3"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[dev-dependencies]
+airform-core = { workspace = true }
+airform-loader = { workspace = true }
+airform-parser = { workspace = true }
+airform-jinja = { workspace = true }
+airform-compiler = { workspace = true }
+airform-graph = { workspace = true }
+airform-executor = { workspace = true }
+criterion = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+
+[[bench]]
+name = "benchmark"
+harness = false

@@ -1,0 +1,8 @@
+ecommerce_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: datafusion
+      path: target/ecommerce.db
+      schema: main
+      threads: 1

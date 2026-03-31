@@ -1,0 +1,17 @@
+[package]
+name = "airform-loader"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airform-core.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+dirs.workspace = true
+walkdir.workspace = true
+globset.workspace = true
+regex.workspace = true

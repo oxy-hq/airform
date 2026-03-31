@@ -1,0 +1,16 @@
+[package]
+name = "airform-parser"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airform-core.workspace = true
+airform-jinja.workspace = true
+airform-loader.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+tracing.workspace = true
+regex.workspace = true
+walkdir.workspace = true

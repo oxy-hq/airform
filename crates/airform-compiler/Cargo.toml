@@ -1,0 +1,12 @@
+[package]
+name = "airform-compiler"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airform-core.workspace = true
+airform-jinja.workspace = true
+airform-graph.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
