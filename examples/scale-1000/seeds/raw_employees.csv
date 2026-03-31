@@ -1,0 +1,14 @@
+id,department_id,first_name,last_name,email,hire_date,title,salary,status,manager_id
+1,2,Frank,Kim,user1@example.com,2024-01-11,title_1,9308.95,pending,6
+2,3,Carol,Smith,user2@example.com,2024-05-27,title_2,4729.82,active,8
+3,8,Jack,Smith,user3@example.com,2024-02-01,title_3,2566.68,active,9
+4,10,Ivy,Davis,user4@example.com,2024-02-25,title_4,2888.13,inactive,2
+5,1,Dan,Davis,user5@example.com,2024-11-26,title_5,6231.88,active,2
+6,8,Jack,Moore,user6@example.com,2024-01-21,title_6,5158.6,active,3
+7,5,Grace,Smith,user7@example.com,2024-10-12,title_7,2413.24,inactive,3
+8,2,Ivy,Brown,user8@example.com,2024-02-17,title_8,5445.38,pending,9
+9,1,Grace,Wilson,user9@example.com,2024-01-21,title_9,3874.94,inactive,5
+10,1,Frank,Jones,user10@example.com,2024-06-08,title_10,7332.08,pending,2
+11,10,Frank,Lee,user11@example.com,2024-01-12,title_11,5464.68,pending,3
+12,8,Hank,Lee,user12@example.com,2024-03-03,title_12,7163.29,inactive,1
+13,5,Dan,Smith,user13@example.com,2024-04-02,title_13,3162.8,inactive,9

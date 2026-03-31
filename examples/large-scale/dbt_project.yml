@@ -1,0 +1,31 @@
+config-version: 2
+
+name: "large_scale"
+version: "1.0.0"
+
+profile: "large_scale"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+seeds:
+  large_scale:
+    +schema: raw
+
+models:
+  +start: "2024-01-01"
+  large_scale:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table

@@ -1,0 +1,1 @@
+2026-03-31 11:55:30,485 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for data files: {'target/scale_10000.duckdb'} (connection.py:496)

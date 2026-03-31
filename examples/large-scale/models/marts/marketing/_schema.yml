@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: fct_signups
+    description: Signup events with attribution.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: fct_activations
+    description: User activation events.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: fct_conversions
+    description: Trial to paid conversion events.
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: dim_campaigns
+    description: Campaign dimension derived from signup sources.
+    columns:
+      - name: signup_source
+        tests: [not_null, unique]
+  - name: dim_channels
+    description: Channel dimension from referrers.
+    columns:
+      - name: referrer
+        tests: [not_null, unique]
+  - name: fct_attribution
+    description: Marketing attribution by source.
+    columns:
+      - name: signup_source
+        tests: [not_null]
+  - name: fct_funnel_stages
+    description: Marketing funnel stage progression.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: fct_cohort_retention
+    description: Cohort-based retention analysis.
+    columns:
+      - name: signup_quarter
+        tests: [not_null]
+  - name: rpt_marketing_overview
+    description: Marketing overview report.
+    columns:
+      - name: signup_source
+        tests: [not_null, unique]
+  - name: fct_ltv
+    description: Customer lifetime value estimates.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]

@@ -1,0 +1,8003 @@
+version: 2
+
+models:
+  - name: stg_users_001
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_002
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_003
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_004
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_005
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_006
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_007
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_008
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_009
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_010
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_011
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_012
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_013
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_014
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_015
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_016
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_017
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_018
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_019
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_020
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_021
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_022
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_023
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_024
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_025
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_026
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_027
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_028
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_029
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_030
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_031
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_032
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_033
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_034
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_035
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_036
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_037
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_038
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_039
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_040
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_041
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_042
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_043
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_044
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_045
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_046
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_047
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_048
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_049
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_050
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_051
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_052
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_053
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_054
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_055
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_056
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_057
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_058
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_059
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_060
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_061
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_062
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_063
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_064
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_065
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_066
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_067
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_068
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_069
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_070
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_071
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_072
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_073
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_074
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_075
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_076
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_077
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_078
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_079
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_080
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_081
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_082
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_083
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_084
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_085
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_086
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_087
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_088
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_089
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_090
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_091
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_092
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_093
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_094
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_095
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_096
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_097
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_098
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_099
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_users_100
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: stg_accounts_001
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_002
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_003
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_004
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_005
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_006
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_007
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_008
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_009
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_010
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_011
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_012
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_013
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_014
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_015
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_016
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_017
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_018
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_019
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_020
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_021
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_022
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_023
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_024
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_025
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_026
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_027
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_028
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_029
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_030
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_031
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_032
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_033
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_034
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_035
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_036
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_037
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_038
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_039
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_040
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_041
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_042
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_043
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_044
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_045
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_046
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_047
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_048
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_049
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_050
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_051
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_052
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_053
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_054
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_055
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_056
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_057
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_058
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_059
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_060
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_061
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_062
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_063
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_064
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_065
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_066
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_067
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_068
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_069
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_070
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_071
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_072
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_073
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_074
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_075
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_076
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_077
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_078
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_079
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_080
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_081
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_082
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_083
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_084
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_085
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_086
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_087
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_088
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_089
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_090
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_091
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_092
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_093
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_094
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_095
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_096
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_097
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_098
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_099
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_accounts_100
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: stg_subscriptions_001
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_002
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_003
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_004
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_005
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_006
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_007
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_008
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_009
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_010
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_011
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_012
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_013
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_014
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_015
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_016
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_017
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_018
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_019
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_020
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_021
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_022
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_023
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_024
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_025
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_026
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_027
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_028
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_029
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_030
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_031
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_032
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_033
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_034
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_035
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_036
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_037
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_038
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_039
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_040
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_041
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_042
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_043
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_044
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_045
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_046
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_047
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_048
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_049
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_050
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_051
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_052
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_053
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_054
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_055
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_056
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_057
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_058
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_059
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_060
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_061
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_062
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_063
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_064
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_065
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_066
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_067
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_068
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_069
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_070
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_071
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_072
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_073
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_074
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_075
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_076
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_077
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_078
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_079
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_080
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_081
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_082
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_083
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_084
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_085
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_086
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_087
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_088
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_089
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_090
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_091
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_092
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_093
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_094
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_095
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_096
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_097
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_098
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_099
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_subscriptions_100
+    columns:
+      - name: subscription_id
+        tests: [not_null]
+  - name: stg_invoices_001
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_002
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_003
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_004
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_005
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_006
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_007
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_008
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_009
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_010
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_011
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_012
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_013
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_014
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_015
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_016
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_017
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_018
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_019
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_020
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_021
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_022
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_023
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_024
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_025
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_026
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_027
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_028
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_029
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_030
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_031
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_032
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_033
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_034
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_035
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_036
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_037
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_038
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_039
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_040
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_041
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_042
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_043
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_044
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_045
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_046
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_047
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_048
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_049
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_050
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_051
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_052
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_053
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_054
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_055
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_056
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_057
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_058
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_059
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_060
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_061
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_062
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_063
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_064
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_065
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_066
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_067
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_068
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_069
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_070
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_071
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_072
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_073
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_074
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_075
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_076
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_077
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_078
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_079
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_080
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_081
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_082
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_083
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_084
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_085
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_086
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_087
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_088
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_089
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_090
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_091
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_092
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_093
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_094
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_095
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_096
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_097
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_098
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_099
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_invoices_100
+    columns:
+      - name: invoice_id
+        tests: [not_null]
+  - name: stg_payments_001
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_002
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_003
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_004
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_005
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_006
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_007
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_008
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_009
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_010
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_011
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_012
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_013
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_014
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_015
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_016
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_017
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_018
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_019
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_020
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_021
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_022
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_023
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_024
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_025
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_026
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_027
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_028
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_029
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_030
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_031
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_032
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_033
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_034
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_035
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_036
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_037
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_038
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_039
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_040
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_041
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_042
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_043
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_044
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_045
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_046
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_047
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_048
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_049
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_050
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_051
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_052
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_053
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_054
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_055
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_056
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_057
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_058
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_059
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_060
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_061
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_062
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_063
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_064
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_065
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_066
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_067
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_068
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_069
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_070
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_071
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_072
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_073
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_074
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_075
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_076
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_077
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_078
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_079
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_080
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_081
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_082
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_083
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_084
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_085
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_086
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_087
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_088
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_089
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_090
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_091
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_092
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_093
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_094
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_095
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_096
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_097
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_098
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_099
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_payments_100
+    columns:
+      - name: payment_id
+        tests: [not_null]
+  - name: stg_events_001
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_002
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_003
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_004
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_005
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_006
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_007
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_008
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_009
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_010
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_011
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_012
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_013
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_014
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_015
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_016
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_017
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_018
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_019
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_020
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_021
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_022
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_023
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_024
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_025
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_026
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_027
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_028
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_029
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_030
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_031
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_032
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_033
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_034
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_035
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_036
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_037
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_038
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_039
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_040
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_041
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_042
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_043
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_044
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_045
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_046
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_047
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_048
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_049
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_050
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_051
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_052
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_053
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_054
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_055
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_056
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_057
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_058
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_059
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_060
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_061
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_062
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_063
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_064
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_065
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_066
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_067
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_068
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_069
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_070
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_071
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_072
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_073
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_074
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_075
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_076
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_077
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_078
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_079
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_080
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_081
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_082
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_083
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_084
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_085
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_086
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_087
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_088
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_089
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_090
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_091
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_092
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_093
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_094
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_095
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_096
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_097
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_098
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_099
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_events_100
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_sessions_001
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_002
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_003
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_004
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_005
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_006
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_007
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_008
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_009
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_010
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_011
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_012
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_013
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_014
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_015
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_016
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_017
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_018
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_019
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_020
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_021
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_022
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_023
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_024
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_025
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_026
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_027
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_028
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_029
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_030
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_031
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_032
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_033
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_034
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_035
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_036
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_037
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_038
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_039
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_040
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_041
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_042
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_043
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_044
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_045
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_046
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_047
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_048
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_049
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_050
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_051
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_052
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_053
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_054
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_055
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_056
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_057
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_058
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_059
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_060
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_061
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_062
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_063
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_064
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_065
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_066
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_067
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_068
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_069
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_070
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_071
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_072
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_073
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_074
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_075
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_076
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_077
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_078
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_079
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_080
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_081
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_082
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_083
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_084
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_085
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_086
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_087
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_088
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_089
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_090
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_091
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_092
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_093
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_094
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_095
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_096
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_097
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_098
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_099
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_sessions_100
+    columns:
+      - name: session_id
+        tests: [not_null]
+  - name: stg_page_views_001
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_002
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_003
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_004
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_005
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_006
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_007
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_008
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_009
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_010
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_011
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_012
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_013
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_014
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_015
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_016
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_017
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_018
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_019
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_020
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_021
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_022
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_023
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_024
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_025
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_026
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_027
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_028
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_029
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_030
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_031
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_032
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_033
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_034
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_035
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_036
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_037
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_038
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_039
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_040
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_041
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_042
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_043
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_044
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_045
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_046
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_047
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_048
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_049
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_050
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_051
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_052
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_053
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_054
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_055
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_056
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_057
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_058
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_059
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_060
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_061
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_062
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_063
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_064
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_065
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_066
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_067
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_068
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_069
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_070
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_071
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_072
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_073
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_074
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_075
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_076
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_077
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_078
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_079
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_080
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_081
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_082
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_083
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_084
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_085
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_086
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_087
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_088
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_089
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_090
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_091
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_092
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_093
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_094
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_095
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_096
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_097
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_098
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_099
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_page_views_100
+    columns:
+      - name: page_view_id
+        tests: [not_null]
+  - name: stg_support_tickets_001
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_002
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_003
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_004
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_005
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_006
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_007
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_008
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_009
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_010
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_011
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_012
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_013
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_014
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_015
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_016
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_017
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_018
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_019
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_020
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_021
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_022
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_023
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_024
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_025
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_026
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_027
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_028
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_029
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_030
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_031
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_032
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_033
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_034
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_035
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_036
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_037
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_038
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_039
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_040
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_041
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_042
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_043
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_044
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_045
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_046
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_047
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_048
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_049
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_050
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_051
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_052
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_053
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_054
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_055
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_056
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_057
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_058
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_059
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_060
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_061
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_062
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_063
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_064
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_065
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_066
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_067
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_068
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_069
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_070
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_071
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_072
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_073
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_074
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_075
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_076
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_077
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_078
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_079
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_080
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_081
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_082
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_083
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_084
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_085
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_086
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_087
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_088
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_089
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_090
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_091
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_092
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_093
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_094
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_095
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_096
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_097
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_098
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_099
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_support_tickets_100
+    columns:
+      - name: support_ticket_id
+        tests: [not_null]
+  - name: stg_feature_usage_001
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_002
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_003
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_004
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_005
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_006
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_007
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_008
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_009
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_010
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_011
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_012
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_013
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_014
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_015
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_016
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_017
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_018
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_019
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_020
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_021
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_022
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_023
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_024
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_025
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_026
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_027
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_028
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_029
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_030
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_031
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_032
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_033
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_034
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_035
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_036
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_037
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_038
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_039
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_040
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_041
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_042
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_043
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_044
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_045
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_046
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_047
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_048
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_049
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_050
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_051
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_052
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_053
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_054
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_055
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_056
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_057
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_058
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_059
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_060
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_061
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_062
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_063
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_064
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_065
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_066
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_067
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_068
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_069
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_070
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_071
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_072
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_073
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_074
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_075
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_076
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_077
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_078
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_079
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_080
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_081
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_082
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_083
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_084
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_085
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_086
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_087
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_088
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_089
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_090
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_091
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_092
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_093
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_094
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_095
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_096
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_097
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_098
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_099
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_feature_usage_100
+    columns:
+      - name: feature_usage_id
+        tests: [not_null]
+  - name: stg_products_001
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_002
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_003
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_004
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_005
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_006
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_007
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_008
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_009
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_010
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_011
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_012
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_013
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_014
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_015
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_016
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_017
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_018
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_019
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_020
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_021
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_022
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_023
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_024
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_025
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_026
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_027
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_028
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_029
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_030
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_031
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_032
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_033
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_034
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_035
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_036
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_037
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_038
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_039
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_040
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_041
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_042
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_043
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_044
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_045
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_046
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_047
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_048
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_049
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_050
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_051
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_052
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_053
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_054
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_055
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_056
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_057
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_058
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_059
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_060
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_061
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_062
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_063
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_064
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_065
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_066
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_067
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_068
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_069
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_070
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_071
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_072
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_073
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_074
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_075
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_076
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_077
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_078
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_079
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_080
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_081
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_082
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_083
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_084
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_085
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_086
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_087
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_088
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_089
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_090
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_091
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_092
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_093
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_094
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_095
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_096
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_097
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_098
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_099
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_products_100
+    columns:
+      - name: product_id
+        tests: [not_null]
+  - name: stg_orders_001
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_002
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_003
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_004
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_005
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_006
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_007
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_008
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_009
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_010
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_011
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_012
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_013
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_014
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_015
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_016
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_017
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_018
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_019
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_020
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_021
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_022
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_023
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_024
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_025
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_026
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_027
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_028
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_029
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_030
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_031
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_032
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_033
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_034
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_035
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_036
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_037
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_038
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_039
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_040
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_041
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_042
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_043
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_044
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_045
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_046
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_047
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_048
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_049
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_050
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_051
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_052
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_053
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_054
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_055
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_056
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_057
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_058
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_059
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_060
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_061
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_062
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_063
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_064
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_065
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_066
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_067
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_068
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_069
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_070
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_071
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_072
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_073
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_074
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_075
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_076
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_077
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_078
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_079
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_080
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_081
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_082
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_083
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_084
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_085
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_086
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_087
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_088
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_089
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_090
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_091
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_092
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_093
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_094
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_095
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_096
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_097
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_098
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_099
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_orders_100
+    columns:
+      - name: order_id
+        tests: [not_null]
+  - name: stg_order_items_001
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_002
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_003
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_004
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_005
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_006
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_007
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_008
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_009
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_010
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_011
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_012
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_013
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_014
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_015
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_016
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_017
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_018
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_019
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_020
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_021
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_022
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_023
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_024
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_025
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_026
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_027
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_028
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_029
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_030
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_031
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_032
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_033
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_034
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_035
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_036
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_037
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_038
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_039
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_040
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_041
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_042
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_043
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_044
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_045
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_046
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_047
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_048
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_049
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_050
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_051
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_052
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_053
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_054
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_055
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_056
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_057
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_058
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_059
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_060
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_061
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_062
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_063
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_064
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_065
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_066
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_067
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_068
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_069
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_070
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_071
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_072
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_073
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_074
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_075
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_076
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_077
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_078
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_079
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_080
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_081
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_082
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_083
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_084
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_085
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_086
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_087
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_088
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_089
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_090
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_091
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_092
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_093
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_094
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_095
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_096
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_097
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_098
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_099
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_order_items_100
+    columns:
+      - name: order_item_id
+        tests: [not_null]
+  - name: stg_campaigns_001
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_002
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_003
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_004
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_005
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_006
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_007
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_008
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_009
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_010
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_011
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_012
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_013
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_014
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_015
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_016
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_017
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_018
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_019
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_020
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_021
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_022
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_023
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_024
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_025
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_026
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_027
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_028
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_029
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_030
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_031
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_032
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_033
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_034
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_035
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_036
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_037
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_038
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_039
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_040
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_041
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_042
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_043
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_044
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_045
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_046
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_047
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_048
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_049
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_050
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_051
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_052
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_053
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_054
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_055
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_056
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_057
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_058
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_059
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_060
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_061
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_062
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_063
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_064
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_065
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_066
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_067
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_068
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_069
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_070
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_071
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_072
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_073
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_074
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_075
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_076
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_077
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_078
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_079
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_080
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_081
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_082
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_083
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_084
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_085
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_086
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_087
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_088
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_089
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_090
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_091
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_092
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_093
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_094
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_095
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_096
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_097
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_098
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_099
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_campaigns_100
+    columns:
+      - name: campaign_id
+        tests: [not_null]
+  - name: stg_channels_001
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_002
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_003
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_004
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_005
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_006
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_007
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_008
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_009
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_010
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_011
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_012
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_013
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_014
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_015
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_016
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_017
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_018
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_019
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_020
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_021
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_022
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_023
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_024
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_025
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_026
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_027
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_028
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_029
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_030
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_031
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_032
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_033
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_034
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_035
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_036
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_037
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_038
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_039
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_040
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_041
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_042
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_043
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_044
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_045
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_046
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_047
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_048
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_049
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_050
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_051
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_052
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_053
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_054
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_055
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_056
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_057
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_058
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_059
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_060
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_061
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_062
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_063
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_064
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_065
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_066
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_067
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_068
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_069
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_070
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_071
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_072
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_073
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_074
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_075
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_076
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_077
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_078
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_079
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_080
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_081
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_082
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_083
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_084
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_085
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_086
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_087
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_088
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_089
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_090
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_091
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_092
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_093
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_094
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_095
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_096
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_097
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_098
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_099
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_channels_100
+    columns:
+      - name: channel_id
+        tests: [not_null]
+  - name: stg_employees_001
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_002
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_003
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_004
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_005
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_006
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_007
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_008
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_009
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_010
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_011
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_012
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_013
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_014
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_015
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_016
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_017
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_018
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_019
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_020
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_021
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_022
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_023
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_024
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_025
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_026
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_027
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_028
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_029
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_030
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_031
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_032
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_033
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_034
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_035
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_036
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_037
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_038
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_039
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_040
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_041
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_042
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_043
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_044
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_045
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_046
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_047
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_048
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_049
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_050
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_051
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_052
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_053
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_054
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_055
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_056
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_057
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_058
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_059
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_060
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_061
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_062
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_063
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_064
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_065
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_066
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_067
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_068
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_069
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_070
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_071
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_072
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_073
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_074
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_075
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_076
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_077
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_078
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_079
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_080
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_081
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_082
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_083
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_084
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_085
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_086
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_087
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_088
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_089
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_090
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_091
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_092
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_093
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_094
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_095
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_096
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_097
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_098
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_099
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_employees_100
+    columns:
+      - name: employee_id
+        tests: [not_null]
+  - name: stg_departments_001
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_002
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_003
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_004
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_005
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_006
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_007
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_008
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_009
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_010
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_011
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_012
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_013
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_014
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_015
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_016
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_017
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_018
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_019
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_020
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_021
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_022
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_023
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_024
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_025
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_026
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_027
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_028
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_029
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_030
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_031
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_032
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_033
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_034
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_035
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_036
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_037
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_038
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_039
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_040
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_041
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_042
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_043
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_044
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_045
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_046
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_047
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_048
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_049
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_050
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_051
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_052
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_053
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_054
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_055
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_056
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_057
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_058
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_059
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_060
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_061
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_062
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_063
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_064
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_065
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_066
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_067
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_068
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_069
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_070
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_071
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_072
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_073
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_074
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_075
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_076
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_077
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_078
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_079
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_080
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_081
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_082
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_083
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_084
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_085
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_086
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_087
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_088
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_089
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_090
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_091
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_092
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_093
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_094
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_095
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_096
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_097
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_098
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_099
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_departments_100
+    columns:
+      - name: department_id
+        tests: [not_null]
+  - name: stg_warehouses_001
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_002
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_003
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_004
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_005
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_006
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_007
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_008
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_009
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_010
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_011
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_012
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_013
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_014
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_015
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_016
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_017
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_018
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_019
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_020
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_021
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_022
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_023
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_024
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_025
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_026
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_027
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_028
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_029
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_030
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_031
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_032
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_033
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_034
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_035
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_036
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_037
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_038
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_039
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_040
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_041
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_042
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_043
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_044
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_045
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_046
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_047
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_048
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_049
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_050
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_051
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_052
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_053
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_054
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_055
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_056
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_057
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_058
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_059
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_060
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_061
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_062
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_063
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_064
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_065
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_066
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_067
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_068
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_069
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_070
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_071
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_072
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_073
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_074
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_075
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_076
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_077
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_078
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_079
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_080
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_081
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_082
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_083
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_084
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_085
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_086
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_087
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_088
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_089
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_090
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_091
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_092
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_093
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_094
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_095
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_096
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_097
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_098
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_099
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_warehouses_100
+    columns:
+      - name: warehouse_id
+        tests: [not_null]
+  - name: stg_shipments_001
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_002
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_003
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_004
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_005
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_006
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_007
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_008
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_009
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_010
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_011
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_012
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_013
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_014
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_015
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_016
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_017
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_018
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_019
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_020
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_021
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_022
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_023
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_024
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_025
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_026
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_027
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_028
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_029
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_030
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_031
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_032
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_033
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_034
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_035
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_036
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_037
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_038
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_039
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_040
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_041
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_042
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_043
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_044
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_045
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_046
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_047
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_048
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_049
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_050
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_051
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_052
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_053
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_054
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_055
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_056
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_057
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_058
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_059
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_060
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_061
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_062
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_063
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_064
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_065
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_066
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_067
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_068
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_069
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_070
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_071
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_072
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_073
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_074
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_075
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_076
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_077
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_078
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_079
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_080
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_081
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_082
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_083
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_084
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_085
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_086
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_087
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_088
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_089
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_090
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_091
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_092
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_093
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_094
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_095
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_096
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_097
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_098
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_099
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_shipments_100
+    columns:
+      - name: shipment_id
+        tests: [not_null]
+  - name: stg_compliance_records_001
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_002
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_003
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_004
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_005
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_006
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_007
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_008
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_009
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_010
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_011
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_012
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_013
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_014
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_015
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_016
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_017
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_018
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_019
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_020
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_021
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_022
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_023
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_024
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_025
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_026
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_027
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_028
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_029
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_030
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_031
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_032
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_033
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_034
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_035
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_036
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_037
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_038
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_039
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_040
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_041
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_042
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_043
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_044
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_045
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_046
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_047
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_048
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_049
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_050
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_051
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_052
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_053
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_054
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_055
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_056
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_057
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_058
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_059
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_060
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_061
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_062
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_063
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_064
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_065
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_066
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_067
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_068
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_069
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_070
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_071
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_072
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_073
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_074
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_075
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_076
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_077
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_078
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_079
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_080
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_081
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_082
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_083
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_084
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_085
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_086
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_087
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_088
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_089
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_090
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_091
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_092
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_093
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_094
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_095
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_096
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_097
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_098
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_099
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]
+  - name: stg_compliance_records_100
+    columns:
+      - name: compliance_record_id
+        tests: [not_null]

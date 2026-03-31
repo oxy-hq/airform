@@ -1,0 +1,31 @@
+config-version: 2
+
+name: "scale_1000"
+version: "1.0.0"
+
+profile: "scale_1000"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+seeds:
+  scale_1000:
+    +schema: raw
+
+models:
+  +start: "2024-01-01"
+  scale_1000:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: table
+    marts:
+      +materialized: table

@@ -1,0 +1,3 @@
+2026-03-31 10:44:19,005 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for data files: {'target/large_scale.duckdb'} (connection.py:496)
+2026-03-31 10:44:19,435 - MainThread - sqlmesh.core.config.connection - INFO - Using existing DuckDB adapter due to overlapping data file: target/large_scale.duckdb (connection.py:486)
+2026-03-31 10:44:19,567 - MainThread - root - INFO - Shutting down the event dispatcher (dispatcher.py:159)

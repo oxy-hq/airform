@@ -7,7 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-EXAMPLES=("jaffle-shop" "ecommerce-analytics")
+EXAMPLES=("jaffle-shop" "ecommerce-analytics" "large-scale" "scale-1000" "scale-10000")
 WARMUP=2
 RUNS=10
 
@@ -27,25 +27,40 @@ header() {
     separator
 }
 
+# Portable millisecond timer (works on macOS and Linux)
+now_ms() {
+    python3 -c 'import time; print(int(time.time()*1000))'
+}
+
 time_cmd() {
-    # Use hyperfine if available, otherwise fall back to time
     local label="$1"; shift
+    local cmd="$1"
+
     if has hyperfine; then
-        hyperfine --warmup "$WARMUP" --runs "$RUNS" --style basic "$@"
-    else
-        echo "[$label] (using built-in time, $RUNS runs)"
-        local total=0
-        for i in $(seq 1 "$RUNS"); do
-            local start end elapsed
-            start=$(date +%s%N 2>/dev/null || python3 -c 'import time; print(int(time.time()*1e9))')
-            eval "$@" >/dev/null 2>&1
-            end=$(date +%s%N 2>/dev/null || python3 -c 'import time; print(int(time.time()*1e9))')
-            elapsed=$(( (end - start) ))
-            total=$(( total + elapsed ))
-        done
-        local avg_ms=$(( total / RUNS / 1000000 ))
-        echo "  Mean: ${avg_ms} ms  ($RUNS runs)"
+        hyperfine --warmup "$WARMUP" --runs "$RUNS" --style basic "$cmd"
+        return
     fi
+
+    # Check if command works at all first
+    echo "[$label] verifying command..."
+    if ! eval "$cmd" >/dev/null 2>/dev/null; then
+        echo "  SKIPPED: command failed"
+        echo "  Try running manually: $cmd"
+        return
+    fi
+
+    echo "[$label] (using built-in time, $RUNS runs)"
+    local total=0
+    for i in $(seq 1 "$RUNS"); do
+        local start end elapsed
+        start=$(now_ms)
+        eval "$cmd" >/dev/null 2>/dev/null
+        end=$(now_ms)
+        elapsed=$(( end - start ))
+        total=$(( total + elapsed ))
+    done
+    local avg_ms=$(( total / RUNS ))
+    echo "  Mean: ${avg_ms} ms  ($RUNS runs)"
 }
 
 # ---------------------------------------------------------------------------
@@ -75,7 +90,7 @@ for example in "${EXAMPLES[@]}"; do
     fi
     echo ""
     echo "--- $example ---"
-    time_cmd "airform/$example" "$AIRFORM compile --project-dir $example_dir"
+    time_cmd "airform/$example" "$AIRFORM compile --project-dir $example_dir --target datafusion"
 done
 
 # ---------------------------------------------------------------------------
@@ -84,15 +99,20 @@ done
 
 if has dbt; then
     header "Benchmarking dbt compile"
+    echo ""
+    echo "NOTE: dbt needs a compatible adapter (e.g. dbt-duckdb) and a valid"
+    echo "profiles.yml. Our examples use a 'datafusion' adapter which dbt does"
+    echo "not support. If benchmarks fail, set up a dbt-duckdb profile."
+    echo ""
 
     for example in "${EXAMPLES[@]}"; do
         example_dir="$REPO_ROOT/examples/$example"
         if [ ! -d "$example_dir" ]; then
             continue
         fi
-        echo ""
         echo "--- $example ---"
-        time_cmd "dbt/$example" "dbt compile --project-dir $example_dir"
+        time_cmd "dbt/$example" \
+            "dbt compile --project-dir $example_dir --profiles-dir $example_dir --target duckdb --no-partial-parse"
     done
 else
     separator
@@ -106,25 +126,28 @@ fi
 # ---------------------------------------------------------------------------
 
 if has sqlmesh; then
-    header "Benchmarking sqlmesh (dbt project reader)"
+    header "Benchmarking sqlmesh"
+    echo ""
+    echo "NOTE: sqlmesh requires its own config.yaml to read dbt projects."
+    echo "If benchmarks fail, add a config.yaml to each example directory."
+    echo ""
 
     for example in "${EXAMPLES[@]}"; do
         example_dir="$REPO_ROOT/examples/$example"
         if [ ! -d "$example_dir" ]; then
             continue
         fi
-        echo ""
         echo "--- $example ---"
-        # sqlmesh can read dbt projects via its dbt integration.
-        # Use 'sqlmesh --paths <dir> plan --no-prompts --skip-tests --no-auto-categorization'
-        # with a DuckDB gateway config. If that fails, fall back to 'sqlmesh render'.
-        if time_cmd "sqlmesh/$example" \
-            "cd $example_dir && sqlmesh --paths . plan --no-prompts --skip-tests --no-auto-categorization 2>/dev/null" 2>/dev/null; then
-            :
-        else
-            echo "  sqlmesh could not parse this project (dbt project may need a config.yaml)"
-            echo "  To benchmark sqlmesh, create a config.yaml in the example directory."
+        # Use 'sqlmesh render' to measure load+parse+compile time.
+        # Most of sqlmesh's time is spent loading the context, so rendering
+        # one model captures the compile overhead fairly.
+        first_model=$(ls "$example_dir/models/staging/"*.sql 2>/dev/null | head -1 | xargs basename | sed 's/.sql//')
+        if [ -z "$first_model" ]; then
+            echo "  SKIPPED: no staging models found"
+            continue
         fi
+        time_cmd "sqlmesh/$example" \
+            "cd $example_dir && sqlmesh render main.$first_model"
     done
 else
     separator
@@ -144,8 +167,8 @@ echo "  airform : $AIRFORM"
 has dbt      && echo "  dbt     : $(which dbt)" || echo "  dbt     : not installed"
 has sqlmesh  && echo "  sqlmesh : $(which sqlmesh)" || echo "  sqlmesh : not installed"
 echo ""
-echo "For more detailed Rust-internal benchmarks run:"
+echo "Install hyperfine for better benchmarks: brew install hyperfine"
+echo ""
+echo "For Rust-internal microbenchmarks run:"
 echo "  cargo bench --manifest-path $REPO_ROOT/Cargo.toml"
 echo ""
-echo "For criterion HTML reports see:"
-echo "  $REPO_ROOT/target/criterion/report/index.html"

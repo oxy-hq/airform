@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: dim_users
+    description: User dimension table with all user attributes.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: dim_accounts
+    description: Account dimension table.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+  - name: fct_events
+    description: Fact table of all tracked events.
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+  - name: fct_sessions
+    description: Fact table of user sessions with metrics.
+    columns:
+      - name: session_id
+        tests: [not_null, unique]
+  - name: fct_subscriptions
+    description: Fact table of subscriptions.
+    columns:
+      - name: subscription_id
+        tests: [not_null, unique]
+  - name: dim_dates
+    description: Date dimension for the platform.
+    columns:
+      - name: date_key
+        tests: [not_null, unique]
+  - name: bridge_user_accounts
+    description: Bridge table mapping users to accounts.
+    columns:
+      - name: user_id
+        tests: [not_null]
+  - name: fct_daily_active_users
+    description: Daily active user counts.
+    columns:
+      - name: activity_date
+        tests: [not_null]
+  - name: fct_user_lifecycle
+    description: User lifecycle stage tracking.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: dim_user_segments
+    description: User segmentation dimension.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]

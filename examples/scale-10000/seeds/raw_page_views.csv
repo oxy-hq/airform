@@ -1,0 +1,14 @@
+id,session_id,user_id,page_url,page_title,viewed_at,time_on_page,referrer,device_type,is_exit
+1,10,8,page_url_1,page_title_1,2024-05-02,30,referrer_1,mobile,false
+2,8,2,page_url_2,page_title_2,2024-11-08,34,referrer_2,desktop,true
+3,7,2,page_url_3,page_title_3,2024-09-08,83,referrer_3,web,false
+4,3,2,page_url_4,page_title_4,2024-01-06,40,referrer_4,desktop,false
+5,8,2,page_url_5,page_title_5,2024-08-23,39,referrer_5,desktop,false
+6,5,9,page_url_6,page_title_6,2024-09-16,57,referrer_6,web,true
+7,7,6,page_url_7,page_title_7,2024-10-09,4,referrer_7,web,true
+8,10,10,page_url_8,page_title_8,2024-01-25,87,referrer_8,mobile,true
+9,3,8,page_url_9,page_title_9,2024-09-21,57,referrer_9,mobile,true
+10,10,7,page_url_10,page_title_10,2024-11-27,63,referrer_10,web,false
+11,6,7,page_url_11,page_title_11,2024-06-11,86,referrer_11,web,true
+12,6,7,page_url_12,page_title_12,2024-12-16,37,referrer_12,desktop,false
+13,9,1,page_url_13,page_title_13,2024-08-03,41,referrer_13,mobile,false

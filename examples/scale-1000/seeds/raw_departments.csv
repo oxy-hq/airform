@@ -1,0 +1,14 @@
+id,department_name,cost_center,head_count,budget,location,created_at,status,parent_id,region
+1,department_name_1,cost_center_1,70,4739.26,US,2024-11-07,inactive,6,US
+2,department_name_2,cost_center_2,84,3325.93,UK,2024-06-14,inactive,8,AU
+3,department_name_3,cost_center_3,44,9737.5,BR,2024-12-16,inactive,9,JP
+4,department_name_4,cost_center_4,11,7273.54,UK,2024-07-20,active,9,JP
+5,department_name_5,cost_center_5,42,1034.95,CA,2024-11-10,inactive,8,KR
+6,department_name_6,cost_center_6,92,4266.9,BR,2024-06-15,active,6,KR
+7,department_name_7,cost_center_7,56,2752.81,US,2024-02-22,pending,7,CA
+8,department_name_8,cost_center_8,66,8012.95,DE,2024-01-05,pending,8,US
+9,department_name_9,cost_center_9,17,681.66,CA,2024-06-13,pending,1,KR
+10,department_name_10,cost_center_10,20,6793.83,CA,2024-06-15,active,10,DE
+11,department_name_11,cost_center_11,68,3675.83,CA,2024-11-09,active,2,US
+12,department_name_12,cost_center_12,95,1868.62,IN,2024-07-18,active,5,JP
+13,department_name_13,cost_center_13,91,4468.27,KR,2024-05-23,inactive,4,UK

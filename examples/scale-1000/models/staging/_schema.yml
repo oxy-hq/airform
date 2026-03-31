@@ -1,0 +1,1403 @@
+version: 2
+
+models:
+  - name: stg_users_01
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_02
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_03
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_04
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_05
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_06
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_07
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_08
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_09
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_users_10
+    description: Staged users data.
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_01
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_02
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_03
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_04
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_05
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_06
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_07
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_08
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_09
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_accounts_10
+    description: Staged accounts data.
+    columns:
+      - name: account_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_01
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_02
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_03
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_04
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_05
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_06
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_07
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_08
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_09
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_subscriptions_10
+    description: Staged subscriptions data.
+    columns:
+      - name: subscription_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_01
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_02
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_03
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_04
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_05
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_06
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_07
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_08
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_09
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_invoices_10
+    description: Staged invoices data.
+    columns:
+      - name: invoice_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_01
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_02
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_03
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_04
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_05
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_06
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_07
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_08
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_09
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_payments_10
+    description: Staged payments data.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_01
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_02
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_03
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_04
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_05
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_06
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_07
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_08
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_09
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_events_10
+    description: Staged events data.
+    columns:
+      - name: event_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_01
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_02
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_03
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_04
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_05
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_06
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_07
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_08
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_09
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_sessions_10
+    description: Staged sessions data.
+    columns:
+      - name: session_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_01
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_02
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_03
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_04
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_05
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_06
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_07
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_08
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_09
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_page_views_10
+    description: Staged page_views data.
+    columns:
+      - name: page_view_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_01
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_02
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_03
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_04
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_05
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_06
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_07
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_08
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_09
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_support_tickets_10
+    description: Staged support_tickets data.
+    columns:
+      - name: support_ticket_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_01
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_02
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_03
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_04
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_05
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_06
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_07
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_08
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_09
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_feature_usage_10
+    description: Staged feature_usage data.
+    columns:
+      - name: feature_usage_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_01
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_02
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_03
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_04
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_05
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_06
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_07
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_08
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_09
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_products_10
+    description: Staged products data.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_01
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_02
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_03
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_04
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_05
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_06
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_07
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_08
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_09
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_orders_10
+    description: Staged orders data.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_01
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_02
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_03
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_04
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_05
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_06
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_07
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_08
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_09
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_order_items_10
+    description: Staged order_items data.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_01
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_02
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_03
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_04
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_05
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_06
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_07
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_08
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_09
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_campaigns_10
+    description: Staged campaigns data.
+    columns:
+      - name: campaign_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_01
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_02
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_03
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_04
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_05
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_06
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_07
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_08
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_09
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_channels_10
+    description: Staged channels data.
+    columns:
+      - name: channel_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_01
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_02
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_03
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_04
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_05
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_06
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_07
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_08
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_09
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_employees_10
+    description: Staged employees data.
+    columns:
+      - name: employee_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_01
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_02
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_03
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_04
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_05
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_06
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_07
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_08
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_09
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_departments_10
+    description: Staged departments data.
+    columns:
+      - name: department_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_01
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_02
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_03
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_04
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_05
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_06
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_07
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_08
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_09
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_warehouses_10
+    description: Staged warehouses data.
+    columns:
+      - name: warehouse_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_01
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_02
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_03
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_04
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_05
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_06
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_07
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_08
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_09
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_shipments_10
+    description: Staged shipments data.
+    columns:
+      - name: shipment_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_01
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_02
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_03
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_04
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_05
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_06
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_07
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_08
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_09
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null
+  - name: stg_compliance_records_10
+    description: Staged compliance_records data.
+    columns:
+      - name: compliance_record_id
+        description: Primary key.
+        tests:
+          - not_null

@@ -1,0 +1,128 @@
+version: 2
+
+models:
+  - name: stg_users
+    description: Staged users with standardized column names.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: stg_accounts
+    description: Staged accounts with standardized column names.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+  - name: stg_subscriptions
+    description: Staged subscriptions.
+    columns:
+      - name: subscription_id
+        tests: [not_null, unique]
+  - name: stg_invoices
+    description: Staged invoices.
+    columns:
+      - name: invoice_id
+        tests: [not_null, unique]
+  - name: stg_payments
+    description: Staged payments.
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+  - name: stg_events
+    description: Staged events.
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+  - name: stg_sessions
+    description: Staged sessions.
+    columns:
+      - name: session_id
+        tests: [not_null, unique]
+  - name: stg_page_views
+    description: Staged page views.
+    columns:
+      - name: page_view_id
+        tests: [not_null, unique]
+  - name: stg_support_tickets
+    description: Staged support tickets.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: stg_feature_usage
+    description: Staged feature usage records.
+    columns:
+      - name: feature_usage_id
+        tests: [not_null, unique]
+  - name: stg_user_emails
+    description: User email domains extracted.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: stg_account_plans
+    description: Account plan details.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+  - name: stg_subscription_periods
+    description: Subscription period details.
+    columns:
+      - name: subscription_id
+        tests: [not_null, unique]
+  - name: stg_invoice_line_items
+    description: Invoice details as line items.
+    columns:
+      - name: invoice_id
+        tests: [not_null, unique]
+  - name: stg_payment_methods
+    description: Payment method classification.
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+  - name: stg_event_types
+    description: Event type classification.
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+  - name: stg_session_durations
+    description: Session duration calculations.
+    columns:
+      - name: session_id
+        tests: [not_null, unique]
+  - name: stg_page_view_engagement
+    description: Page view engagement metrics.
+    columns:
+      - name: page_view_id
+        tests: [not_null, unique]
+  - name: stg_ticket_priorities
+    description: Ticket priority classification.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: stg_feature_categories
+    description: Feature categorization.
+    columns:
+      - name: feature_usage_id
+        tests: [not_null, unique]
+  - name: stg_user_countries
+    description: User country standardization.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: stg_account_industries
+    description: Account industry standardization.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+  - name: stg_subscription_amounts
+    description: Subscription amount normalization.
+    columns:
+      - name: subscription_id
+        tests: [not_null, unique]
+  - name: stg_invoice_statuses
+    description: Invoice status classification.
+    columns:
+      - name: invoice_id
+        tests: [not_null, unique]
+  - name: stg_event_properties
+    description: Event property extraction.
+    columns:
+      - name: event_id
+        tests: [not_null, unique]

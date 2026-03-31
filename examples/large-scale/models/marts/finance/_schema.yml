@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: fct_revenue
+    description: Revenue fact table with all revenue transactions.
+    columns:
+      - name: invoice_id
+        tests: [not_null, unique]
+  - name: fct_invoices
+    description: Invoice fact table with payment details.
+    columns:
+      - name: invoice_id
+        tests: [not_null, unique]
+  - name: fct_payments
+    description: Payment fact table.
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+  - name: fct_mrr
+    description: Monthly recurring revenue by account.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+  - name: fct_arr
+    description: Annual recurring revenue by account.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+  - name: dim_pricing_plans
+    description: Pricing plan dimension.
+    columns:
+      - name: plan_id
+        tests: [not_null, unique]
+  - name: fct_churn_revenue
+    description: Revenue lost to churn.
+    columns:
+      - name: subscription_id
+        tests: [not_null, unique]
+  - name: fct_expansion_revenue
+    description: Revenue from plan upgrades.
+    columns:
+      - name: account_id
+        tests: [not_null]
+  - name: fct_net_revenue_retention
+    description: Net revenue retention metrics.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+  - name: rpt_revenue_summary
+    description: Revenue summary report.
+    columns:
+      - name: plan_id
+        tests: [not_null, unique]

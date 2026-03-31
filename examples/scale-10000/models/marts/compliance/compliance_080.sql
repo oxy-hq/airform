@@ -1,0 +1,3 @@
+with a as (select * from {{ ref('stg_page_views_080') }}),
+b as (select * from {{ ref('int_model_1085') }})
+select a.* from a inner join b on a.compliance_record_id = b.compliance_record_id

@@ -1,0 +1,13 @@
+id,campaign_name,channel,start_date,end_date,budget,spend,status,target_audience,goal
+1,campaign_name_1,channel_1,2024-04-06,2024-10-05,7604.55,6558.54,active,target_audience_1,goal_1
+2,campaign_name_2,channel_2,2024-11-16,2024-08-25,5641.72,5798.89,pending,target_audience_2,goal_2
+3,campaign_name_3,channel_3,2024-10-21,2024-11-20,3238.85,9710.02,inactive,target_audience_3,goal_3
+4,campaign_name_4,channel_4,2024-03-15,2024-02-16,4427.66,3035.18,inactive,target_audience_4,goal_4
+5,campaign_name_5,channel_5,2024-10-02,2024-06-17,751.16,4622.81,active,target_audience_5,goal_5
+6,campaign_name_6,channel_6,2024-01-12,2024-05-03,6450.22,9773.91,active,target_audience_6,goal_6
+7,campaign_name_7,channel_7,2024-10-20,2024-09-13,4632.49,5547.62,pending,target_audience_7,goal_7
+8,campaign_name_8,channel_8,2024-01-15,2024-10-21,1890.51,6054.01,pending,target_audience_8,goal_8
+9,campaign_name_9,channel_9,2024-03-02,2024-08-04,8111.56,8375.4,pending,target_audience_9,goal_9
+10,campaign_name_10,channel_10,2024-02-17,2024-11-06,401.03,7079.14,inactive,target_audience_10,goal_10
+11,campaign_name_11,channel_11,2024-09-17,2024-10-06,3645.34,9180.19,inactive,target_audience_11,goal_11
+12,campaign_name_12,channel_12,2024-07-25,2024-06-22,5982.88,7894.38,pending,target_audience_12,goal_12

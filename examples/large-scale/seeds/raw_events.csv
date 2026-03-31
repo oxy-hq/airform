@@ -1,0 +1,16 @@
+id,user_id,session_id,event_type,event_name,properties,created_at
+1,1,1,track,page_view,/dashboard,2024-06-01 10:00:00
+2,1,1,track,button_click,create_project,2024-06-01 10:05:00
+3,2,2,track,page_view,/settings,2024-06-01 11:00:00
+4,3,3,track,feature_used,export_csv,2024-06-01 12:00:00
+5,5,4,track,page_view,/dashboard,2024-06-02 09:00:00
+6,5,4,track,button_click,invite_user,2024-06-02 09:10:00
+7,6,5,track,page_view,/reports,2024-06-02 14:00:00
+8,9,6,track,feature_used,api_call,2024-06-03 08:00:00
+9,11,7,track,page_view,/onboarding,2024-06-03 10:00:00
+10,11,7,track,button_click,complete_setup,2024-06-03 10:30:00
+11,1,8,track,page_view,/dashboard,2024-06-04 09:00:00
+12,1,8,track,feature_used,create_report,2024-06-04 09:15:00
+13,13,9,track,page_view,/dashboard,2024-06-05 11:00:00
+14,3,10,track,page_view,/billing,2024-06-05 15:00:00
+15,9,11,track,feature_used,webhook_setup,2024-06-06 10:00:00

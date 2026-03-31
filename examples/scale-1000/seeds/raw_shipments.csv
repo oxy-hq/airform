@@ -1,0 +1,15 @@
+id,order_id,warehouse_id,shipped_at,delivered_at,carrier,tracking_number,status,weight,cost
+1,1,1,2024-02-02,2024-11-25,express,tracking_number_1,inactive,6514.79,7671.92
+2,7,10,2024-11-01,2024-08-21,express,tracking_number_2,inactive,6422.65,3027.92
+3,4,7,2024-05-15,2024-02-23,standard,tracking_number_3,active,4401.66,4847.67
+4,4,6,2024-10-05,2024-06-28,express,tracking_number_4,inactive,7344.66,8609.17
+5,7,3,2024-06-17,2024-09-04,premium,tracking_number_5,active,4670.06,2682.04
+6,4,3,2024-02-02,2024-05-13,express,tracking_number_6,inactive,2490.22,8654.42
+7,3,6,2024-10-24,2024-06-07,standard,tracking_number_7,inactive,9959.73,4673.48
+8,5,8,2024-01-03,2024-07-17,premium,tracking_number_8,active,2159.29,3535.42
+9,1,5,2024-08-20,2024-11-22,premium,tracking_number_9,inactive,5371.54,8473.25
+10,7,3,2024-05-24,2024-06-25,premium,tracking_number_10,inactive,461.97,521.07
+11,9,4,2024-06-18,2024-05-03,premium,tracking_number_11,pending,4509.04,5503.07
+12,10,10,2024-02-05,2024-02-13,premium,tracking_number_12,inactive,5582.74,3662.41
+13,3,4,2024-10-17,2024-07-17,standard,tracking_number_13,active,398.75,7138.78
+14,8,9,2024-08-05,2024-10-17,standard,tracking_number_14,inactive,9314.37,3192.12

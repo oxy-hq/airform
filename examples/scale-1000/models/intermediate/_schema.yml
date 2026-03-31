@@ -1,0 +1,443 @@
+version: 2
+
+models:
+  - name: int_model_001
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_002
+    description: Intermediate model.
+  - name: int_model_003
+    description: Intermediate model.
+  - name: int_model_004
+    description: Intermediate model.
+  - name: int_model_005
+    description: Intermediate model.
+  - name: int_model_006
+    description: Intermediate model.
+  - name: int_model_007
+    description: Intermediate model.
+  - name: int_model_008
+    description: Intermediate model.
+  - name: int_model_009
+    description: Intermediate model.
+  - name: int_model_010
+    description: Intermediate model.
+  - name: int_model_011
+    description: Intermediate model.
+  - name: int_model_012
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_013
+    description: Intermediate model.
+  - name: int_model_014
+    description: Intermediate model.
+  - name: int_model_015
+    description: Intermediate model.
+  - name: int_model_016
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_017
+    description: Intermediate model.
+  - name: int_model_018
+    description: Intermediate model.
+  - name: int_model_019
+    description: Intermediate model.
+  - name: int_model_020
+    description: Intermediate model.
+  - name: int_model_021
+    description: Intermediate model.
+  - name: int_model_022
+    description: Intermediate model.
+  - name: int_model_023
+    description: Intermediate model.
+  - name: int_model_024
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_025
+    description: Intermediate model.
+  - name: int_model_026
+    description: Intermediate model.
+  - name: int_model_027
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_028
+    description: Intermediate model.
+  - name: int_model_029
+    description: Intermediate model.
+  - name: int_model_030
+    description: Intermediate model.
+  - name: int_model_031
+    description: Intermediate model.
+  - name: int_model_032
+    description: Intermediate model.
+  - name: int_model_033
+    description: Intermediate model.
+  - name: int_model_034
+    description: Intermediate model.
+  - name: int_model_035
+    description: Intermediate model.
+  - name: int_model_036
+    description: Intermediate model.
+  - name: int_model_037
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_038
+    description: Intermediate model.
+  - name: int_model_039
+    description: Intermediate model.
+  - name: int_model_040
+    description: Intermediate model.
+  - name: int_model_041
+    description: Intermediate model.
+  - name: int_model_042
+    description: Intermediate model.
+  - name: int_model_043
+    description: Intermediate model.
+  - name: int_model_044
+    description: Intermediate model.
+  - name: int_model_045
+    description: Intermediate model.
+  - name: int_model_046
+    description: Intermediate model.
+  - name: int_model_047
+    description: Intermediate model.
+  - name: int_model_048
+    description: Intermediate model.
+  - name: int_model_049
+    description: Intermediate model.
+  - name: int_model_050
+    description: Intermediate model.
+  - name: int_model_051
+    description: Intermediate model.
+  - name: int_model_052
+    description: Intermediate model.
+  - name: int_model_053
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_054
+    description: Intermediate model.
+  - name: int_model_055
+    description: Intermediate model.
+  - name: int_model_056
+    description: Intermediate model.
+  - name: int_model_057
+    description: Intermediate model.
+  - name: int_model_058
+    description: Intermediate model.
+  - name: int_model_059
+    description: Intermediate model.
+  - name: int_model_060
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_061
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_062
+    description: Intermediate model.
+  - name: int_model_063
+    description: Intermediate model.
+  - name: int_model_064
+    description: Intermediate model.
+  - name: int_model_065
+    description: Intermediate model.
+  - name: int_model_066
+    description: Intermediate model.
+  - name: int_model_067
+    description: Intermediate model.
+  - name: int_model_068
+    description: Intermediate model.
+  - name: int_model_069
+    description: Intermediate model.
+  - name: int_model_070
+    description: Intermediate model.
+  - name: int_model_071
+    description: Intermediate model.
+  - name: int_model_072
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_073
+    description: Intermediate model.
+  - name: int_model_074
+    description: Intermediate model.
+  - name: int_model_075
+    description: Intermediate model.
+  - name: int_model_076
+    description: Intermediate model.
+  - name: int_model_077
+    description: Intermediate model.
+  - name: int_model_078
+    description: Intermediate model.
+  - name: int_model_079
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_080
+    description: Intermediate model.
+  - name: int_model_081
+    description: Intermediate model.
+  - name: int_model_082
+    description: Intermediate model.
+  - name: int_model_083
+    description: Intermediate model.
+  - name: int_model_084
+    description: Intermediate model.
+  - name: int_model_085
+    description: Intermediate model.
+  - name: int_model_086
+    description: Intermediate model.
+  - name: int_model_087
+    description: Intermediate model.
+  - name: int_model_088
+    description: Intermediate model.
+  - name: int_model_089
+    description: Intermediate model.
+  - name: int_model_090
+    description: Intermediate model.
+  - name: int_model_091
+    description: Intermediate model.
+  - name: int_model_092
+    description: Intermediate model.
+  - name: int_model_093
+    description: Intermediate model.
+  - name: int_model_094
+    description: Intermediate model.
+  - name: int_model_095
+    description: Intermediate model.
+  - name: int_model_096
+    description: Intermediate model.
+  - name: int_model_097
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_098
+    description: Intermediate model.
+  - name: int_model_099
+    description: Intermediate model.
+  - name: int_model_100
+    description: Intermediate model.
+  - name: int_model_101
+    description: Intermediate model.
+  - name: int_model_102
+    description: Intermediate model.
+  - name: int_model_103
+    description: Intermediate model.
+  - name: int_model_104
+    description: Intermediate model.
+  - name: int_model_105
+    description: Intermediate model.
+  - name: int_model_106
+    description: Intermediate model.
+  - name: int_model_107
+    description: Intermediate model.
+  - name: int_model_108
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_109
+    description: Intermediate model.
+  - name: int_model_110
+    description: Intermediate model.
+  - name: int_model_111
+    description: Intermediate model.
+  - name: int_model_112
+    description: Intermediate model.
+  - name: int_model_113
+    description: Intermediate model.
+  - name: int_model_114
+    description: Intermediate model.
+  - name: int_model_115
+    description: Intermediate model.
+  - name: int_model_116
+    description: Intermediate model.
+  - name: int_model_117
+    description: Intermediate model.
+  - name: int_model_118
+    description: Intermediate model.
+  - name: int_model_119
+    description: Intermediate model.
+  - name: int_model_120
+    description: Intermediate model.
+  - name: int_model_121
+    description: Intermediate model.
+  - name: int_model_122
+    description: Intermediate model.
+  - name: int_model_123
+    description: Intermediate model.
+  - name: int_model_124
+    description: Intermediate model.
+  - name: int_model_125
+    description: Intermediate model.
+  - name: int_model_126
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_127
+    description: Intermediate model.
+  - name: int_model_128
+    description: Intermediate model.
+  - name: int_model_129
+    description: Intermediate model.
+  - name: int_model_130
+    description: Intermediate model.
+  - name: int_model_131
+    description: Intermediate model.
+  - name: int_model_132
+    description: Intermediate model.
+  - name: int_model_133
+    description: Intermediate model.
+  - name: int_model_134
+    description: Intermediate model.
+  - name: int_model_135
+    description: Intermediate model.
+  - name: int_model_136
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_137
+    description: Intermediate model.
+  - name: int_model_138
+    description: Intermediate model.
+  - name: int_model_139
+    description: Intermediate model.
+  - name: int_model_140
+    description: Intermediate model.
+  - name: int_model_141
+    description: Intermediate model.
+  - name: int_model_142
+    description: Intermediate model.
+  - name: int_model_143
+    description: Intermediate model.
+  - name: int_model_144
+    description: Intermediate model.
+  - name: int_model_145
+    description: Intermediate model.
+  - name: int_model_146
+    description: Intermediate model.
+  - name: int_model_147
+    description: Intermediate model.
+  - name: int_model_148
+    description: Intermediate model.
+  - name: int_model_149
+    description: Intermediate model.
+  - name: int_model_150
+    description: Intermediate model.
+  - name: int_model_151
+    description: Intermediate model.
+  - name: int_model_152
+    description: Intermediate model.
+  - name: int_model_153
+    description: Intermediate model.
+  - name: int_model_154
+    description: Intermediate model.
+  - name: int_model_155
+    description: Intermediate model.
+  - name: int_model_156
+    description: Intermediate model.
+  - name: int_model_157
+    description: Intermediate model.
+  - name: int_model_158
+    description: Intermediate model.
+  - name: int_model_159
+    description: Intermediate model.
+  - name: int_model_160
+    description: Intermediate model.
+  - name: int_model_161
+    description: Intermediate model.
+  - name: int_model_162
+    description: Intermediate model.
+  - name: int_model_163
+    description: Intermediate model.
+  - name: int_model_164
+    description: Intermediate model.
+  - name: int_model_165
+    description: Intermediate model.
+  - name: int_model_166
+    description: Intermediate model.
+  - name: int_model_167
+    description: Intermediate model.
+  - name: int_model_168
+    description: Intermediate model.
+  - name: int_model_169
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_170
+    description: Intermediate model.
+  - name: int_model_171
+    description: Intermediate model.
+  - name: int_model_172
+    description: Intermediate model.
+  - name: int_model_173
+    description: Intermediate model.
+  - name: int_model_174
+    description: Intermediate model.
+  - name: int_model_175
+    description: Intermediate model.
+  - name: int_model_176
+    description: Intermediate model.
+  - name: int_model_177
+    description: Intermediate model.
+  - name: int_model_178
+    description: Intermediate model.
+  - name: int_model_179
+    description: Intermediate model.
+  - name: int_model_180
+    description: Intermediate model.
+  - name: int_model_181
+    description: Intermediate model.
+  - name: int_model_182
+    description: Intermediate model.
+  - name: int_model_183
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_184
+    description: Intermediate model.
+  - name: int_model_185
+    description: Intermediate model.
+  - name: int_model_186
+    description: Intermediate model.
+  - name: int_model_187
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_188
+    description: Intermediate model.
+  - name: int_model_189
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_190
+    description: Intermediate model.
+  - name: int_model_191
+    description: Intermediate model.
+  - name: int_model_192
+    description: Intermediate model.
+  - name: int_model_193
+    description: Intermediate model.
+  - name: int_model_194
+    description: Intermediate model.
+  - name: int_model_195
+    description: Ephemeral intermediate model.
+    config:
+      materialized: ephemeral
+  - name: int_model_196
+    description: Intermediate model.
+  - name: int_model_197
+    description: Intermediate model.
+  - name: int_model_198
+    description: Intermediate model.
+  - name: int_model_199
+    description: Intermediate model.
+  - name: int_model_200
+    description: Intermediate model.

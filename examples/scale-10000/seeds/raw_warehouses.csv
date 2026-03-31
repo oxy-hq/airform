@@ -1,0 +1,12 @@
+id,warehouse_name,location,capacity,utilization,status,manager_id,region,created_at,type
+1,warehouse_name_1,US,58,23,pending,8,US,2024-11-28,typeB
+2,warehouse_name_2,DE,91,9,pending,9,DE,2024-05-28,typeA
+3,warehouse_name_3,UK,47,66,active,2,UK,2024-03-08,typeB
+4,warehouse_name_4,US,47,71,pending,6,FR,2024-09-05,typeC
+5,warehouse_name_5,US,9,40,inactive,8,JP,2024-07-25,typeB
+6,warehouse_name_6,JP,10,17,inactive,2,FR,2024-08-22,typeC
+7,warehouse_name_7,DE,17,100,pending,10,UK,2024-03-14,typeC
+8,warehouse_name_8,US,16,67,active,5,UK,2024-03-11,typeC
+9,warehouse_name_9,UK,45,67,inactive,2,DE,2024-04-21,typeC
+10,warehouse_name_10,DE,17,81,inactive,10,JP,2024-02-17,typeC
+11,warehouse_name_11,UK,76,75,active,3,JP,2024-12-20,typeB

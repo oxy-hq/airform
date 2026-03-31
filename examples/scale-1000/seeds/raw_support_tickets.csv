@@ -1,0 +1,11 @@
+id,user_id,account_id,subject,priority,status,created_at,resolved_at,category,agent_id
+1,7,9,subject_1,low,pending,2024-09-15,2024-07-02,2024-04-17,6
+2,10,8,subject_2,high,inactive,2024-01-07,2024-05-18,2024-03-10,8
+3,8,2,subject_3,low,pending,2024-10-26,2024-04-23,2024-03-10,9
+4,1,9,subject_4,medium,active,2024-04-27,2024-02-15,2024-02-21,3
+5,8,5,subject_5,high,pending,2024-05-14,2024-08-16,2024-04-15,9
+6,3,7,subject_6,low,pending,2024-09-24,2024-03-28,2024-02-09,7
+7,6,9,subject_7,medium,active,2024-05-24,2024-05-27,2024-10-19,8
+8,3,8,subject_8,high,inactive,2024-06-11,2024-09-25,2024-09-13,8
+9,6,4,subject_9,high,active,2024-10-13,2024-04-28,2024-07-02,6
+10,8,7,subject_10,medium,pending,2024-11-05,2024-08-02,2024-03-17,10

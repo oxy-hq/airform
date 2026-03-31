@@ -1,0 +1,14 @@
+id,account_id,plan_id,start_date,end_date,status,amount,currency,interval_months,auto_renew
+1,6,8,2024-09-15,2024-02-08,active,649.62,USD,76,true
+2,10,4,2024-01-03,2024-12-21,active,2297.13,USD,43,true
+3,9,4,2024-05-22,2024-08-07,pending,1331.8,GBP,74,false
+4,4,8,2024-07-07,2024-02-04,pending,4316.2,EUR,53,false
+5,1,2,2024-01-13,2024-12-11,active,2494.08,USD,69,false
+6,3,7,2024-03-09,2024-08-08,active,4436.88,GBP,13,true
+7,9,1,2024-02-25,2024-04-06,inactive,4861.55,USD,52,true
+8,3,7,2024-01-13,2024-05-26,inactive,2859.64,GBP,94,false
+9,3,4,2024-05-07,2024-01-19,pending,5426.53,GBP,41,true
+10,1,10,2024-08-17,2024-09-06,active,9608.18,USD,24,true
+11,10,2,2024-11-28,2024-04-13,active,9416.55,GBP,32,true
+12,10,2,2024-07-22,2024-10-19,pending,3170.53,EUR,27,false
+13,4,5,2024-07-05,2024-11-21,inactive,4577.67,USD,2,false

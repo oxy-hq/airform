@@ -1,0 +1,123 @@
+version: 2
+
+models:
+  - name: hr_model_001
+    description: Mart model in hr domain.
+  - name: hr_model_002
+    description: Mart model in hr domain.
+  - name: hr_model_003
+    description: Mart model in hr domain.
+  - name: hr_model_004
+    description: Mart model in hr domain.
+  - name: hr_model_005
+    description: Mart model in hr domain.
+  - name: hr_model_006
+    description: Mart model in hr domain.
+  - name: hr_model_007
+    description: Mart model in hr domain.
+  - name: hr_model_008
+    description: Mart model in hr domain.
+  - name: hr_model_009
+    description: Mart model in hr domain.
+  - name: hr_model_010
+    description: Mart model in hr domain.
+  - name: hr_model_011
+    description: Mart model in hr domain.
+  - name: hr_model_012
+    description: Mart model in hr domain.
+  - name: hr_model_013
+    description: Mart model in hr domain.
+  - name: hr_model_014
+    description: Mart model in hr domain.
+  - name: hr_model_015
+    description: Mart model in hr domain.
+  - name: hr_model_016
+    description: Mart model in hr domain.
+  - name: hr_model_017
+    description: Mart model in hr domain.
+  - name: hr_model_018
+    description: Mart model in hr domain.
+  - name: hr_model_019
+    description: Mart model in hr domain.
+  - name: hr_model_020
+    description: Mart model in hr domain.
+  - name: hr_model_021
+    description: Mart model in hr domain.
+  - name: hr_model_022
+    description: Mart model in hr domain.
+  - name: hr_model_023
+    description: Mart model in hr domain.
+  - name: hr_model_024
+    description: Mart model in hr domain.
+  - name: hr_model_025
+    description: Mart model in hr domain.
+  - name: hr_model_026
+    description: Mart model in hr domain.
+  - name: hr_model_027
+    description: Mart model in hr domain.
+  - name: hr_model_028
+    description: Mart model in hr domain.
+  - name: hr_model_029
+    description: Mart model in hr domain.
+  - name: hr_model_030
+    description: Mart model in hr domain.
+  - name: hr_model_031
+    description: Mart model in hr domain.
+  - name: hr_model_032
+    description: Mart model in hr domain.
+  - name: hr_model_033
+    description: Mart model in hr domain.
+  - name: hr_model_034
+    description: Mart model in hr domain.
+  - name: hr_model_035
+    description: Mart model in hr domain.
+  - name: hr_model_036
+    description: Mart model in hr domain.
+  - name: hr_model_037
+    description: Mart model in hr domain.
+  - name: hr_model_038
+    description: Mart model in hr domain.
+  - name: hr_model_039
+    description: Mart model in hr domain.
+  - name: hr_model_040
+    description: Mart model in hr domain.
+  - name: hr_model_041
+    description: Mart model in hr domain.
+  - name: hr_model_042
+    description: Mart model in hr domain.
+  - name: hr_model_043
+    description: Mart model in hr domain.
+  - name: hr_model_044
+    description: Mart model in hr domain.
+  - name: hr_model_045
+    description: Mart model in hr domain.
+  - name: hr_model_046
+    description: Mart model in hr domain.
+  - name: hr_model_047
+    description: Mart model in hr domain.
+  - name: hr_model_048
+    description: Mart model in hr domain.
+  - name: hr_model_049
+    description: Mart model in hr domain.
+  - name: hr_model_050
+    description: Mart model in hr domain.
+  - name: hr_model_051
+    description: Mart model in hr domain.
+  - name: hr_model_052
+    description: Mart model in hr domain.
+  - name: hr_model_053
+    description: Mart model in hr domain.
+  - name: hr_model_054
+    description: Mart model in hr domain.
+  - name: hr_model_055
+    description: Mart model in hr domain.
+  - name: hr_model_056
+    description: Mart model in hr domain.
+  - name: hr_model_057
+    description: Mart model in hr domain.
+  - name: hr_model_058
+    description: Mart model in hr domain.
+  - name: hr_model_059
+    description: Mart model in hr domain.
+  - name: hr_model_060
+    description: Mart model in hr domain.

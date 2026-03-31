@@ -1,0 +1,16 @@
+id,account_id,email,first_name,last_name,created_at,updated_at,status,country,signup_source
+1,2,user1@example.com,Alice,Chen,2024-04-08,2024-03-24,active,JP,signup_source_1
+2,2,user2@example.com,Jack,Davis,2024-01-01,2024-02-07,active,JP,signup_source_2
+3,10,user3@example.com,Alice,Moore,2024-04-23,2024-11-23,pending,FR,signup_source_3
+4,4,user4@example.com,Hank,Taylor,2024-05-26,2024-01-25,active,FR,signup_source_4
+5,6,user5@example.com,Eve,Lee,2024-04-25,2024-06-04,active,FR,signup_source_5
+6,2,user6@example.com,Frank,Brown,2024-10-09,2024-01-24,inactive,JP,signup_source_6
+7,2,user7@example.com,Grace,Jones,2024-09-10,2024-11-20,inactive,JP,signup_source_7
+8,4,user8@example.com,Bob,Smith,2024-11-08,2024-05-03,active,US,signup_source_8
+9,7,user9@example.com,Eve,Wilson,2024-11-27,2024-06-06,inactive,DE,signup_source_9
+10,4,user10@example.com,Eve,Jones,2024-10-21,2024-03-18,pending,UK,signup_source_10
+11,3,user11@example.com,Hank,Davis,2024-05-21,2024-12-18,active,DE,signup_source_11
+12,1,user12@example.com,Dan,Smith,2024-06-13,2024-05-03,active,JP,signup_source_12
+13,6,user13@example.com,Dan,Wilson,2024-07-21,2024-08-05,inactive,UK,signup_source_13
+14,4,user14@example.com,Ivy,Moore,2024-05-24,2024-10-14,pending,FR,signup_source_14
+15,6,user15@example.com,Dan,Lee,2024-09-16,2024-02-25,active,US,signup_source_15

@@ -1,0 +1,14 @@
+id,account_id,record_type,status,reviewed_at,reviewer_id,notes,risk_level,category,created_at
+1,10,typeC,inactive,2024-10-11,9,notes_1,high,2024-09-16,2024-12-19
+2,5,typeB,active,2024-06-11,2,notes_2,medium,2024-10-10,2024-12-28
+3,1,typeC,inactive,2024-05-21,10,notes_3,high,2024-04-24,2024-01-19
+4,8,typeA,pending,2024-11-24,10,notes_4,medium,2024-03-27,2024-11-08
+5,1,typeC,pending,2024-02-07,1,notes_5,medium,2024-06-14,2024-03-14
+6,4,typeB,pending,2024-10-16,1,notes_6,high,2024-03-17,2024-04-18
+7,6,typeC,inactive,2024-09-13,6,notes_7,low,2024-08-18,2024-06-18
+8,6,typeC,pending,2024-11-21,5,notes_8,high,2024-08-07,2024-04-09
+9,9,typeB,active,2024-05-25,5,notes_9,high,2024-04-23,2024-12-16
+10,6,typeB,inactive,2024-09-26,5,notes_10,medium,2024-02-19,2024-11-18
+11,7,typeB,inactive,2024-03-10,1,notes_11,medium,2024-12-03,2024-06-15
+12,5,typeC,inactive,2024-04-07,9,notes_12,medium,2024-09-23,2024-05-05
+13,2,typeC,pending,2024-10-08,4,notes_13,low,2024-11-17,2024-04-21

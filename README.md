@@ -26,7 +26,7 @@ Compile, run, and test [dbt](https://www.getdbt.com/) projects locally using [Ap
 ### From source
 
 ```bash
-git clone https://github.com/robertyi/airform.git
+git clone https://github.com/oxy-hq/airform.git
 cd airform
 cargo build --release
 # Binary is at target/release/airform
@@ -250,13 +250,38 @@ Airform supports dbt-style graph operators in `-s` / `--select`:
 
 ---
 
+## Benchmarks
+
+Compilation time (wall clock, single run, MacBook Pro M-series):
+
+| Models | airform | dbt | sqlmesh | vs dbt | vs sqlmesh |
+|--------|---------|-----|---------|--------|------------|
+| 5 | 20 ms | 2.3 s | 2.3 s | **115x** | **115x** |
+| 100 | 27 ms | 3.1 s | 2.7 s | **115x** | **100x** |
+| 1,000 | 94 ms | 6.6 s | 4.3 s | **70x** | **46x** |
+| 10,000 | 17 s | 586 s | 413 s | **34x** | **24x** |
+
+Run benchmarks yourself:
+
+```bash
+# Shell-based benchmark (airform vs dbt vs sqlmesh)
+./benchmarks/run_benchmark.sh
+
+# Rust microbenchmarks (internal pipeline stages)
+cargo bench
+```
+
+See [benchmarks/README.md](benchmarks/README.md) for details.
+
+---
+
 ## Comparison
 
 | Feature | dbt Core | SQLMesh | Airform |
 |---------|----------|---------|---------|
 | Language | Python | Python | Rust |
 | Local execution | Limited (DuckDB adapter) | Built-in | Built-in (DataFusion) |
-| Startup time | Seconds | Seconds | Instant |
+| Compile 10k models | ~10 min | ~7 min | **17 sec** |
 | Single binary | No | No | Yes (~75 MB) |
 | dbt syntax compatible | Yes | Partial | Yes |
 | Column-level lineage | No (dbt Cloud only) | Yes | Yes |
@@ -270,7 +295,7 @@ Airform supports dbt-style graph operators in `-s` / `--select`:
 Contributions are welcome. To get started:
 
 ```bash
-git clone https://github.com/robertyi/airform.git
+git clone https://github.com/oxy-hq/airform.git
 cd airform
 cargo build
 cargo test

@@ -1,0 +1,14 @@
+with source as (
+    select * from {{ source('raw', 'raw_warehouses') }}
+),
+renamed as (
+    select
+        id as warehouse_id
+,        type
+,        manager_id
+,        location
+,        utilization
+,        status
+    from source
+)
+select * from renamed

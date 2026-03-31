@@ -1,0 +1,16 @@
+id,account_id,email,first_name,last_name,created_at,updated_at,status,country,signup_source
+1,1,alice@example.com,Alice,Johnson,2024-01-05 10:00:00,2024-06-01 12:00:00,active,US,organic
+2,1,bob@example.com,Bob,Smith,2024-01-10 14:30:00,2024-05-15 09:00:00,active,US,referral
+3,2,carol@example.com,Carol,Williams,2024-02-01 08:00:00,2024-06-10 11:00:00,active,UK,paid_ad
+4,2,dave@example.com,Dave,Brown,2024-02-15 16:00:00,2024-04-20 10:00:00,churned,UK,organic
+5,3,eve@example.com,Eve,Davis,2024-03-01 09:00:00,2024-06-15 14:00:00,active,CA,referral
+6,3,frank@example.com,Frank,Miller,2024-03-10 11:00:00,2024-06-01 08:00:00,active,CA,paid_ad
+7,4,grace@example.com,Grace,Wilson,2024-04-01 13:00:00,2024-06-20 16:00:00,trial,DE,organic
+8,5,henry@example.com,Henry,Moore,2024-04-15 07:00:00,2024-05-01 10:00:00,churned,DE,organic
+9,6,iris@example.com,Iris,Taylor,2024-05-01 10:00:00,2024-06-25 09:00:00,active,FR,paid_ad
+10,7,jack@example.com,Jack,Anderson,2024-05-15 15:00:00,2024-06-30 11:00:00,trial,FR,referral
+11,8,kate@example.com,Kate,Thomas,2024-06-01 08:00:00,2024-06-28 14:00:00,active,US,organic
+12,9,leo@example.com,Leo,Jackson,2024-06-10 12:00:00,2024-06-30 10:00:00,trial,US,paid_ad
+13,10,mia@example.com,Mia,White,2024-06-15 09:00:00,2024-06-29 16:00:00,active,UK,referral
+14,10,noah@example.com,Noah,Harris,2024-06-20 14:00:00,2024-06-30 08:00:00,trial,UK,organic
+15,11,olivia@example.com,Olivia,Martin,2024-06-25 11:00:00,2024-06-30 12:00:00,active,CA,paid_ad

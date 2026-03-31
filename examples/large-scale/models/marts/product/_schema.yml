@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: fct_feature_usage
+    description: Feature usage fact table.
+    columns:
+      - name: feature_usage_id
+        tests: [not_null, unique]
+  - name: fct_adoption_rates
+    description: Feature adoption rates.
+    columns:
+      - name: feature_name
+        tests: [not_null, unique]
+  - name: dim_features
+    description: Feature dimension table.
+    columns:
+      - name: feature_name
+        tests: [not_null, unique]
+  - name: fct_engagement_scores
+    description: User engagement scores.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: fct_power_users
+    description: Power user identification.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: fct_stickiness
+    description: Product stickiness metrics.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: rpt_product_health
+    description: Product health dashboard report.
+    columns:
+      - name: feature_name
+        tests: [not_null, unique]
+  - name: fct_feature_retention
+    description: Feature-level retention metrics.
+    columns:
+      - name: feature_name
+        tests: [not_null, unique]
+  - name: dim_user_personas
+    description: User persona classification.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+  - name: fct_product_qualified_leads
+    description: Product-qualified lead identification.
+    columns:
+      - name: user_id
+        tests: [not_null, unique]

@@ -1,0 +1,16 @@
+id,user_id,session_id,page_url,page_title,referrer_url,viewed_at,time_on_page_seconds
+1,1,1,/dashboard,Dashboard,,2024-06-01 10:00:00,120
+2,1,1,/projects,Projects,/dashboard,2024-06-01 10:02:00,180
+3,2,2,/settings,Settings,,2024-06-01 11:00:00,90
+4,3,3,/dashboard,Dashboard,,2024-06-01 12:00:00,300
+5,3,3,/reports,Reports,/dashboard,2024-06-01 12:05:00,450
+6,5,4,/dashboard,Dashboard,,2024-06-02 09:00:00,200
+7,5,4,/team,Team,/dashboard,2024-06-02 09:04:00,150
+8,6,5,/reports,Reports,,2024-06-02 14:00:00,600
+9,9,6,/docs,Documentation,,2024-06-03 08:00:00,900
+10,11,7,/onboarding,Get Started,,2024-06-03 10:00:00,1200
+11,11,7,/dashboard,Dashboard,/onboarding,2024-06-03 10:20:00,300
+12,1,8,/dashboard,Dashboard,,2024-06-04 09:00:00,180
+13,13,9,/dashboard,Dashboard,,2024-06-05 11:00:00,240
+14,3,10,/billing,Billing,,2024-06-05 15:00:00,60
+15,9,11,/settings,Settings,,2024-06-06 10:00:00,420

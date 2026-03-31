@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Raw seed data for the SaaS analytics platform.
+    tables:
+      - name: raw_users
+        description: One record per user.
+      - name: raw_accounts
+        description: One record per account (company).
+      - name: raw_subscriptions
+        description: One record per subscription.
+      - name: raw_invoices
+        description: One record per invoice.
+      - name: raw_payments
+        description: One record per payment attempt.
+      - name: raw_events
+        description: One record per tracked event.
+      - name: raw_sessions
+        description: One record per user session.
+      - name: raw_page_views
+        description: One record per page view.
+      - name: raw_support_tickets
+        description: One record per support ticket.
+      - name: raw_feature_usage
+        description: One record per feature usage entry.

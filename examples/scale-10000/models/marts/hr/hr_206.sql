@@ -1,0 +1,3 @@
+with a as (select * from {{ ref('stg_warehouses_006') }}),
+b as (select * from {{ ref('int_model_1894') }})
+select a.* from a inner join b on a.event_id = b.event_id

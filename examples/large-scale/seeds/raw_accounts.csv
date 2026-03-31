@@ -1,0 +1,12 @@
+id,name,plan_id,industry,company_size,created_at,updated_at,status,billing_email
+1,Acme Corp,3,technology,50,2024-01-05 10:00:00,2024-06-01 12:00:00,active,billing@acme.com
+2,Globex Inc,2,finance,200,2024-02-01 08:00:00,2024-06-10 11:00:00,active,billing@globex.com
+3,Initech,3,technology,100,2024-03-01 09:00:00,2024-06-15 14:00:00,active,billing@initech.com
+4,Umbrella Co,1,healthcare,500,2024-04-01 13:00:00,2024-06-20 16:00:00,trial,billing@umbrella.com
+5,Stark Industries,4,technology,1000,2024-04-15 07:00:00,2024-05-01 10:00:00,churned,billing@stark.com
+6,Wayne Enterprises,2,finance,300,2024-05-01 10:00:00,2024-06-25 09:00:00,active,billing@wayne.com
+7,Capsule Corp,1,retail,25,2024-05-15 15:00:00,2024-06-30 11:00:00,trial,billing@capsule.com
+8,Cyberdyne,3,technology,150,2024-06-01 08:00:00,2024-06-28 14:00:00,active,billing@cyberdyne.com
+9,Oscorp,2,healthcare,75,2024-06-10 12:00:00,2024-06-30 10:00:00,trial,billing@oscorp.com
+10,LexCorp,4,finance,400,2024-06-15 09:00:00,2024-06-29 16:00:00,active,billing@lexcorp.com
+11,Wonka Industries,1,retail,30,2024-06-25 11:00:00,2024-06-30 12:00:00,active,billing@wonka.com

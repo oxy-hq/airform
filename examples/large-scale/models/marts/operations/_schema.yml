@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: fct_support_tickets
+    description: Support ticket fact table.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: dim_ticket_categories
+    description: Ticket category dimension.
+    columns:
+      - name: category
+        tests: [not_null, unique]
+  - name: fct_resolution_times
+    description: Ticket resolution time metrics.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: fct_csat_scores
+    description: Customer satisfaction scores.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: fct_escalations
+    description: Escalated ticket tracking.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: dim_support_agents
+    description: Support agent dimension.
+    columns:
+      - name: agent_id
+        tests: [not_null, unique]
+  - name: rpt_support_overview
+    description: Support operations overview report.
+    columns:
+      - name: category
+        tests: [not_null, unique]
+  - name: fct_sla_compliance
+    description: SLA compliance tracking.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: fct_first_response_time
+    description: First response time metrics.
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+  - name: fct_ticket_volume
+    description: Ticket volume trends.
+    columns:
+      - name: ticket_date
+        tests: [not_null]

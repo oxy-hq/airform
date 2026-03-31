@@ -1,0 +1,16 @@
+id,invoice_id,amount,method,status,processed_at,currency,fee,net_amount,reference_id
+1,2,7200.35,premium,pending,2024-05-22,EUR,3268.57,6975.11,9
+2,3,1926.48,express,inactive,2024-11-24,USD,6158.99,3016.49,9
+3,1,3045.71,standard,inactive,2024-10-20,GBP,3229.27,4423.44,4
+4,9,4737.13,express,active,2024-11-03,EUR,5159.37,6333.08,6
+5,2,8186.05,standard,pending,2024-05-08,USD,1482.07,471.68,8
+6,10,8498.88,standard,inactive,2024-07-21,GBP,1952.41,6966.58,8
+7,7,2447.4,express,pending,2024-01-25,USD,7786.42,2196.22,9
+8,8,511.68,standard,active,2024-08-05,EUR,6679.1,9879.05,10
+9,6,9500.9,premium,pending,2024-12-17,EUR,8307.39,5483.24,3
+10,8,4506.2,standard,pending,2024-05-25,GBP,4851.12,2400.07,8
+11,2,7138.31,standard,inactive,2024-06-11,GBP,814.97,1516.8,7
+12,3,7067.13,standard,inactive,2024-07-11,GBP,4664.58,632.03,7
+13,7,9049.34,express,pending,2024-01-28,GBP,3810.01,68.9,6
+14,5,7537.22,premium,pending,2024-12-24,GBP,8000.68,8979.14,8
+15,4,2736.62,premium,active,2024-07-11,GBP,6794.63,4049.12,3

@@ -1,0 +1,1439 @@
+[0m12:51:07.093662 [debug] [Thread-1 (]: Began running node model.scale_10000.marketing_206
+[0m12:51:07.100343 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.marketing_204, now model.scale_10000.marketing_206)
+[0m12:51:07.101295 [debug] [Thread-1 (]: Began compiling node model.scale_10000.marketing_206
+[0m12:51:07.108162 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.marketing_206"
+[0m12:51:07.112614 [debug] [Thread-1 (]: Began executing node model.scale_10000.marketing_206
+[0m12:51:07.114125 [debug] [Thread-1 (]: Finished running node model.scale_10000.marketing_206
+[0m12:51:07.115129 [debug] [Thread-1 (]: Began running node model.scale_10000.analytics_198
+[0m12:51:07.120444 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.marketing_206, now model.scale_10000.analytics_198)
+[0m12:51:07.121343 [debug] [Thread-1 (]: Began compiling node model.scale_10000.analytics_198
+[0m12:51:07.128299 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.analytics_198"
+[0m12:51:07.131935 [debug] [Thread-1 (]: Began executing node model.scale_10000.analytics_198
+[0m12:51:07.133767 [debug] [Thread-1 (]: Finished running node model.scale_10000.analytics_198
+[0m12:51:07.134823 [debug] [Thread-1 (]: Began running node model.scale_10000.analytics_210
+[0m12:51:07.136469 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.analytics_198, now model.scale_10000.analytics_210)
+[0m12:51:07.137348 [debug] [Thread-1 (]: Began compiling node model.scale_10000.analytics_210
+[0m12:51:07.150048 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.analytics_210"
+[0m12:51:07.151966 [debug] [Thread-1 (]: Began executing node model.scale_10000.analytics_210
+[0m12:51:07.153880 [debug] [Thread-1 (]: Finished running node model.scale_10000.analytics_210
+[0m12:51:07.154884 [debug] [Thread-1 (]: Began running node model.scale_10000.executive_198
+[0m12:51:07.156283 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.analytics_210, now model.scale_10000.executive_198)
+[0m12:51:07.157364 [debug] [Thread-1 (]: Began compiling node model.scale_10000.executive_198
+[0m12:51:07.168008 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.executive_198"
+[0m12:51:07.170014 [debug] [Thread-1 (]: Began executing node model.scale_10000.executive_198
+[0m12:51:07.171614 [debug] [Thread-1 (]: Finished running node model.scale_10000.executive_198
+[0m12:51:07.172570 [debug] [Thread-1 (]: Began running node model.scale_10000.executive_210
+[0m12:51:07.173996 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.executive_198, now model.scale_10000.executive_210)
+[0m12:51:07.174868 [debug] [Thread-1 (]: Began compiling node model.scale_10000.executive_210
+[0m12:51:07.182375 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.executive_210"
+[0m12:51:07.184106 [debug] [Thread-1 (]: Began executing node model.scale_10000.executive_210
+[0m12:51:07.185932 [debug] [Thread-1 (]: Finished running node model.scale_10000.executive_210
+[0m12:51:07.188852 [debug] [Thread-1 (]: Began running node model.scale_10000.marketing_198
+[0m12:51:07.190173 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.executive_210, now model.scale_10000.marketing_198)
+[0m12:51:07.191033 [debug] [Thread-1 (]: Began compiling node model.scale_10000.marketing_198
+[0m12:51:07.198053 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.marketing_198"
+[0m12:51:07.204615 [debug] [Thread-1 (]: Began executing node model.scale_10000.marketing_198
+[0m12:51:07.206341 [debug] [Thread-1 (]: Finished running node model.scale_10000.marketing_198
+[0m12:51:07.207323 [debug] [Thread-1 (]: Began running node model.scale_10000.marketing_210
+[0m12:51:07.208738 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.marketing_198, now model.scale_10000.marketing_210)
+[0m12:51:07.209812 [debug] [Thread-1 (]: Began compiling node model.scale_10000.marketing_210
+[0m12:51:07.218301 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.marketing_210"
+[0m12:51:07.220194 [debug] [Thread-1 (]: Began executing node model.scale_10000.marketing_210
+[0m12:51:07.221613 [debug] [Thread-1 (]: Finished running node model.scale_10000.marketing_210
+[0m12:51:07.222536 [debug] [Thread-1 (]: Began running node model.scale_10000.analytics_212
+[0m12:51:07.223988 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.marketing_210, now model.scale_10000.analytics_212)
+[0m12:51:07.224946 [debug] [Thread-1 (]: Began compiling node model.scale_10000.analytics_212
+[0m12:51:07.230935 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.analytics_212"
+[0m12:51:07.232681 [debug] [Thread-1 (]: Began executing node model.scale_10000.analytics_212
+[0m12:51:07.238789 [debug] [Thread-1 (]: Finished running node model.scale_10000.analytics_212
+[0m12:51:07.242607 [debug] [Thread-1 (]: Began running node model.scale_10000.executive_212
+[0m12:51:07.245723 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.analytics_212, now model.scale_10000.executive_212)
+[0m12:51:07.248092 [debug] [Thread-1 (]: Began compiling node model.scale_10000.executive_212
+[0m12:51:07.270456 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.executive_212"
+[0m12:51:07.276679 [debug] [Thread-1 (]: Began executing node model.scale_10000.executive_212
+[0m12:51:07.278132 [debug] [Thread-1 (]: Finished running node model.scale_10000.executive_212
+[0m12:51:07.279065 [debug] [Thread-1 (]: Began running node model.scale_10000.marketing_212
+[0m12:51:07.280423 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.executive_212, now model.scale_10000.marketing_212)
+[0m12:51:07.281273 [debug] [Thread-1 (]: Began compiling node model.scale_10000.marketing_212
+[0m12:51:07.288866 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.marketing_212"
+[0m12:51:07.290692 [debug] [Thread-1 (]: Began executing node model.scale_10000.marketing_212
+[0m12:51:07.292154 [debug] [Thread-1 (]: Finished running node model.scale_10000.marketing_212
+[0m12:51:07.293109 [debug] [Thread-1 (]: Began running node model.scale_10000.core_002
+[0m12:51:07.304666 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.marketing_212, now model.scale_10000.core_002)
+[0m12:51:07.313156 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_002
+[0m12:51:07.329294 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_002"
+[0m12:51:07.335619 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_002
+[0m12:51:07.337053 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_002
+[0m12:51:07.338225 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_002
+[0m12:51:07.339828 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_002, now model.scale_10000.retention_002)
+[0m12:51:07.340749 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_002
+[0m12:51:07.349163 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_002"
+[0m12:51:07.351685 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_002
+[0m12:51:07.353229 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_002
+[0m12:51:07.354244 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_002
+[0m12:51:07.355746 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_002, now model.scale_10000.sales_002)
+[0m12:51:07.356652 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_002
+[0m12:51:07.363973 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_002"
+[0m12:51:07.365852 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_002
+[0m12:51:07.367631 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_002
+[0m12:51:07.376485 [debug] [Thread-1 (]: Began running node model.scale_10000.security_002
+[0m12:51:07.378154 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_002, now model.scale_10000.security_002)
+[0m12:51:07.379126 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_002
+[0m12:51:07.385786 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_002"
+[0m12:51:07.388811 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_002
+[0m12:51:07.390204 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_002
+[0m12:51:07.391126 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_294
+[0m12:51:07.392516 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_002, now model.scale_10000.engineering_294)
+[0m12:51:07.393671 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_294
+[0m12:51:07.402526 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_294"
+[0m12:51:07.404342 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_294
+[0m12:51:07.405745 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_294
+[0m12:51:07.406637 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_294
+[0m12:51:07.407962 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_294, now model.scale_10000.hr_294)
+[0m12:51:07.408970 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_294
+[0m12:51:07.417577 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_294"
+[0m12:51:07.419535 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_294
+[0m12:51:07.422164 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_294
+[0m12:51:07.424277 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_294
+[0m12:51:07.426192 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_294, now model.scale_10000.onboarding_294)
+[0m12:51:07.427132 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_294
+[0m12:51:07.439449 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_294"
+[0m12:51:07.441425 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_294
+[0m12:51:07.443439 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_294
+[0m12:51:07.444391 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_288
+[0m12:51:07.449412 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_294, now model.scale_10000.engineering_288)
+[0m12:51:07.450360 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_288
+[0m12:51:07.457788 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_288"
+[0m12:51:07.461870 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_288
+[0m12:51:07.463888 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_288
+[0m12:51:07.465286 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_288
+[0m12:51:07.466275 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_288, now model.scale_10000.hr_288)
+[0m12:51:07.467156 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_288
+[0m12:51:07.488271 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_288"
+[0m12:51:07.490305 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_288
+[0m12:51:07.492614 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_288
+[0m12:51:07.493756 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_288
+[0m12:51:07.494765 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_288, now model.scale_10000.onboarding_288)
+[0m12:51:07.495679 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_288
+[0m12:51:07.505056 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_288"
+[0m12:51:07.506973 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_288
+[0m12:51:07.508489 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_288
+[0m12:51:07.512647 [debug] [Thread-1 (]: Began running node model.scale_10000.core_008
+[0m12:51:07.513675 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_288, now model.scale_10000.core_008)
+[0m12:51:07.514617 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_008
+[0m12:51:07.521321 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_008"
+[0m12:51:07.524516 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_008
+[0m12:51:07.526044 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_008
+[0m12:51:07.528107 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_008
+[0m12:51:07.529053 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_008, now model.scale_10000.retention_008)
+[0m12:51:07.530279 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_008
+[0m12:51:07.536612 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_008"
+[0m12:51:07.539538 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_008
+[0m12:51:07.541512 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_008
+[0m12:51:07.542487 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_008
+[0m12:51:07.543523 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_008, now model.scale_10000.sales_008)
+[0m12:51:07.544378 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_008
+[0m12:51:07.552582 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_008"
+[0m12:51:07.554481 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_008
+[0m12:51:07.555994 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_008
+[0m12:51:07.556957 [debug] [Thread-1 (]: Began running node model.scale_10000.security_008
+[0m12:51:07.557852 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_008, now model.scale_10000.security_008)
+[0m12:51:07.558734 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_008
+[0m12:51:07.566087 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_008"
+[0m12:51:07.568047 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_008
+[0m12:51:07.569606 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_008
+[0m12:51:07.572028 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_300
+[0m12:51:07.573151 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_008, now model.scale_10000.engineering_300)
+[0m12:51:07.574080 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_300
+[0m12:51:07.581332 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_300"
+[0m12:51:07.583396 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_300
+[0m12:51:07.585053 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_300
+[0m12:51:07.586053 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_300
+[0m12:51:07.587018 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_300, now model.scale_10000.hr_300)
+[0m12:51:07.587948 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_300
+[0m12:51:07.602578 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_300"
+[0m12:51:07.604414 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_300
+[0m12:51:07.605845 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_300
+[0m12:51:07.606780 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_300
+[0m12:51:07.607654 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_300, now model.scale_10000.onboarding_300)
+[0m12:51:07.609052 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_300
+[0m12:51:07.619752 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_300"
+[0m12:51:07.621652 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_300
+[0m12:51:07.623258 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_300
+[0m12:51:07.624204 [debug] [Thread-1 (]: Began running node model.scale_10000.core_014
+[0m12:51:07.634096 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_300, now model.scale_10000.core_014)
+[0m12:51:07.635200 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_014
+[0m12:51:07.642569 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_014"
+[0m12:51:07.649936 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_014
+[0m12:51:07.654684 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_014
+[0m12:51:07.655748 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_014
+[0m12:51:07.656710 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_014, now model.scale_10000.retention_014)
+[0m12:51:07.657576 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_014
+[0m12:51:07.669929 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_014"
+[0m12:51:07.671793 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_014
+[0m12:51:07.673401 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_014
+[0m12:51:07.674313 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_014
+[0m12:51:07.675376 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_014, now model.scale_10000.sales_014)
+[0m12:51:07.676401 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_014
+[0m12:51:07.692011 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_014"
+[0m12:51:07.694027 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_014
+[0m12:51:07.695495 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_014
+[0m12:51:07.703376 [debug] [Thread-1 (]: Began running node model.scale_10000.security_014
+[0m12:51:07.704394 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_014, now model.scale_10000.security_014)
+[0m12:51:07.705436 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_014
+[0m12:51:07.712565 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_014"
+[0m12:51:07.716730 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_014
+[0m12:51:07.718232 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_014
+[0m12:51:07.719145 [debug] [Thread-1 (]: Began running node model.scale_10000.core_006
+[0m12:51:07.720003 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_014, now model.scale_10000.core_006)
+[0m12:51:07.721065 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_006
+[0m12:51:07.731021 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_006"
+[0m12:51:07.733082 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_006
+[0m12:51:07.734613 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_006
+[0m12:51:07.736366 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_006
+[0m12:51:07.737347 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_006, now model.scale_10000.retention_006)
+[0m12:51:07.738238 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_006
+[0m12:51:07.747168 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_006"
+[0m12:51:07.748941 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_006
+[0m12:51:07.750329 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_006
+[0m12:51:07.751256 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_006
+[0m12:51:07.752361 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_006, now model.scale_10000.sales_006)
+[0m12:51:07.753250 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_006
+[0m12:51:07.760204 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_006"
+[0m12:51:07.762322 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_006
+[0m12:51:07.763701 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_006
+[0m12:51:07.764659 [debug] [Thread-1 (]: Began running node model.scale_10000.security_006
+[0m12:51:07.765531 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_006, now model.scale_10000.security_006)
+[0m12:51:07.766367 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_006
+[0m12:51:07.782117 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_006"
+[0m12:51:07.783979 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_006
+[0m12:51:07.785453 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_006
+[0m12:51:07.786385 [debug] [Thread-1 (]: Began running node model.scale_10000.core_012
+[0m12:51:07.787268 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_006, now model.scale_10000.core_012)
+[0m12:51:07.790845 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_012
+[0m12:51:07.798369 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_012"
+[0m12:51:07.800472 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_012
+[0m12:51:07.802682 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_012
+[0m12:51:07.803637 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_012
+[0m12:51:07.804515 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_012, now model.scale_10000.retention_012)
+[0m12:51:07.805377 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_012
+[0m12:51:07.812395 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_012"
+[0m12:51:07.814159 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_012
+[0m12:51:07.815568 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_012
+[0m12:51:07.816496 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_012
+[0m12:51:07.817394 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_012, now model.scale_10000.sales_012)
+[0m12:51:07.818272 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_012
+[0m12:51:07.826568 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_012"
+[0m12:51:07.828619 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_012
+[0m12:51:07.830024 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_012
+[0m12:51:07.830931 [debug] [Thread-1 (]: Began running node model.scale_10000.security_012
+[0m12:51:07.831801 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_012, now model.scale_10000.security_012)
+[0m12:51:07.832676 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_012
+[0m12:51:07.843040 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_012"
+[0m12:51:07.844942 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_012
+[0m12:51:07.848753 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_012
+[0m12:51:07.849687 [debug] [Thread-1 (]: Began running node model.scale_10000.core_020
+[0m12:51:07.850711 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_012, now model.scale_10000.core_020)
+[0m12:51:07.851747 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_020
+[0m12:51:07.862093 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_020"
+[0m12:51:07.863991 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_020
+[0m12:51:07.865448 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_020
+[0m12:51:07.866720 [debug] [Thread-1 (]: Began running node model.scale_10000.core_026
+[0m12:51:07.873067 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_020, now model.scale_10000.core_026)
+[0m12:51:07.873915 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_026
+[0m12:51:07.881017 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_026"
+[0m12:51:07.882776 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_026
+[0m12:51:07.891197 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_026
+[0m12:51:07.896430 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_020
+[0m12:51:07.897391 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_026, now model.scale_10000.retention_020)
+[0m12:51:07.898246 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_020
+[0m12:51:07.904959 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_020"
+[0m12:51:07.908098 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_020
+[0m12:51:07.909592 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_020
+[0m12:51:07.910540 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_026
+[0m12:51:07.911425 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_020, now model.scale_10000.retention_026)
+[0m12:51:07.912269 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_026
+[0m12:51:07.921691 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_026"
+[0m12:51:07.925988 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_026
+[0m12:51:07.927779 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_026
+[0m12:51:07.928808 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_020
+[0m12:51:07.929830 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_026, now model.scale_10000.sales_020)
+[0m12:51:07.930740 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_020
+[0m12:51:07.940317 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_020"
+[0m12:51:07.945577 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_020
+[0m12:51:07.947042 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_020
+[0m12:51:07.948000 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_026
+[0m12:51:07.949096 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_020, now model.scale_10000.sales_026)
+[0m12:51:07.950368 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_026
+[0m12:51:07.959550 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_026"
+[0m12:51:07.967213 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_026
+[0m12:51:07.968813 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_026
+[0m12:51:07.969723 [debug] [Thread-1 (]: Began running node model.scale_10000.security_020
+[0m12:51:07.970580 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_026, now model.scale_10000.security_020)
+[0m12:51:07.971409 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_020
+[0m12:51:07.983052 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_020"
+[0m12:51:07.985306 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_020
+[0m12:51:07.986712 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_020
+[0m12:51:07.987607 [debug] [Thread-1 (]: Began running node model.scale_10000.security_026
+[0m12:51:07.988475 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_020, now model.scale_10000.security_026)
+[0m12:51:07.989298 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_026
+[0m12:51:08.010362 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_026"
+[0m12:51:08.013811 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_026
+[0m12:51:08.015268 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_026
+[0m12:51:08.016465 [debug] [Thread-1 (]: Began running node model.scale_10000.core_018
+[0m12:51:08.017522 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_026, now model.scale_10000.core_018)
+[0m12:51:08.018404 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_018
+[0m12:51:08.030471 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_018"
+[0m12:51:08.032601 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_018
+[0m12:51:08.034155 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_018
+[0m12:51:08.035140 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_018
+[0m12:51:08.042264 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_018, now model.scale_10000.retention_018)
+[0m12:51:08.043138 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_018
+[0m12:51:08.050518 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_018"
+[0m12:51:08.054321 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_018
+[0m12:51:08.056665 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_018
+[0m12:51:08.059310 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_018
+[0m12:51:08.060529 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_018, now model.scale_10000.sales_018)
+[0m12:51:08.061649 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_018
+[0m12:51:08.073205 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_018"
+[0m12:51:08.093008 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_018
+[0m12:51:08.097463 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_018
+[0m12:51:08.098475 [debug] [Thread-1 (]: Began running node model.scale_10000.security_018
+[0m12:51:08.100891 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_018, now model.scale_10000.security_018)
+[0m12:51:08.101855 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_018
+[0m12:51:08.110603 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_018"
+[0m12:51:08.125263 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_018
+[0m12:51:08.127571 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_018
+[0m12:51:08.128535 [debug] [Thread-1 (]: Began running node model.scale_10000.core_032
+[0m12:51:08.129686 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_018, now model.scale_10000.core_032)
+[0m12:51:08.130555 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_032
+[0m12:51:08.137464 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_032"
+[0m12:51:08.142647 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_032
+[0m12:51:08.144074 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_032
+[0m12:51:08.144958 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_032
+[0m12:51:08.145787 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_032, now model.scale_10000.retention_032)
+[0m12:51:08.146569 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_032
+[0m12:51:08.158067 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_032"
+[0m12:51:08.159934 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_032
+[0m12:51:08.161357 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_032
+[0m12:51:08.162248 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_032
+[0m12:51:08.163112 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_032, now model.scale_10000.sales_032)
+[0m12:51:08.163925 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_032
+[0m12:51:08.178430 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_032"
+[0m12:51:08.180453 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_032
+[0m12:51:08.181855 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_032
+[0m12:51:08.182866 [debug] [Thread-1 (]: Began running node model.scale_10000.security_032
+[0m12:51:08.183736 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_032, now model.scale_10000.security_032)
+[0m12:51:08.194393 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_032
+[0m12:51:08.201526 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_032"
+[0m12:51:08.203524 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_032
+[0m12:51:08.211356 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_032
+[0m12:51:08.212695 [debug] [Thread-1 (]: Began running node model.scale_10000.core_024
+[0m12:51:08.213696 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_032, now model.scale_10000.core_024)
+[0m12:51:08.214560 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_024
+[0m12:51:08.229639 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_024"
+[0m12:51:08.239173 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_024
+[0m12:51:08.240587 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_024
+[0m12:51:08.241896 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_024
+[0m12:51:08.242835 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_024, now model.scale_10000.retention_024)
+[0m12:51:08.243695 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_024
+[0m12:51:08.340836 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_024"
+[0m12:51:08.343114 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_024
+[0m12:51:08.344727 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_024
+[0m12:51:08.345711 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_024
+[0m12:51:08.347218 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_024, now model.scale_10000.sales_024)
+[0m12:51:08.348212 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_024
+[0m12:51:08.358431 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_024"
+[0m12:51:08.360391 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_024
+[0m12:51:08.366249 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_024
+[0m12:51:08.367225 [debug] [Thread-1 (]: Began running node model.scale_10000.security_024
+[0m12:51:08.368122 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_024, now model.scale_10000.security_024)
+[0m12:51:08.368971 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_024
+[0m12:51:08.387412 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_024"
+[0m12:51:08.389366 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_024
+[0m12:51:08.390973 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_024
+[0m12:51:08.391928 [debug] [Thread-1 (]: Began running node model.scale_10000.core_030
+[0m12:51:08.393006 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_024, now model.scale_10000.core_030)
+[0m12:51:08.393905 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_030
+[0m12:51:08.401222 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_030"
+[0m12:51:08.403012 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_030
+[0m12:51:08.404421 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_030
+[0m12:51:08.405633 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_030
+[0m12:51:08.406795 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_030, now model.scale_10000.retention_030)
+[0m12:51:08.407835 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_030
+[0m12:51:08.414741 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_030"
+[0m12:51:08.416921 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_030
+[0m12:51:08.418333 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_030
+[0m12:51:08.419243 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_030
+[0m12:51:08.420110 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_030, now model.scale_10000.sales_030)
+[0m12:51:08.422428 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_030
+[0m12:51:08.429886 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_030"
+[0m12:51:08.431757 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_030
+[0m12:51:08.434554 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_030
+[0m12:51:08.435541 [debug] [Thread-1 (]: Began running node model.scale_10000.security_030
+[0m12:51:08.436492 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_030, now model.scale_10000.security_030)
+[0m12:51:08.437383 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_030
+[0m12:51:08.445993 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_030"
+[0m12:51:08.448019 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_030
+[0m12:51:08.449550 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_030
+[0m12:51:08.450583 [debug] [Thread-1 (]: Began running node model.scale_10000.core_038
+[0m12:51:08.451646 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_030, now model.scale_10000.core_038)
+[0m12:51:08.452590 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_038
+[0m12:51:08.463045 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_038"
+[0m12:51:08.472974 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_038
+[0m12:51:08.474599 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_038
+[0m12:51:08.475924 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_038
+[0m12:51:08.477016 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_038, now model.scale_10000.retention_038)
+[0m12:51:08.477951 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_038
+[0m12:51:08.491585 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_038"
+[0m12:51:08.493607 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_038
+[0m12:51:08.495111 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_038
+[0m12:51:08.496084 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_038
+[0m12:51:08.496995 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_038, now model.scale_10000.sales_038)
+[0m12:51:08.500186 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_038
+[0m12:51:08.508802 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_038"
+[0m12:51:08.510813 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_038
+[0m12:51:08.512308 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_038
+[0m12:51:08.513251 [debug] [Thread-1 (]: Began running node model.scale_10000.security_038
+[0m12:51:08.514153 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_038, now model.scale_10000.security_038)
+[0m12:51:08.522116 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_038
+[0m12:51:08.529269 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_038"
+[0m12:51:08.531209 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_038
+[0m12:51:08.534003 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_038
+[0m12:51:08.534945 [debug] [Thread-1 (]: Began running node model.scale_10000.core_044
+[0m12:51:08.535833 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_038, now model.scale_10000.core_044)
+[0m12:51:08.536702 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_044
+[0m12:51:08.548422 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_044"
+[0m12:51:08.550248 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_044
+[0m12:51:08.554089 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_044
+[0m12:51:08.559773 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_044
+[0m12:51:08.563938 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_044, now model.scale_10000.retention_044)
+[0m12:51:08.565064 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_044
+[0m12:51:08.582657 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_044"
+[0m12:51:08.584790 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_044
+[0m12:51:08.589023 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_044
+[0m12:51:08.590123 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_044
+[0m12:51:08.591425 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_044, now model.scale_10000.sales_044)
+[0m12:51:08.592426 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_044
+[0m12:51:08.608881 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_044"
+[0m12:51:08.611196 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_044
+[0m12:51:08.612751 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_044
+[0m12:51:08.613734 [debug] [Thread-1 (]: Began running node model.scale_10000.security_044
+[0m12:51:08.614667 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_044, now model.scale_10000.security_044)
+[0m12:51:08.615580 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_044
+[0m12:51:08.627648 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_044"
+[0m12:51:08.629621 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_044
+[0m12:51:08.631147 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_044
+[0m12:51:08.632133 [debug] [Thread-1 (]: Began running node model.scale_10000.core_036
+[0m12:51:08.633055 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_044, now model.scale_10000.core_036)
+[0m12:51:08.635198 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_036
+[0m12:51:08.642776 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_036"
+[0m12:51:08.645618 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_036
+[0m12:51:08.647378 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_036
+[0m12:51:08.648575 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_036
+[0m12:51:08.649562 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_036, now model.scale_10000.retention_036)
+[0m12:51:08.650453 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_036
+[0m12:51:08.658753 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_036"
+[0m12:51:08.660676 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_036
+[0m12:51:08.662137 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_036
+[0m12:51:08.663139 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_036
+[0m12:51:08.664055 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_036, now model.scale_10000.sales_036)
+[0m12:51:08.665575 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_036
+[0m12:51:08.676944 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_036"
+[0m12:51:08.678841 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_036
+[0m12:51:08.680343 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_036
+[0m12:51:08.681309 [debug] [Thread-1 (]: Began running node model.scale_10000.security_036
+[0m12:51:08.682215 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_036, now model.scale_10000.security_036)
+[0m12:51:08.683050 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_036
+[0m12:51:08.692428 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_036"
+[0m12:51:08.694228 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_036
+[0m12:51:08.695820 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_036
+[0m12:51:08.696745 [debug] [Thread-1 (]: Began running node model.scale_10000.core_050
+[0m12:51:08.697626 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_036, now model.scale_10000.core_050)
+[0m12:51:08.698465 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_050
+[0m12:51:08.708876 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_050"
+[0m12:51:08.710597 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_050
+[0m12:51:08.712199 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_050
+[0m12:51:08.713173 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_050
+[0m12:51:08.714155 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_050, now model.scale_10000.retention_050)
+[0m12:51:08.717972 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_050
+[0m12:51:08.731492 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_050"
+[0m12:51:08.733421 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_050
+[0m12:51:08.735263 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_050
+[0m12:51:08.759740 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_050
+[0m12:51:08.760811 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_050, now model.scale_10000.sales_050)
+[0m12:51:08.761663 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_050
+[0m12:51:08.776910 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_050"
+[0m12:51:08.778958 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_050
+[0m12:51:08.780472 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_050
+[0m12:51:08.781398 [debug] [Thread-1 (]: Began running node model.scale_10000.security_050
+[0m12:51:08.782274 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_050, now model.scale_10000.security_050)
+[0m12:51:08.783376 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_050
+[0m12:51:08.793066 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_050"
+[0m12:51:08.795052 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_050
+[0m12:51:08.796416 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_050
+[0m12:51:08.798157 [debug] [Thread-1 (]: Began running node model.scale_10000.core_056
+[0m12:51:08.799008 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_050, now model.scale_10000.core_056)
+[0m12:51:08.799968 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_056
+[0m12:51:08.811335 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_056"
+[0m12:51:08.813337 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_056
+[0m12:51:08.814960 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_056
+[0m12:51:08.815847 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_056
+[0m12:51:08.823520 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_056, now model.scale_10000.retention_056)
+[0m12:51:08.824681 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_056
+[0m12:51:08.831352 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_056"
+[0m12:51:08.833489 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_056
+[0m12:51:08.834894 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_056
+[0m12:51:08.835785 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_056
+[0m12:51:08.836648 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_056, now model.scale_10000.sales_056)
+[0m12:51:08.837478 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_056
+[0m12:51:08.853242 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_056"
+[0m12:51:08.855179 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_056
+[0m12:51:08.856660 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_056
+[0m12:51:08.857604 [debug] [Thread-1 (]: Began running node model.scale_10000.security_056
+[0m12:51:08.858879 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_056, now model.scale_10000.security_056)
+[0m12:51:08.859763 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_056
+[0m12:51:08.866375 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_056"
+[0m12:51:08.868191 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_056
+[0m12:51:08.871134 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_056
+[0m12:51:08.872187 [debug] [Thread-1 (]: Began running node model.scale_10000.core_042
+[0m12:51:08.873139 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_056, now model.scale_10000.core_042)
+[0m12:51:08.874036 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_042
+[0m12:51:08.882389 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_042"
+[0m12:51:08.884189 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_042
+[0m12:51:08.885627 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_042
+[0m12:51:08.886554 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_042
+[0m12:51:08.887445 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_042, now model.scale_10000.retention_042)
+[0m12:51:08.888298 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_042
+[0m12:51:08.896272 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_042"
+[0m12:51:08.898052 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_042
+[0m12:51:08.899433 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_042
+[0m12:51:08.900380 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_042
+[0m12:51:08.901246 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_042, now model.scale_10000.sales_042)
+[0m12:51:08.902076 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_042
+[0m12:51:08.909195 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_042"
+[0m12:51:08.911161 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_042
+[0m12:51:08.912608 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_042
+[0m12:51:08.913590 [debug] [Thread-1 (]: Began running node model.scale_10000.security_042
+[0m12:51:08.914466 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_042, now model.scale_10000.security_042)
+[0m12:51:08.915315 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_042
+[0m12:51:08.922669 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_042"
+[0m12:51:08.924386 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_042
+[0m12:51:08.925777 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_042
+[0m12:51:08.926694 [debug] [Thread-1 (]: Began running node model.scale_10000.core_048
+[0m12:51:08.927555 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_042, now model.scale_10000.core_048)
+[0m12:51:08.928375 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_048
+[0m12:51:08.936511 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_048"
+[0m12:51:08.939270 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_048
+[0m12:51:08.940787 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_048
+[0m12:51:08.941736 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_048
+[0m12:51:08.942669 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_048, now model.scale_10000.retention_048)
+[0m12:51:08.943661 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_048
+[0m12:51:08.951073 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_048"
+[0m12:51:08.952858 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_048
+[0m12:51:08.954459 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_048
+[0m12:51:08.955419 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_048
+[0m12:51:08.956323 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_048, now model.scale_10000.sales_048)
+[0m12:51:08.957160 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_048
+[0m12:51:08.965458 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_048"
+[0m12:51:08.967210 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_048
+[0m12:51:08.968761 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_048
+[0m12:51:08.969711 [debug] [Thread-1 (]: Began running node model.scale_10000.security_048
+[0m12:51:08.971092 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_048, now model.scale_10000.security_048)
+[0m12:51:08.978936 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_048
+[0m12:51:08.986178 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_048"
+[0m12:51:08.988027 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_048
+[0m12:51:08.991849 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_048
+[0m12:51:08.992815 [debug] [Thread-1 (]: Began running node model.scale_10000.core_054
+[0m12:51:08.993722 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_048, now model.scale_10000.core_054)
+[0m12:51:08.994578 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_054
+[0m12:51:09.007765 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_054"
+[0m12:51:09.009655 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_054
+[0m12:51:09.011123 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_054
+[0m12:51:09.012038 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_054
+[0m12:51:09.012916 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_054, now model.scale_10000.retention_054)
+[0m12:51:09.015314 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_054
+[0m12:51:09.022533 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_054"
+[0m12:51:09.024340 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_054
+[0m12:51:09.034354 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_054
+[0m12:51:09.035342 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_054
+[0m12:51:09.036394 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_054, now model.scale_10000.sales_054)
+[0m12:51:09.037242 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_054
+[0m12:51:09.057245 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_054"
+[0m12:51:09.059606 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_054
+[0m12:51:09.061232 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_054
+[0m12:51:09.062230 [debug] [Thread-1 (]: Began running node model.scale_10000.security_054
+[0m12:51:09.063185 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_054, now model.scale_10000.security_054)
+[0m12:51:09.064066 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_054
+[0m12:51:09.074126 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_054"
+[0m12:51:09.076340 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_054
+[0m12:51:09.077857 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_054
+[0m12:51:09.078782 [debug] [Thread-1 (]: Began running node model.scale_10000.core_068
+[0m12:51:09.086302 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_054, now model.scale_10000.core_068)
+[0m12:51:09.087219 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_068
+[0m12:51:09.094517 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_068"
+[0m12:51:09.097158 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_068
+[0m12:51:09.098558 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_068
+[0m12:51:09.099471 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_068
+[0m12:51:09.100339 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_068, now model.scale_10000.retention_068)
+[0m12:51:09.101208 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_068
+[0m12:51:09.108531 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_068"
+[0m12:51:09.110288 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_068
+[0m12:51:09.112032 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_068
+[0m12:51:09.113020 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_068
+[0m12:51:09.113959 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_068, now model.scale_10000.sales_068)
+[0m12:51:09.114812 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_068
+[0m12:51:09.123056 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_068"
+[0m12:51:09.124919 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_068
+[0m12:51:09.126385 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_068
+[0m12:51:09.127344 [debug] [Thread-1 (]: Began running node model.scale_10000.security_068
+[0m12:51:09.128270 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_068, now model.scale_10000.security_068)
+[0m12:51:09.129334 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_068
+[0m12:51:09.141833 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_068"
+[0m12:51:09.143614 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_068
+[0m12:51:09.145049 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_068
+[0m12:51:09.149927 [debug] [Thread-1 (]: Began running node model.scale_10000.core_062
+[0m12:51:09.150946 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_068, now model.scale_10000.core_062)
+[0m12:51:09.151809 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_062
+[0m12:51:09.158499 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_062"
+[0m12:51:09.165447 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_062
+[0m12:51:09.166826 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_062
+[0m12:51:09.167732 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_062
+[0m12:51:09.168584 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_062, now model.scale_10000.retention_062)
+[0m12:51:09.169408 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_062
+[0m12:51:09.180288 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_062"
+[0m12:51:09.182061 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_062
+[0m12:51:09.183431 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_062
+[0m12:51:09.184313 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_062
+[0m12:51:09.185162 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_062, now model.scale_10000.sales_062)
+[0m12:51:09.185980 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_062
+[0m12:51:09.198503 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_062"
+[0m12:51:09.201971 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_062
+[0m12:51:09.203478 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_062
+[0m12:51:09.204731 [debug] [Thread-1 (]: Began running node model.scale_10000.security_062
+[0m12:51:09.205691 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_062, now model.scale_10000.security_062)
+[0m12:51:09.206586 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_062
+[0m12:51:09.216769 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_062"
+[0m12:51:09.218569 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_062
+[0m12:51:09.219972 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_062
+[0m12:51:09.222107 [debug] [Thread-1 (]: Began running node model.scale_10000.core_060
+[0m12:51:09.223039 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_062, now model.scale_10000.core_060)
+[0m12:51:09.224433 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_060
+[0m12:51:09.231549 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_060"
+[0m12:51:09.234585 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_060
+[0m12:51:09.236007 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_060
+[0m12:51:09.236924 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_060
+[0m12:51:09.238061 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_060, now model.scale_10000.retention_060)
+[0m12:51:09.238925 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_060
+[0m12:51:09.245731 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_060"
+[0m12:51:09.247489 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_060
+[0m12:51:09.249290 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_060
+[0m12:51:09.250257 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_060
+[0m12:51:09.251187 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_060, now model.scale_10000.sales_060)
+[0m12:51:09.252051 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_060
+[0m12:51:09.267626 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_060"
+[0m12:51:09.274178 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_060
+[0m12:51:09.276096 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_060
+[0m12:51:09.277155 [debug] [Thread-1 (]: Began running node model.scale_10000.security_060
+[0m12:51:09.283790 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_060, now model.scale_10000.security_060)
+[0m12:51:09.287089 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_060
+[0m12:51:09.296733 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_060"
+[0m12:51:09.298565 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_060
+[0m12:51:09.300124 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_060
+[0m12:51:09.301076 [debug] [Thread-1 (]: Began running node model.scale_10000.core_066
+[0m12:51:09.302325 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_060, now model.scale_10000.core_066)
+[0m12:51:09.303655 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_066
+[0m12:51:09.312924 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_066"
+[0m12:51:09.314721 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_066
+[0m12:51:09.316174 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_066
+[0m12:51:09.317117 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_066
+[0m12:51:09.318015 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_066, now model.scale_10000.retention_066)
+[0m12:51:09.319705 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_066
+[0m12:51:09.327421 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_066"
+[0m12:51:09.329210 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_066
+[0m12:51:09.331042 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_066
+[0m12:51:09.331984 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_066
+[0m12:51:09.332940 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_066, now model.scale_10000.sales_066)
+[0m12:51:09.333795 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_066
+[0m12:51:09.343213 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_066"
+[0m12:51:09.345579 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_066
+[0m12:51:09.347442 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_066
+[0m12:51:09.348697 [debug] [Thread-1 (]: Began running node model.scale_10000.security_066
+[0m12:51:09.350920 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_066, now model.scale_10000.security_066)
+[0m12:51:09.351876 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_066
+[0m12:51:09.364976 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_066"
+[0m12:51:09.372089 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_066
+[0m12:51:09.374241 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_066
+[0m12:51:09.375550 [debug] [Thread-1 (]: Began running node model.scale_10000.core_074
+[0m12:51:09.376493 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_066, now model.scale_10000.core_074)
+[0m12:51:09.379897 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_074
+[0m12:51:09.387534 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_074"
+[0m12:51:09.390110 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_074
+[0m12:51:09.393823 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_074
+[0m12:51:09.395302 [debug] [Thread-1 (]: Began running node model.scale_10000.core_080
+[0m12:51:09.396288 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_074, now model.scale_10000.core_080)
+[0m12:51:09.397207 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_080
+[0m12:51:09.404671 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_080"
+[0m12:51:09.408269 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_080
+[0m12:51:09.409775 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_080
+[0m12:51:09.410735 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_074
+[0m12:51:09.412102 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_080, now model.scale_10000.retention_074)
+[0m12:51:09.413668 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_074
+[0m12:51:09.426646 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_074"
+[0m12:51:09.428761 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_074
+[0m12:51:09.438288 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_074
+[0m12:51:09.439626 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_080
+[0m12:51:09.441237 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_074, now model.scale_10000.retention_080)
+[0m12:51:09.442153 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_080
+[0m12:51:09.459638 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_080"
+[0m12:51:09.461964 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_080
+[0m12:51:09.463838 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_080
+[0m12:51:09.464814 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_074
+[0m12:51:09.465732 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_080, now model.scale_10000.sales_074)
+[0m12:51:09.466795 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_074
+[0m12:51:09.475782 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_074"
+[0m12:51:09.477832 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_074
+[0m12:51:09.479402 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_074
+[0m12:51:09.480350 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_080
+[0m12:51:09.481303 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_074, now model.scale_10000.sales_080)
+[0m12:51:09.482197 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_080
+[0m12:51:09.499139 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_080"
+[0m12:51:09.501186 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_080
+[0m12:51:09.502757 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_080
+[0m12:51:09.504015 [debug] [Thread-1 (]: Began running node model.scale_10000.security_074
+[0m12:51:09.505032 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_080, now model.scale_10000.security_074)
+[0m12:51:09.508323 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_074
+[0m12:51:09.515379 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_074"
+[0m12:51:09.517212 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_074
+[0m12:51:09.520141 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_074
+[0m12:51:09.521156 [debug] [Thread-1 (]: Began running node model.scale_10000.security_080
+[0m12:51:09.522102 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_074, now model.scale_10000.security_080)
+[0m12:51:09.522994 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_080
+[0m12:51:09.529642 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_080"
+[0m12:51:09.535535 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_080
+[0m12:51:09.537127 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_080
+[0m12:51:09.538098 [debug] [Thread-1 (]: Began running node model.scale_10000.core_084
+[0m12:51:09.539035 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_080, now model.scale_10000.core_084)
+[0m12:51:09.539920 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_084
+[0m12:51:09.547984 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_084"
+[0m12:51:09.549800 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_084
+[0m12:51:09.551264 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_084
+[0m12:51:09.555103 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_084
+[0m12:51:09.556189 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_084, now model.scale_10000.retention_084)
+[0m12:51:09.557184 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_084
+[0m12:51:09.566810 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_084"
+[0m12:51:09.568780 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_084
+[0m12:51:09.570544 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_084
+[0m12:51:09.571500 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_084
+[0m12:51:09.572397 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_084, now model.scale_10000.sales_084)
+[0m12:51:09.573301 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_084
+[0m12:51:09.581764 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_084"
+[0m12:51:09.583721 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_084
+[0m12:51:09.585566 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_084
+[0m12:51:09.586555 [debug] [Thread-1 (]: Began running node model.scale_10000.security_084
+[0m12:51:09.587472 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_084, now model.scale_10000.security_084)
+[0m12:51:09.588362 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_084
+[0m12:51:09.598924 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_084"
+[0m12:51:09.600908 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_084
+[0m12:51:09.602388 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_084
+[0m12:51:09.603450 [debug] [Thread-1 (]: Began running node model.scale_10000.core_072
+[0m12:51:09.614803 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_084, now model.scale_10000.core_072)
+[0m12:51:09.615909 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_072
+[0m12:51:09.623612 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_072"
+[0m12:51:09.634143 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_072
+[0m12:51:09.635860 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_072
+[0m12:51:09.636903 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_072
+[0m12:51:09.638017 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_072, now model.scale_10000.retention_072)
+[0m12:51:09.638909 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_072
+[0m12:51:09.655639 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_072"
+[0m12:51:09.657431 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_072
+[0m12:51:09.658987 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_072
+[0m12:51:09.659917 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_072
+[0m12:51:09.660811 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_072, now model.scale_10000.sales_072)
+[0m12:51:09.662291 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_072
+[0m12:51:09.677067 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_072"
+[0m12:51:09.679003 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_072
+[0m12:51:09.684078 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_072
+[0m12:51:09.685100 [debug] [Thread-1 (]: Began running node model.scale_10000.security_072
+[0m12:51:09.686241 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_072, now model.scale_10000.security_072)
+[0m12:51:09.687132 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_072
+[0m12:51:09.696753 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_072"
+[0m12:51:09.698495 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_072
+[0m12:51:09.700182 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_072
+[0m12:51:09.701114 [debug] [Thread-1 (]: Began running node model.scale_10000.core_090
+[0m12:51:09.701990 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_072, now model.scale_10000.core_090)
+[0m12:51:09.702848 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_090
+[0m12:51:09.712611 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_090"
+[0m12:51:09.714361 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_090
+[0m12:51:09.715778 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_090
+[0m12:51:09.716687 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_090
+[0m12:51:09.717749 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_090, now model.scale_10000.retention_090)
+[0m12:51:09.725555 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_090
+[0m12:51:09.747554 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_090"
+[0m12:51:09.749540 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_090
+[0m12:51:09.751026 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_090
+[0m12:51:09.751979 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_090
+[0m12:51:09.753924 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_090, now model.scale_10000.sales_090)
+[0m12:51:09.755117 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_090
+[0m12:51:09.762328 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_090"
+[0m12:51:09.765294 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_090
+[0m12:51:09.766839 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_090
+[0m12:51:09.768019 [debug] [Thread-1 (]: Began running node model.scale_10000.security_090
+[0m12:51:09.768965 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_090, now model.scale_10000.security_090)
+[0m12:51:09.769826 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_090
+[0m12:51:09.778030 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_090"
+[0m12:51:09.779821 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_090
+[0m12:51:09.783227 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_090
+[0m12:51:09.784175 [debug] [Thread-1 (]: Began running node model.scale_10000.core_086
+[0m12:51:09.785088 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_090, now model.scale_10000.core_086)
+[0m12:51:09.786407 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_086
+[0m12:51:09.795359 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_086"
+[0m12:51:09.797584 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_086
+[0m12:51:09.798949 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_086
+[0m12:51:09.799832 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_086
+[0m12:51:09.800904 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_086, now model.scale_10000.retention_086)
+[0m12:51:09.806214 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_086
+[0m12:51:09.813289 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_086"
+[0m12:51:09.815170 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_086
+[0m12:51:09.825138 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_086
+[0m12:51:09.826368 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_086
+[0m12:51:09.827322 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_086, now model.scale_10000.sales_086)
+[0m12:51:09.828182 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_086
+[0m12:51:09.834874 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_086"
+[0m12:51:09.843257 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_086
+[0m12:51:09.844781 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_086
+[0m12:51:09.845753 [debug] [Thread-1 (]: Began running node model.scale_10000.security_086
+[0m12:51:09.846647 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_086, now model.scale_10000.security_086)
+[0m12:51:09.847495 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_086
+[0m12:51:09.858215 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_086"
+[0m12:51:09.862525 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_086
+[0m12:51:09.863979 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_086
+[0m12:51:09.864892 [debug] [Thread-1 (]: Began running node model.scale_10000.core_078
+[0m12:51:09.865758 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_086, now model.scale_10000.core_078)
+[0m12:51:09.866613 [debug] [Thread-1 (]: Began compiling node model.scale_10000.core_078
+[0m12:51:09.874630 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.core_078"
+[0m12:51:09.876503 [debug] [Thread-1 (]: Began executing node model.scale_10000.core_078
+[0m12:51:09.877945 [debug] [Thread-1 (]: Finished running node model.scale_10000.core_078
+[0m12:51:09.879371 [debug] [Thread-1 (]: Began running node model.scale_10000.retention_078
+[0m12:51:09.880282 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.core_078, now model.scale_10000.retention_078)
+[0m12:51:09.881269 [debug] [Thread-1 (]: Began compiling node model.scale_10000.retention_078
+[0m12:51:09.893409 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.retention_078"
+[0m12:51:09.895302 [debug] [Thread-1 (]: Began executing node model.scale_10000.retention_078
+[0m12:51:09.896767 [debug] [Thread-1 (]: Finished running node model.scale_10000.retention_078
+[0m12:51:09.897732 [debug] [Thread-1 (]: Began running node model.scale_10000.sales_078
+[0m12:51:09.898637 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.retention_078, now model.scale_10000.sales_078)
+[0m12:51:09.899479 [debug] [Thread-1 (]: Began compiling node model.scale_10000.sales_078
+[0m12:51:09.908122 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.sales_078"
+[0m12:51:09.909969 [debug] [Thread-1 (]: Began executing node model.scale_10000.sales_078
+[0m12:51:09.911362 [debug] [Thread-1 (]: Finished running node model.scale_10000.sales_078
+[0m12:51:09.912278 [debug] [Thread-1 (]: Began running node model.scale_10000.security_078
+[0m12:51:09.913304 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.sales_078, now model.scale_10000.security_078)
+[0m12:51:09.914269 [debug] [Thread-1 (]: Began compiling node model.scale_10000.security_078
+[0m12:51:09.922444 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.security_078"
+[0m12:51:09.924235 [debug] [Thread-1 (]: Began executing node model.scale_10000.security_078
+[0m12:51:09.926097 [debug] [Thread-1 (]: Finished running node model.scale_10000.security_078
+[0m12:51:09.927122 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_012
+[0m12:51:09.928107 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.security_078, now model.scale_10000.engineering_012)
+[0m12:51:09.929024 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_012
+[0m12:51:09.937452 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_012"
+[0m12:51:09.939237 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_012
+[0m12:51:09.940685 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_012
+[0m12:51:09.941622 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_012
+[0m12:51:09.942517 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_012, now model.scale_10000.hr_012)
+[0m12:51:09.943338 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_012
+[0m12:51:09.958388 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_012"
+[0m12:51:09.960621 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_012
+[0m12:51:09.962192 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_012
+[0m12:51:09.963134 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_012
+[0m12:51:09.964006 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_012, now model.scale_10000.onboarding_012)
+[0m12:51:09.965935 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_012
+[0m12:51:09.973496 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_012"
+[0m12:51:09.975193 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_012
+[0m12:51:09.976972 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_012
+[0m12:51:09.977992 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_032
+[0m12:51:09.979107 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_012, now model.scale_10000.engineering_032)
+[0m12:51:09.980070 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_032
+[0m12:51:09.986410 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_032"
+[0m12:51:09.993620 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_032
+[0m12:51:09.998325 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_032
+[0m12:51:09.999873 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_032
+[0m12:51:10.000875 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_032, now model.scale_10000.hr_032)
+[0m12:51:10.001817 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_032
+[0m12:51:10.011497 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_032"
+[0m12:51:10.013299 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_032
+[0m12:51:10.014740 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_032
+[0m12:51:10.015660 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_032
+[0m12:51:10.016543 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_032, now model.scale_10000.onboarding_032)
+[0m12:51:10.017402 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_032
+[0m12:51:10.030680 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_032"
+[0m12:51:10.032812 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_032
+[0m12:51:10.034350 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_032
+[0m12:51:10.039726 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_018
+[0m12:51:10.040745 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_032, now model.scale_10000.engineering_018)
+[0m12:51:10.041581 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_018
+[0m12:51:10.048769 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_018"
+[0m12:51:10.052611 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_018
+[0m12:51:10.054161 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_018
+[0m12:51:10.055053 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_018
+[0m12:51:10.056049 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_018, now model.scale_10000.hr_018)
+[0m12:51:10.057065 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_018
+[0m12:51:10.068168 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_018"
+[0m12:51:10.069965 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_018
+[0m12:51:10.071470 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_018
+[0m12:51:10.072391 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_018
+[0m12:51:10.073312 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_018, now model.scale_10000.onboarding_018)
+[0m12:51:10.074151 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_018
+[0m12:51:10.082123 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_018"
+[0m12:51:10.083959 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_018
+[0m12:51:10.085938 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_018
+[0m12:51:10.086872 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_024
+[0m12:51:10.092478 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_018, now model.scale_10000.engineering_024)
+[0m12:51:10.093404 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_024
+[0m12:51:10.100547 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_024"
+[0m12:51:10.105516 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_024
+[0m12:51:10.106953 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_024
+[0m12:51:10.107862 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_024
+[0m12:51:10.108779 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_024, now model.scale_10000.hr_024)
+[0m12:51:10.109838 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_024
+[0m12:51:10.120019 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_024"
+[0m12:51:10.122619 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_024
+[0m12:51:10.124003 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_024
+[0m12:51:10.125231 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_024
+[0m12:51:10.127840 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_024, now model.scale_10000.onboarding_024)
+[0m12:51:10.129157 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_024
+[0m12:51:10.136841 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_024"
+[0m12:51:10.138879 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_024
+[0m12:51:10.140352 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_024
+[0m12:51:10.141314 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_030
+[0m12:51:10.142312 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_024, now model.scale_10000.engineering_030)
+[0m12:51:10.143458 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_030
+[0m12:51:10.151125 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_030"
+[0m12:51:10.152898 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_030
+[0m12:51:10.154400 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_030
+[0m12:51:10.156161 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_030
+[0m12:51:10.157046 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_030, now model.scale_10000.hr_030)
+[0m12:51:10.157872 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_030
+[0m12:51:10.171693 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_030"
+[0m12:51:10.173523 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_030
+[0m12:51:10.174940 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_030
+[0m12:51:10.175958 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_030
+[0m12:51:10.176852 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_030, now model.scale_10000.onboarding_030)
+[0m12:51:10.177705 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_030
+[0m12:51:10.185219 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_030"
+[0m12:51:10.187019 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_030
+[0m12:51:10.188456 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_030
+[0m12:51:10.189443 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_044
+[0m12:51:10.194097 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_030, now model.scale_10000.engineering_044)
+[0m12:51:10.195517 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_044
+[0m12:51:10.202532 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_044"
+[0m12:51:10.204526 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_044
+[0m12:51:10.206001 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_044
+[0m12:51:10.206926 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_044
+[0m12:51:10.207797 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_044, now model.scale_10000.hr_044)
+[0m12:51:10.208634 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_044
+[0m12:51:10.216987 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_044"
+[0m12:51:10.218734 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_044
+[0m12:51:10.220159 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_044
+[0m12:51:10.221081 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_044
+[0m12:51:10.221934 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_044, now model.scale_10000.onboarding_044)
+[0m12:51:10.222841 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_044
+[0m12:51:10.233764 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_044"
+[0m12:51:10.241344 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_044
+[0m12:51:10.243065 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_044
+[0m12:51:10.244038 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_038
+[0m12:51:10.244926 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_044, now model.scale_10000.engineering_038)
+[0m12:51:10.245971 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_038
+[0m12:51:10.263357 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_038"
+[0m12:51:10.265365 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_038
+[0m12:51:10.267794 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_038
+[0m12:51:10.268973 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_038
+[0m12:51:10.269944 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_038, now model.scale_10000.hr_038)
+[0m12:51:10.270823 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_038
+[0m12:51:10.277948 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_038"
+[0m12:51:10.283295 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_038
+[0m12:51:10.285023 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_038
+[0m12:51:10.285953 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_038
+[0m12:51:10.287130 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_038, now model.scale_10000.onboarding_038)
+[0m12:51:10.287990 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_038
+[0m12:51:10.296607 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_038"
+[0m12:51:10.298419 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_038
+[0m12:51:10.300296 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_038
+[0m12:51:10.301326 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_036
+[0m12:51:10.302212 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_038, now model.scale_10000.engineering_036)
+[0m12:51:10.303412 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_036
+[0m12:51:10.318511 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_036"
+[0m12:51:10.320555 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_036
+[0m12:51:10.322252 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_036
+[0m12:51:10.330513 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_036
+[0m12:51:10.331452 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_036, now model.scale_10000.hr_036)
+[0m12:51:10.332325 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_036
+[0m12:51:10.339361 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_036"
+[0m12:51:10.346474 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_036
+[0m12:51:10.347917 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_036
+[0m12:51:10.349060 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_036
+[0m12:51:10.350099 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_036, now model.scale_10000.onboarding_036)
+[0m12:51:10.350953 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_036
+[0m12:51:10.360088 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_036"
+[0m12:51:10.361969 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_036
+[0m12:51:10.363381 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_036
+[0m12:51:10.364280 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_042
+[0m12:51:10.365143 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_036, now model.scale_10000.engineering_042)
+[0m12:51:10.366638 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_042
+[0m12:51:10.397838 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_042"
+[0m12:51:10.399979 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_042
+[0m12:51:10.401777 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_042
+[0m12:51:10.402746 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_042
+[0m12:51:10.403670 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_042, now model.scale_10000.hr_042)
+[0m12:51:10.404597 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_042
+[0m12:51:10.413649 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_042"
+[0m12:51:10.415512 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_042
+[0m12:51:10.416949 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_042
+[0m12:51:10.417881 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_042
+[0m12:51:10.420825 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_042, now model.scale_10000.onboarding_042)
+[0m12:51:10.421776 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_042
+[0m12:51:10.429738 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_042"
+[0m12:51:10.434972 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_042
+[0m12:51:10.436467 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_042
+[0m12:51:10.437389 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_056
+[0m12:51:10.438261 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_042, now model.scale_10000.engineering_056)
+[0m12:51:10.439272 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_056
+[0m12:51:10.449644 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_056"
+[0m12:51:10.451486 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_056
+[0m12:51:10.452909 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_056
+[0m12:51:10.454130 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_056
+[0m12:51:10.455086 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_056, now model.scale_10000.hr_056)
+[0m12:51:10.455968 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_056
+[0m12:51:10.467151 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_056"
+[0m12:51:10.469021 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_056
+[0m12:51:10.470865 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_056
+[0m12:51:10.471878 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_056
+[0m12:51:10.472974 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_056, now model.scale_10000.onboarding_056)
+[0m12:51:10.474690 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_056
+[0m12:51:10.481923 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_056"
+[0m12:51:10.483922 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_056
+[0m12:51:10.487418 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_056
+[0m12:51:10.488466 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_050
+[0m12:51:10.489653 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_056, now model.scale_10000.engineering_050)
+[0m12:51:10.490582 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_050
+[0m12:51:10.500940 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_050"
+[0m12:51:10.503222 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_050
+[0m12:51:10.504844 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_050
+[0m12:51:10.505861 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_050
+[0m12:51:10.506800 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_050, now model.scale_10000.hr_050)
+[0m12:51:10.507653 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_050
+[0m12:51:10.515419 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_050"
+[0m12:51:10.517303 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_050
+[0m12:51:10.518821 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_050
+[0m12:51:10.519777 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_050
+[0m12:51:10.521601 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_050, now model.scale_10000.onboarding_050)
+[0m12:51:10.522990 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_050
+[0m12:51:10.531124 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_050"
+[0m12:51:10.533822 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_050
+[0m12:51:10.535383 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_050
+[0m12:51:10.536368 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_062
+[0m12:51:10.537827 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_050, now model.scale_10000.engineering_062)
+[0m12:51:10.538784 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_062
+[0m12:51:10.548099 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_062"
+[0m12:51:10.550211 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_062
+[0m12:51:10.551705 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_062
+[0m12:51:10.552666 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_062
+[0m12:51:10.553619 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_062, now model.scale_10000.hr_062)
+[0m12:51:10.555906 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_062
+[0m12:51:10.562725 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_062"
+[0m12:51:10.564563 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_062
+[0m12:51:10.567613 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_062
+[0m12:51:10.568668 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_062
+[0m12:51:10.569589 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_062, now model.scale_10000.onboarding_062)
+[0m12:51:10.570468 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_062
+[0m12:51:10.577265 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_062"
+[0m12:51:10.585086 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_062
+[0m12:51:10.586576 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_062
+[0m12:51:10.587549 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_054
+[0m12:51:10.588443 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_062, now model.scale_10000.engineering_054)
+[0m12:51:10.589320 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_054
+[0m12:51:10.604102 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_054"
+[0m12:51:10.617694 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_054
+[0m12:51:10.619293 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_054
+[0m12:51:10.620324 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_054
+[0m12:51:10.621260 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_054, now model.scale_10000.hr_054)
+[0m12:51:10.622134 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_054
+[0m12:51:10.635804 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_054"
+[0m12:51:10.637842 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_054
+[0m12:51:10.639440 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_054
+[0m12:51:10.640479 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_054
+[0m12:51:10.641822 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_054, now model.scale_10000.onboarding_054)
+[0m12:51:10.642792 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_054
+[0m12:51:10.659724 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_054"
+[0m12:51:10.661582 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_054
+[0m12:51:10.672901 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_054
+[0m12:51:10.673906 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_048
+[0m12:51:10.675108 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_054, now model.scale_10000.engineering_048)
+[0m12:51:10.675963 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_048
+[0m12:51:10.692381 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_048"
+[0m12:51:10.694512 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_048
+[0m12:51:10.696066 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_048
+[0m12:51:10.697005 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_048
+[0m12:51:10.700406 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_048, now model.scale_10000.hr_048)
+[0m12:51:10.702058 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_048
+[0m12:51:10.738478 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_048"
+[0m12:51:10.741656 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_048
+[0m12:51:10.746506 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_048
+[0m12:51:10.747540 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_048
+[0m12:51:10.748546 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_048, now model.scale_10000.onboarding_048)
+[0m12:51:10.749656 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_048
+[0m12:51:10.764129 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_048"
+[0m12:51:10.767938 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_048
+[0m12:51:10.773594 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_048
+[0m12:51:10.774716 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_060
+[0m12:51:10.775750 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_048, now model.scale_10000.engineering_060)
+[0m12:51:10.776932 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_060
+[0m12:51:10.785186 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_060"
+[0m12:51:10.792651 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_060
+[0m12:51:10.799635 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_060
+[0m12:51:10.804935 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_068
+[0m12:51:10.807272 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_060, now model.scale_10000.engineering_068)
+[0m12:51:10.810395 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_068
+[0m12:51:10.851556 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_068"
+[0m12:51:10.856721 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_068
+[0m12:51:10.858397 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_068
+[0m12:51:10.859478 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_074
+[0m12:51:10.860450 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_068, now model.scale_10000.engineering_074)
+[0m12:51:10.861329 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_074
+[0m12:51:10.873169 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_074"
+[0m12:51:10.875420 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_074
+[0m12:51:10.876971 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_074
+[0m12:51:10.877924 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_060
+[0m12:51:10.878840 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_074, now model.scale_10000.hr_060)
+[0m12:51:10.879694 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_060
+[0m12:51:10.903794 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_060"
+[0m12:51:10.905806 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_060
+[0m12:51:10.907420 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_060
+[0m12:51:10.908633 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_068
+[0m12:51:10.909679 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_060, now model.scale_10000.hr_068)
+[0m12:51:10.910571 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_068
+[0m12:51:10.922623 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_068"
+[0m12:51:10.924626 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_068
+[0m12:51:10.926170 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_068
+[0m12:51:10.930676 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_074
+[0m12:51:10.931606 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_068, now model.scale_10000.hr_074)
+[0m12:51:10.932451 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_074
+[0m12:51:10.939074 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_074"
+[0m12:51:10.943805 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_074
+[0m12:51:10.945291 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_074
+[0m12:51:10.946219 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_060
+[0m12:51:10.947099 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_074, now model.scale_10000.onboarding_060)
+[0m12:51:10.947942 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_060
+[0m12:51:10.970750 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_060"
+[0m12:51:10.972921 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_060
+[0m12:51:10.974499 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_060
+[0m12:51:10.976051 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_068
+[0m12:51:10.977001 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_060, now model.scale_10000.onboarding_068)
+[0m12:51:10.977869 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_068
+[0m12:51:10.984493 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_068"
+[0m12:51:10.988615 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_068
+[0m12:51:10.990143 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_068
+[0m12:51:10.991077 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_074
+[0m12:51:10.991953 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_068, now model.scale_10000.onboarding_074)
+[0m12:51:10.992815 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_074
+[0m12:51:10.999299 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_074"
+[0m12:51:11.001028 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_074
+[0m12:51:11.002435 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_074
+[0m12:51:11.003389 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_066
+[0m12:51:11.004262 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_074, now model.scale_10000.engineering_066)
+[0m12:51:11.005110 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_066
+[0m12:51:11.012037 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_066"
+[0m12:51:11.013810 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_066
+[0m12:51:11.015249 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_066
+[0m12:51:11.016169 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_066
+[0m12:51:11.017511 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_066, now model.scale_10000.hr_066)
+[0m12:51:11.018445 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_066
+[0m12:51:11.025449 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_066"
+[0m12:51:11.027201 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_066
+[0m12:51:11.030053 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_066
+[0m12:51:11.031036 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_066
+[0m12:51:11.032204 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_066, now model.scale_10000.onboarding_066)
+[0m12:51:11.033268 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_066
+[0m12:51:11.041519 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_066"
+[0m12:51:11.043268 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_066
+[0m12:51:11.044652 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_066
+[0m12:51:11.045566 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_080
+[0m12:51:11.046454 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_066, now model.scale_10000.engineering_080)
+[0m12:51:11.047299 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_080
+[0m12:51:11.059289 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_080"
+[0m12:51:11.061402 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_080
+[0m12:51:11.062953 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_080
+[0m12:51:11.063918 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_080
+[0m12:51:11.065045 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_080, now model.scale_10000.hr_080)
+[0m12:51:11.066039 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_080
+[0m12:51:11.076393 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_080"
+[0m12:51:11.078186 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_080
+[0m12:51:11.079624 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_080
+[0m12:51:11.080562 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_080
+[0m12:51:11.081639 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_080, now model.scale_10000.onboarding_080)
+[0m12:51:11.082653 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_080
+[0m12:51:11.089152 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_080"
+[0m12:51:11.091051 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_080
+[0m12:51:11.092435 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_080
+[0m12:51:11.093461 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_072
+[0m12:51:11.094362 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_080, now model.scale_10000.engineering_072)
+[0m12:51:11.095202 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_072
+[0m12:51:11.102683 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_072"
+[0m12:51:11.107524 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_072
+[0m12:51:11.109180 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_072
+[0m12:51:11.110201 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_072
+[0m12:51:11.111130 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_072, now model.scale_10000.hr_072)
+[0m12:51:11.111975 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_072
+[0m12:51:11.124805 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_072"
+[0m12:51:11.126620 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_072
+[0m12:51:11.128057 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_072
+[0m12:51:11.129139 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_072
+[0m12:51:11.130017 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_072, now model.scale_10000.onboarding_072)
+[0m12:51:11.130840 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_072
+[0m12:51:11.145636 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_072"
+[0m12:51:11.147516 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_072
+[0m12:51:11.149243 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_072
+[0m12:51:11.156242 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_078
+[0m12:51:11.157296 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_072, now model.scale_10000.engineering_078)
+[0m12:51:11.158245 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_078
+[0m12:51:11.181956 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_078"
+[0m12:51:11.183821 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_078
+[0m12:51:11.185280 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_078
+[0m12:51:11.187686 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_078
+[0m12:51:11.188745 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_078, now model.scale_10000.hr_078)
+[0m12:51:11.189619 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_078
+[0m12:51:11.196578 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_078"
+[0m12:51:11.207779 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_078
+[0m12:51:11.209313 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_078
+[0m12:51:11.210313 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_078
+[0m12:51:11.211220 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_078, now model.scale_10000.onboarding_078)
+[0m12:51:11.212255 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_078
+[0m12:51:11.225030 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_078"
+[0m12:51:11.227227 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_078
+[0m12:51:11.231950 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_078
+[0m12:51:11.232889 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_086
+[0m12:51:11.233769 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_078, now model.scale_10000.engineering_086)
+[0m12:51:11.234611 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_086
+[0m12:51:11.350625 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_086"
+[0m12:51:11.353077 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_086
+[0m12:51:11.354888 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_086
+[0m12:51:11.355907 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_092
+[0m12:51:11.356878 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_086, now model.scale_10000.engineering_092)
+[0m12:51:11.357794 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_092
+[0m12:51:11.371157 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_092"
+[0m12:51:11.373090 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_092
+[0m12:51:11.374549 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_092
+[0m12:51:11.375475 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_086
+[0m12:51:11.376401 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_092, now model.scale_10000.hr_086)
+[0m12:51:11.377250 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_086
+[0m12:51:11.384211 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_086"
+[0m12:51:11.386060 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_086
+[0m12:51:11.387486 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_086
+[0m12:51:11.388399 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_092
+[0m12:51:11.390926 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_086, now model.scale_10000.hr_092)
+[0m12:51:11.392008 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_092
+[0m12:51:11.398379 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_092"
+[0m12:51:11.400125 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_092
+[0m12:51:11.402611 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_092
+[0m12:51:11.404125 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_086
+[0m12:51:11.405090 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_092, now model.scale_10000.onboarding_086)
+[0m12:51:11.405990 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_086
+[0m12:51:11.412870 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_086"
+[0m12:51:11.414950 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_086
+[0m12:51:11.416424 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_086
+[0m12:51:11.417361 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_092
+[0m12:51:11.418936 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_086, now model.scale_10000.onboarding_092)
+[0m12:51:11.419830 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_092
+[0m12:51:11.426539 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_092"
+[0m12:51:11.428363 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_092
+[0m12:51:11.433082 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_092
+[0m12:51:11.434042 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_084
+[0m12:51:11.434940 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_092, now model.scale_10000.engineering_084)
+[0m12:51:11.435814 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_084
+[0m12:51:11.444460 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_084"
+[0m12:51:11.448836 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_084
+[0m12:51:11.450460 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_084
+[0m12:51:11.451476 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_084
+[0m12:51:11.452403 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_084, now model.scale_10000.hr_084)
+[0m12:51:11.453265 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_084
+[0m12:51:11.461862 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_084"
+[0m12:51:11.463815 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_084
+[0m12:51:11.465318 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_084
+[0m12:51:11.466406 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_084
+[0m12:51:11.467310 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_084, now model.scale_10000.onboarding_084)
+[0m12:51:11.468173 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_084
+[0m12:51:11.495013 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_084"
+[0m12:51:11.497314 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_084
+[0m12:51:11.499707 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_084
+[0m12:51:11.500911 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_098
+[0m12:51:11.501979 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_084, now model.scale_10000.engineering_098)
+[0m12:51:11.503031 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_098
+[0m12:51:11.514694 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_098"
+[0m12:51:11.516564 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_098
+[0m12:51:11.518186 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_098
+[0m12:51:11.527073 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_098
+[0m12:51:11.528215 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_098, now model.scale_10000.hr_098)
+[0m12:51:11.529124 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_098
+[0m12:51:11.536329 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_098"
+[0m12:51:11.543713 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_098
+[0m12:51:11.547005 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_098
+[0m12:51:11.548584 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_098
+[0m12:51:11.549722 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_098, now model.scale_10000.onboarding_098)
+[0m12:51:11.550617 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_098
+[0m12:51:11.561489 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_098"
+[0m12:51:11.563702 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_098
+[0m12:51:11.565282 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_098
+[0m12:51:11.566303 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_090
+[0m12:51:11.568894 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_098, now model.scale_10000.engineering_090)
+[0m12:51:11.569783 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_090
+[0m12:51:11.577180 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_090"
+[0m12:51:11.585308 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_090
+[0m12:51:11.587012 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_090
+[0m12:51:11.587983 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_104
+[0m12:51:11.588888 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_090, now model.scale_10000.engineering_104)
+[0m12:51:11.589795 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_104
+[0m12:51:11.598701 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_104"
+[0m12:51:11.600748 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_104
+[0m12:51:11.602302 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_104
+[0m12:51:11.603279 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_090
+[0m12:51:11.604204 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_104, now model.scale_10000.hr_090)
+[0m12:51:11.605228 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_090
+[0m12:51:11.617586 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_090"
+[0m12:51:11.620042 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_090
+[0m12:51:11.621743 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_090
+[0m12:51:11.622743 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_104
+[0m12:51:11.623723 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_090, now model.scale_10000.hr_104)
+[0m12:51:11.624603 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_104
+[0m12:51:11.633350 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_104"
+[0m12:51:11.636032 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_104
+[0m12:51:11.637568 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_104
+[0m12:51:11.638564 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_090
+[0m12:51:11.639632 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_104, now model.scale_10000.onboarding_090)
+[0m12:51:11.641528 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_090
+[0m12:51:11.651538 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_090"
+[0m12:51:11.653608 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_090
+[0m12:51:11.657326 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_090
+[0m12:51:11.658264 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_104
+[0m12:51:11.659176 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_090, now model.scale_10000.onboarding_104)
+[0m12:51:11.660049 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_104
+[0m12:51:11.669073 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_104"
+[0m12:51:11.671012 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_104
+[0m12:51:11.672778 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_104
+[0m12:51:11.673765 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_108
+[0m12:51:11.674701 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_104, now model.scale_10000.engineering_108)
+[0m12:51:11.675737 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_108
+[0m12:51:11.689787 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_108"
+[0m12:51:11.691659 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_108
+[0m12:51:11.694458 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_108
+[0m12:51:11.699024 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_108
+[0m12:51:11.700264 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_108, now model.scale_10000.hr_108)
+[0m12:51:11.701122 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_108
+[0m12:51:11.709115 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_108"
+[0m12:51:11.711288 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_108
+[0m12:51:11.712697 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_108
+[0m12:51:11.713724 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_108
+[0m12:51:11.714598 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_108, now model.scale_10000.onboarding_108)
+[0m12:51:11.715470 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_108
+[0m12:51:11.735261 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_108"
+[0m12:51:11.737655 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_108
+[0m12:51:11.739294 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_108
+[0m12:51:11.746763 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_096
+[0m12:51:11.747912 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_108, now model.scale_10000.engineering_096)
+[0m12:51:11.748877 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_096
+[0m12:51:11.758005 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_096"
+[0m12:51:11.773492 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_096
+[0m12:51:11.775060 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_096
+[0m12:51:11.776348 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_096
+[0m12:51:11.777394 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_096, now model.scale_10000.hr_096)
+[0m12:51:11.778424 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_096
+[0m12:51:11.794023 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_096"
+[0m12:51:11.795995 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_096
+[0m12:51:11.797503 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_096
+[0m12:51:11.798882 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_096
+[0m12:51:11.799853 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_096, now model.scale_10000.onboarding_096)
+[0m12:51:11.805295 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_096
+[0m12:51:11.813043 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_096"
+[0m12:51:11.822468 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_096
+[0m12:51:11.824134 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_096
+[0m12:51:11.825203 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_110
+[0m12:51:11.826218 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_096, now model.scale_10000.engineering_110)
+[0m12:51:11.827113 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_110
+[0m12:51:11.841226 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_110"
+[0m12:51:11.843494 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_110
+[0m12:51:11.845032 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_110
+[0m12:51:11.846346 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_110
+[0m12:51:11.847280 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_110, now model.scale_10000.hr_110)
+[0m12:51:11.848129 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_110
+[0m12:51:11.856402 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_110"
+[0m12:51:11.858422 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_110
+[0m12:51:11.860083 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_110
+[0m12:51:11.861230 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_110
+[0m12:51:11.873325 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_110, now model.scale_10000.onboarding_110)
+[0m12:51:11.875204 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_110
+[0m12:51:11.904572 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_110"
+[0m12:51:11.909300 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_110
+[0m12:51:11.917452 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_110
+[0m12:51:11.920438 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_102
+[0m12:51:11.921578 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_110, now model.scale_10000.engineering_102)
+[0m12:51:11.922545 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_102
+[0m12:51:11.943099 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_102"
+[0m12:51:11.945791 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_102
+[0m12:51:11.955515 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_102
+[0m12:51:11.956525 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_114
+[0m12:51:11.959630 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_102, now model.scale_10000.engineering_114)
+[0m12:51:11.960610 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_114
+[0m12:51:11.976855 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_114"
+[0m12:51:11.986669 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_114
+[0m12:51:11.988896 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_114
+[0m12:51:11.989945 [debug] [Thread-1 (]: Began running node model.scale_10000.engineering_116
+[0m12:51:11.991032 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_114, now model.scale_10000.engineering_116)
+[0m12:51:11.991950 [debug] [Thread-1 (]: Began compiling node model.scale_10000.engineering_116
+[0m12:51:12.009252 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.engineering_116"
+[0m12:51:12.012010 [debug] [Thread-1 (]: Began executing node model.scale_10000.engineering_116
+[0m12:51:12.018942 [debug] [Thread-1 (]: Finished running node model.scale_10000.engineering_116
+[0m12:51:12.019964 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_102
+[0m12:51:12.030549 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.engineering_116, now model.scale_10000.hr_102)
+[0m12:51:12.031480 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_102
+[0m12:51:12.056809 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_102"
+[0m12:51:12.059623 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_102
+[0m12:51:12.061843 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_102
+[0m12:51:12.062830 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_114
+[0m12:51:12.063988 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_102, now model.scale_10000.hr_114)
+[0m12:51:12.064850 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_114
+[0m12:51:12.083397 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_114"
+[0m12:51:12.086735 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_114
+[0m12:51:12.096887 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_114
+[0m12:51:12.098000 [debug] [Thread-1 (]: Began running node model.scale_10000.hr_116
+[0m12:51:12.098998 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_114, now model.scale_10000.hr_116)
+[0m12:51:12.099885 [debug] [Thread-1 (]: Began compiling node model.scale_10000.hr_116
+[0m12:51:12.127002 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.hr_116"
+[0m12:51:12.129637 [debug] [Thread-1 (]: Began executing node model.scale_10000.hr_116
+[0m12:51:12.131378 [debug] [Thread-1 (]: Finished running node model.scale_10000.hr_116
+[0m12:51:12.133695 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_102
+[0m12:51:12.135169 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.hr_116, now model.scale_10000.onboarding_102)
+[0m12:51:12.136250 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_102
+[0m12:51:12.146073 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_102"
+[0m12:51:12.148375 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_102
+[0m12:51:12.150023 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_102
+[0m12:51:12.150994 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_114
+[0m12:51:12.151924 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_102, now model.scale_10000.onboarding_114)
+[0m12:51:12.152801 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_114
+[0m12:51:12.167276 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_114"
+[0m12:51:12.172977 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_114
+[0m12:51:12.174923 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_114
+[0m12:51:12.178453 [debug] [Thread-1 (]: Began running node model.scale_10000.onboarding_116
+[0m12:51:12.179503 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.scale_10000.onboarding_114, now model.scale_10000.onboarding_116)
+[0m12:51:12.180399 [debug] [Thread-1 (]: Began compiling node model.scale_10000.onboarding_116
+[0m12:51:12.191593 [debug] [Thread-1 (]: Writing injected SQL for node "model.scale_10000.onboarding_116"
+[0m12:51:12.193485 [debug] [Thread-1 (]: Began executing node model.scale_10000.onboarding_116
+[0m12:51:12.195067 [debug] [Thread-1 (]: Finished running node model.scale_10000.onboarding_116
+[0m12:51:12.198808 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m12:51:12.199583 [debug] [MainThread]: Connection 'model.scale_10000.onboarding_116' was properly closed.
+[0m12:51:16.907619 [debug] [MainThread]: Command end result
+[0m12:51:32.123882 [debug] [MainThread]: Wrote artifact WritableManifest to examples/scale-10000/target/manifest.json
+[0m12:51:32.272380 [debug] [MainThread]: Wrote artifact SemanticManifest to examples/scale-10000/target/semantic_manifest.json
+[0m12:51:34.411878 [debug] [MainThread]: Wrote artifact RunExecutionResult to examples/scale-10000/target/run_results.json
+[0m12:51:34.483155 [debug] [MainThread]: Resource report: {"command_name": "compile", "command_success": true, "command_wall_clock_time": 573.6234, "process_in_blocks": "0", "process_kernel_time": 32.022377, "process_mem_max_rss": "499220480", "process_out_blocks": "0", "process_user_time": 281.4639}
+[0m12:51:34.488060 [debug] [MainThread]: Command `dbt compile` succeeded at 12:51:34.484691 after 573.63 seconds
+[0m12:51:34.489552 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105f42950>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10060bdd0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x111d33410>]}
+[0m12:51:34.491175 [debug] [MainThread]: Flushing usage events
+[0m12:51:34.996558 [debug] [MainThread]: An error was encountered while trying to flush usage events

@@ -1,0 +1,13 @@
+id,channel_name,channel_type,is_active,created_at,cost_per_click,cost_per_impression,region,category,priority
+1,channel_name_1,typeA,false,2024-02-18,6787.01,2848.63,JP,2024-03-11,low
+2,channel_name_2,typeC,true,2024-06-10,9677.29,6987.81,FR,2024-03-20,high
+3,channel_name_3,typeA,false,2024-09-13,6438.5,3291.48,UK,2024-11-23,high
+4,channel_name_4,typeC,true,2024-11-22,4239.83,3624.66,DE,2024-05-06,low
+5,channel_name_5,typeB,false,2024-04-08,9999.77,1557.9,DE,2024-02-17,high
+6,channel_name_6,typeC,true,2024-11-11,8765.16,6184.13,JP,2024-07-05,low
+7,channel_name_7,typeA,true,2024-12-15,446.49,3649.35,UK,2024-08-20,medium
+8,channel_name_8,typeC,false,2024-04-18,2399.29,9656.31,FR,2024-04-12,high
+9,channel_name_9,typeC,false,2024-08-25,2824.9,3824.91,JP,2024-07-06,low
+10,channel_name_10,typeC,true,2024-05-02,6415.38,8742.43,JP,2024-02-23,high
+11,channel_name_11,typeA,false,2024-02-25,1611.52,4498.7,JP,2024-03-27,medium
+12,channel_name_12,typeA,true,2024-08-12,9305.41,4154.82,FR,2024-09-12,low

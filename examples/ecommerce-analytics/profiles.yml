@@ -1,8 +1,13 @@
 ecommerce_analytics:
-  target: dev
+  target: duckdb
   outputs:
-    dev:
+    datafusion:
       type: datafusion
       path: target/ecommerce.db
+      schema: main
+      threads: 1
+    duckdb:
+      type: duckdb
+      path: target/ecommerce.duckdb
       schema: main
       threads: 1

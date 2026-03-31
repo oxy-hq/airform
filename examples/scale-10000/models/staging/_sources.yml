@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: raw_users
+      - name: raw_accounts
+      - name: raw_subscriptions
+      - name: raw_invoices
+      - name: raw_payments
+      - name: raw_events
+      - name: raw_sessions
+      - name: raw_page_views
+      - name: raw_support_tickets
+      - name: raw_feature_usage
+      - name: raw_products
+      - name: raw_orders
+      - name: raw_order_items
+      - name: raw_campaigns
+      - name: raw_channels
+      - name: raw_employees
+      - name: raw_departments
+      - name: raw_warehouses
+      - name: raw_shipments
+      - name: raw_compliance_records

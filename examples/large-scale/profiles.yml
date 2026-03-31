@@ -1,0 +1,13 @@
+large_scale:
+  target: duckdb
+  outputs:
+    datafusion:
+      type: datafusion
+      path: target/large_scale.db
+      schema: main
+      threads: 1
+    duckdb:
+      type: duckdb
+      path: target/large_scale.duckdb
+      schema: main
+      threads: 1

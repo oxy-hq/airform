@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Raw seed data.
+    tables:
+      - name: raw_users
+        description: Raw users data.
+      - name: raw_accounts
+        description: Raw accounts data.
+      - name: raw_subscriptions
+        description: Raw subscriptions data.
+      - name: raw_invoices
+        description: Raw invoices data.
+      - name: raw_payments
+        description: Raw payments data.
+      - name: raw_events
+        description: Raw events data.
+      - name: raw_sessions
+        description: Raw sessions data.
+      - name: raw_page_views
+        description: Raw page_views data.
+      - name: raw_support_tickets
+        description: Raw support_tickets data.
+      - name: raw_feature_usage
+        description: Raw feature_usage data.
+      - name: raw_products
+        description: Raw products data.
+      - name: raw_orders
+        description: Raw orders data.
+      - name: raw_order_items
+        description: Raw order_items data.
+      - name: raw_campaigns
+        description: Raw campaigns data.
+      - name: raw_channels
+        description: Raw channels data.
+      - name: raw_employees
+        description: Raw employees data.
+      - name: raw_departments
+        description: Raw departments data.
+      - name: raw_warehouses
+        description: Raw warehouses data.
+      - name: raw_shipments
+        description: Raw shipments data.
+      - name: raw_compliance_records
+        description: Raw compliance_records data.
