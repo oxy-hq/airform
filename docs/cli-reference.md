@@ -88,6 +88,47 @@ airform compile --no-cache
 
 ---
 
+### analyze
+
+Validate SQL correctness and extract column-level lineage by parsing compiled SQL into DataFusion logical plans. This catches type errors, invalid column references, and malformed SQL without hitting a warehouse.
+
+```bash
+airform analyze [options]
+```
+
+**Options:**
+
+| Flag | Short | Description |
+|------|-------|-------------|
+| `--select <MODEL>` | `-s` | Show inferred schema and lineage for a specific model |
+| `--target <TARGET>` | `-t` | Which target to use from profiles.yml |
+| `--lineage` | | Show column-level lineage |
+| `--column <NAME>` | `-c` | Trace lineage for a specific column (use with `--select`) |
+
+**Examples:**
+
+```bash
+# Validate all models and show diagnostics
+airform analyze
+
+# Show inferred schema for a model
+airform analyze --select customers
+
+# Show column-level lineage for all models
+airform analyze --lineage
+
+# Show lineage for a specific model
+airform analyze --select customers --lineage
+
+# Trace a single column back through the DAG
+airform analyze --select customers --column customer_lifetime_value
+
+# Use a specific target
+airform analyze --target prod
+```
+
+---
+
 ### run
 
 Compile and execute models locally via DataFusion. Models are executed in topological (dependency) order.

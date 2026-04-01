@@ -11,7 +11,8 @@ Compile, run, and test [dbt](https://www.getdbt.com/) projects locally using [Ap
 - **Full dbt syntax compatibility** -- `dbt_project.yml`, `profiles.yml`, `ref()`, `source()`, `config()`, `var()`, `env_var()`, `is_incremental()`
 - **Local execution via DataFusion** -- develop and iterate without touching a warehouse
 - **Fast** -- single ~75 MB binary; compiles the jaffle-shop example (5 models) in 0.16 s, the ecommerce-analytics example (19 models) in 0.33 s
-- **Column-level lineage** -- trace how a column flows through your DAG
+- **SQL comprehension** -- parses compiled SQL into logical plans (via DataFusion) for static validation and column-level lineage, catching type errors and invalid SQL without hitting a warehouse
+- **Column-level lineage** -- trace how a column flows through your DAG, powered by logical plan analysis
 - **Materializations** -- `view`, `table`, `incremental`, `ephemeral` (with automatic CTE injection)
 - **Seeds & tests** -- CSV loading, generic tests (`not_null`, `unique`, `accepted_values`, `relationships`)
 - **SQL formatting** -- built-in formatter with `--check` mode for CI
@@ -58,6 +59,9 @@ airform compile
 # Run models locally via DataFusion
 airform run
 
+# Analyze SQL: validate correctness and extract column-level lineage
+airform analyze
+
 # Run tests
 airform test
 
@@ -86,6 +90,7 @@ All commands accept the global flags `--project-dir <PATH>` and `--debug`.
 | `init <name>` | Scaffold a new dbt project |
 | `parse` | Parse the project and validate SQL |
 | `compile` | Compile models (resolve refs, render Jinja) |
+| `analyze` | Validate SQL correctness and extract column-level lineage via logical plans |
 | `run` | Compile and execute models locally via DataFusion |
 | `test` | Run generic and custom tests |
 | `seed` | Load seed CSV files into the local execution context |
@@ -109,6 +114,17 @@ airform compile --exclude my_model        # compile everything except my_model
 airform compile --no-cache                # force full recompile
 airform compile --target prod             # use a specific profiles.yml target
 airform compile --format json             # output as JSON (also: table, csv)
+```
+
+### analyze
+
+```bash
+airform analyze                           # validate all models and show diagnostics
+airform analyze --select my_model         # show inferred schema for a model
+airform analyze --lineage                 # show column-level lineage for all models
+airform analyze --select my_model --lineage  # lineage for a specific model
+airform analyze --select my_model --column revenue  # trace a single column
+airform analyze --target prod             # use a specific profiles.yml target
 ```
 
 ### run
@@ -160,7 +176,7 @@ airform format --check                    # check mode (exit 1 if files would ch
 
 ## Project structure
 
-Airform is organized as a Cargo workspace with eight crates:
+Airform is organized as a Cargo workspace with nine crates:
 
 ```
 crates/
@@ -170,6 +186,7 @@ crates/
   airform-parser/      SQL parsing, column extraction, dependency detection
   airform-graph/       DAG construction, topological sort, node selection (+model, model+, path:, tag:)
   airform-compiler/    Compilation pipeline: resolve refs, inject CTEs for ephemeral models, caching
+  airform-analyzer/    SQL comprehension: logical plan validation, schema inference, column-level lineage
   airform-executor/    DataFusion-based local execution, materializations, information schema
   airform-cli/         CLI entry point (clap), orchestrates all other crates
 ```
@@ -284,7 +301,9 @@ See [benchmarks/README.md](benchmarks/README.md) for details.
 | Compile 10k models | ~10 min | ~7 min | **17 sec** |
 | Single binary | No | No | Yes (~75 MB) |
 | dbt syntax compatible | Yes | Partial | Yes |
-| Column-level lineage | No (dbt Cloud only) | Yes | Yes |
+| SQL validation (no warehouse) | No | No | Yes (logical plan analysis) |
+| Column-level lineage | No (dbt Cloud only) | Yes | Yes (logical plan-based) |
+| Schema inference | No | No | Yes (from SQL + CSV) |
 | Incremental by default | No | Yes | File-fingerprint caching |
 | SQL formatter | No (needs sqlfmt) | Built-in | Built-in |
 

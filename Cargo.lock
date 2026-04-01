@@ -35,6 +35,7 @@ dependencies = [
 name = "airform"
 version = "0.1.0"
 dependencies = [
+ "airform-analyzer",
  "airform-compiler",
  "airform-core",
  "airform-executor",
@@ -57,9 +58,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "airform-analyzer"
+version = "0.1.0"
+dependencies = [
+ "airform-core",
+ "airform-graph",
+ "anyhow",
+ "datafusion",
+ "serde",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
 name = "airform-bench"
 version = "0.1.0"
 dependencies = [
+ "airform-analyzer",
  "airform-compiler",
  "airform-core",
  "airform-executor",

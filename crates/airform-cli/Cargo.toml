@@ -15,6 +15,7 @@ airform-jinja.workspace = true
 airform-compiler.workspace = true
 airform-graph.workspace = true
 airform-executor.workspace = true
+airform-analyzer.workspace = true
 anyhow.workspace = true
 clap.workspace = true
 tracing.workspace = true

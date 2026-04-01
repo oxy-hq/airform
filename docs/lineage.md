@@ -48,9 +48,27 @@ If neither `--upstream` nor `--downstream` is specified, airform shows both dire
 
 ## Column-level lineage
 
-Column-level lineage traces how individual columns flow through your transformation DAG. Airform uses regex-based SQL analysis to extract column references from compiled SQL and map them to upstream models and sources.
+Column-level lineage traces how individual columns flow through your transformation DAG. Airform provides two approaches:
 
-### Tracing a column
+- **Logical plan-based** (`airform analyze`): Parses compiled SQL into DataFusion logical plans and walks the plan tree to extract precise column dependencies. This is the recommended approach — it handles CTEs, subqueries, type casts, and complex expressions correctly.
+- **Regex-based** (`airform lineage --column`): Uses pattern matching on the SQL text. Faster but less accurate for complex queries.
+
+### Tracing a column with `analyze`
+
+```bash
+airform analyze --select customers --column customer_lifetime_value
+```
+
+Output:
+
+```
+Column lineage for: customers.customer_lifetime_value
+  SOURCE NODE                    SOURCE COLUMN        TYPE       TARGET NODE                    TARGET COLUMN
+  ----------------------------------------------------------------------------------------------------
+  stg_payments                   total_amount         copy       customers                      customer_lifetime_value
+```
+
+### Tracing a column with `lineage`
 
 ```bash
 airform lineage customers --column customer_lifetime_value
@@ -81,7 +99,25 @@ Column lineage edges are classified into three types:
 
 ## How column lineage works
 
-Airform's column lineage analysis (`airform-graph` crate) works as follows:
+### Logical plan-based lineage (`airform-analyzer`)
+
+The analyzer parses compiled SQL into DataFusion logical plans and walks the plan tree:
+
+1. **Bootstrap schemas**: Source and seed schemas are registered as empty tables in a DataFusion planning context. Seeds get type-inferred schemas from CSV sampling. Sources without `data_type` annotations fall back to matching seed CSV schemas.
+
+2. **Plan each model**: Models are planned in topological order. Each model's compiled SQL is parsed into a logical plan without execution. The inferred output schema is registered for downstream models to reference.
+
+3. **Walk projections**: The top-level `Projection` node's expressions are analyzed. Each output column's defining expression is inspected for `Column` references, which directly identify the source relation and column name.
+
+4. **Resolve CTE aliases**: A mapping from CTE/subquery alias names to their underlying table scans is built by walking `SubqueryAlias` nodes. Transitive aliases are resolved (e.g., `renamed` → `source` → `raw_users`).
+
+5. **Classify dependencies**: If an output column's expression is a single `Column` reference (possibly aliased), it's `copy`. If it involves functions, operators, or multiple columns, it's `transform`. Columns in `Filter`, `Join`, and `Aggregate` group-by expressions are `scan`.
+
+6. **Trace recursively**: The `trace_column` method follows lineage edges backward through the entire DAG, collecting the complete provenance chain.
+
+### Regex-based lineage (`airform-graph`)
+
+The fallback regex-based analysis (`airform lineage --column`) works as follows:
 
 1. **Build alias map**: For each model, map CTE names and table aliases to their upstream model or source names using `ref()` and `source()` dependency information.
 
@@ -107,15 +143,28 @@ airform lineage <model> --upstream
 # Show downstream dependents for a model
 airform lineage <model> --downstream
 
-# Trace a specific column through the DAG
+# Trace a specific column through the DAG (regex-based)
 airform lineage <model> --column <column_name>
 
-# Combine options
-airform lineage customers --upstream --column customer_id
+# Validate SQL and show column-level lineage (logical plan-based, recommended)
+airform analyze --lineage
+airform analyze --select <model> --lineage
+airform analyze --select <model> --column <column_name>
+
+# Show inferred schema for a model
+airform analyze --select <model>
 ```
 
 ## Limitations
 
-- Column lineage uses regex-based SQL parsing rather than a full SQL parser. Complex expressions, subqueries, and window functions may not be fully traced.
+### Regex-based lineage (`airform lineage --column`)
+
+- Uses regex-based SQL parsing rather than a full SQL parser. Complex expressions, subqueries, and window functions may not be fully traced.
 - `SELECT *` blocks are skipped during lineage analysis since the specific columns cannot be determined without schema information.
 - Unqualified column references (without a table alias) are resolved on a best-effort basis by checking which upstream model has a matching column definition.
+
+### Logical plan-based lineage (`airform analyze`)
+
+- Sources without `data_type` annotations in schema.yml and without a matching seed CSV cannot have their schemas inferred. Downstream models that depend on unresolvable sources will report a diagnostic error.
+- `SELECT *` at the outermost level is handled by looking through to the inner projection. Wildcards deeper in CTEs may not be fully expanded.
+- Lineage resolution through deeply nested CTEs depends on DataFusion's ability to plan the SQL. Dialect-specific SQL features not supported by DataFusion may cause planning failures.

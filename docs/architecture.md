@@ -1,6 +1,6 @@
 # Architecture
 
-Airform is organized as a Rust workspace with eight crates, each responsible for a distinct stage of the compilation and execution pipeline.
+Airform is organized as a Rust workspace with nine crates, each responsible for a distinct stage of the compilation and execution pipeline.
 
 ## Crate structure
 
@@ -15,6 +15,7 @@ airform/
     airform-jinja/              # Jinja template rendering (minijinja)
     airform-compiler/           # Compilation pipeline (resolve refs, inject CTEs)
     airform-graph/              # DAG construction, topological sort, lineage
+    airform-analyzer/           # SQL comprehension: logical plan validation, schema inference, column lineage
     airform-executor/           # Local execution via Apache DataFusion
 ```
 
@@ -90,6 +91,18 @@ Builds and analyzes the project DAG:
 - Classifies column dependencies as `Copy`, `Transform`, or `Scan`.
 - Supports recursive tracing through the full DAG.
 
+### airform-analyzer
+
+Provides SQL comprehension by parsing compiled SQL into DataFusion logical plans without executing them. This is similar to what dbt-fusion (via SDF) does — understanding SQL semantics rather than treating it as opaque text.
+
+Three capabilities from a single logical plan:
+
+- **SQL validation**: Catches type mismatches (e.g., `Utf8 / Float64`), invalid column references, and malformed SQL at compile time, without hitting a warehouse. Errors cascade correctly — if a staging model fails validation, all downstream models report it.
+- **Schema inference**: Resolves output schemas (column names and Arrow types) for every model by walking models in topological order. Seeds get schemas from CSV type inference (samples data rows to detect Int64/Float64/Utf8/Boolean). Sources fall back to matching seed CSV schemas when schema.yml lacks `data_type` annotations.
+- **Column-level lineage**: Walks the logical plan tree to trace each output column back to its input columns, classifying dependencies as Copy (direct pass-through), Transform (derived via expression), or Scan (used in WHERE/JOIN/GROUP BY).
+
+The analyzer registers empty `MemTable` tables with the correct schemas in a DataFusion `SessionContext` used purely for planning (never execution). As each model is analyzed in topological order, its inferred output schema is registered for downstream models to reference.
+
 ### airform-executor
 
 Executes compiled SQL locally using Apache DataFusion:
@@ -110,7 +123,7 @@ Executes compiled SQL locally using Apache DataFusion:
 The user-facing CLI, built with `clap`:
 
 - Parses command-line arguments and dispatches to command handlers.
-- Commands: `init`, `parse`, `compile`, `run`, `test`, `seed`, `debug`, `lineage`, `ls`, `clean`, `docs-generate`, `format`.
+- Commands: `init`, `parse`, `compile`, `analyze`, `run`, `test`, `seed`, `debug`, `lineage`, `ls`, `clean`, `docs-generate`, `format`.
 - Configures `tracing-subscriber` for logging.
 - Uses `tokio` async runtime for execution.
 
@@ -131,6 +144,18 @@ When you run `airform run`, the following happens:
    - Tables: executed, results stored in memory
    - Ephemeral: skipped (already CTEs)
 9. Results are reported (success/error/skip counts, timing)
+```
+
+When you run `airform analyze`, the pipeline runs steps 1-5, then:
+
+```
+6. Analyzer creates a planning-only DataFusion session (no data)
+7. Analyzer registers source/seed schemas (from schema.yml + CSV inference)
+8. Analyzer plans each model's SQL in topological order
+   - Validates SQL correctness (type checking, column existence)
+   - Infers output schema and registers it for downstream models
+   - Extracts column-level lineage from the logical plan
+9. Diagnostics and lineage are reported
 ```
 
 ## Key dependencies

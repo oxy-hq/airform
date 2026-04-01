@@ -1,0 +1,14 @@
+[package]
+name = "airform-analyzer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+airform-core.workspace = true
+airform-graph.workspace = true
+datafusion.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true

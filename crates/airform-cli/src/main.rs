@@ -151,6 +151,25 @@ enum Commands {
     /// Generate and serve documentation (writes manifest.json)
     DocsGenerate,
 
+    /// Analyze SQL: validate correctness and extract column-level lineage via logical plans
+    Analyze {
+        /// Select specific models to analyze
+        #[arg(short, long)]
+        select: Option<String>,
+
+        /// Which target to use from profiles.yml
+        #[arg(short, long)]
+        target: Option<String>,
+
+        /// Show column-level lineage for a specific model
+        #[arg(long)]
+        lineage: bool,
+
+        /// Trace lineage for a specific column (requires --lineage and model name via --select)
+        #[arg(short, long)]
+        column: Option<String>,
+    },
+
     /// Format SQL files (uppercase keywords, consistent indentation)
     Format {
         /// Check mode: exit non-zero if files would change (for CI)
@@ -243,6 +262,21 @@ async fn main() -> anyhow::Result<()> {
                 effective_output,
                 select.as_deref(),
             )
+        }
+        Commands::Analyze {
+            select,
+            target,
+            lineage,
+            column,
+        } => {
+            commands::analyze::run(
+                &project_dir,
+                select.as_deref(),
+                target.as_deref(),
+                lineage,
+                column.as_deref(),
+            )
+            .await
         }
         Commands::Clean => commands::clean::run(&project_dir),
         Commands::DocsGenerate => commands::docs::run(&project_dir),
