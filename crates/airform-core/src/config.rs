@@ -165,6 +165,13 @@ impl std::str::FromStr for Materialization {
     }
 }
 
+/// Contract enforcement configuration for a model.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ContractConfig {
+    #[serde(default)]
+    pub enforced: bool,
+}
+
 /// Node-level configuration (from config() macro or dbt_project.yml)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NodeConfig {
@@ -198,6 +205,21 @@ pub struct NodeConfig {
     #[serde(default)]
     pub on_schema_change: Option<String>,
 
+    #[serde(default)]
+    pub contract: Option<ContractConfig>,
+
+    /// Snapshot strategy: "timestamp" or "check"
+    #[serde(default)]
+    pub strategy: Option<String>,
+
+    /// Column to check for changes (timestamp strategy)
+    #[serde(default)]
+    pub updated_at: Option<String>,
+
+    /// Columns to check for changes (check strategy)
+    #[serde(default)]
+    pub check_cols: Option<Vec<String>>,
+
     /// Any extra config keys
     #[serde(flatten)]
     pub extra: HashMap<String, serde_yaml::Value>,
@@ -216,6 +238,10 @@ impl Default for NodeConfig {
             unique_key: None,
             incremental_strategy: None,
             on_schema_change: None,
+            contract: None,
+            strategy: None,
+            updated_at: None,
+            check_cols: None,
             extra: HashMap::new(),
         }
     }

@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: airform_test
+      POSTGRES_USER: airform
+      POSTGRES_PASSWORD: airformtest
+    ports:
+      - "${AIRFORM_PG_PORT:-15432}:5432"
+    volumes:
+      - ./tests/dialect/seed/postgres.sql:/docker-entrypoint-initdb.d/01_seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airform"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24-alpine
+    environment:
+      CLICKHOUSE_DB: airform_test
+      CLICKHOUSE_USER: airform
+      CLICKHOUSE_PASSWORD: airformtest
+    ports:
+      - "${AIRFORM_CH_HTTP_PORT:-18123}:8123"
+      - "${AIRFORM_CH_TCP_PORT:-19000}:9000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:8123/ping"]
+      interval: 2s
+      timeout: 5s
+      retries: 10

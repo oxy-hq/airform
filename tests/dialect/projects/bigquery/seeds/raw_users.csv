@@ -1,0 +1,6 @@
+id,first_name,last_name,email,country,revenue
+1,Alice,Smith,alice@example.com,US,49.99
+2,Bob,Jones,bob@example.com,UK,25.00
+3,Charlie,Brown,charlie@example.com,DE,0
+4,Diana,Prince,diana@example.com,US,99.99
+5,Eve,Taylor,eve@example.com,JP,15.00

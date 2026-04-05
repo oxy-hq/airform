@@ -36,6 +36,15 @@ pub struct DbtContext {
 
     /// Resolved source relations ((source_name, table_name) -> "schema.table")
     pub source_resolutions: HashMap<(String, String), String>,
+
+    /// Whether --full-refresh was passed
+    pub full_refresh: bool,
+
+    /// Whether this model is being run incrementally (materialization=incremental and not full_refresh)
+    pub is_incremental: bool,
+
+    /// The `{{ this }}` relation name for incremental models
+    pub this_relation: Option<String>,
 }
 
 impl DbtContext {
@@ -53,6 +62,9 @@ impl DbtContext {
             config_values: Arc::new(Mutex::new(HashMap::new())),
             ref_resolutions: HashMap::new(),
             source_resolutions: HashMap::new(),
+            full_refresh: false,
+            is_incremental: false,
+            this_relation: None,
         }
     }
 

@@ -129,63 +129,134 @@ impl Executor {
                 continue;
             };
 
-            if let ManifestNode::Model(model) = node {
-                // Skip ephemeral models (they're CTEs, not executed directly)
-                if model.config.materialized == Materialization::Ephemeral {
-                    results.push(NodeResult {
-                        unique_id: unique_id.clone(),
-                        name: model.name.clone(),
-                        status: NodeStatus::Skipped,
-                        duration: Duration::ZERO,
-                        rows_affected: None,
-                        message: Some("ephemeral (CTE only)".to_string()),
-                    });
-                    continue;
-                }
-
-                let Some(compiled_sql) = &model.compiled_sql else {
-                    results.push(NodeResult {
-                        unique_id: unique_id.clone(),
-                        name: model.name.clone(),
-                        status: NodeStatus::Error,
-                        duration: Duration::ZERO,
-                        rows_affected: None,
-                        message: Some("No compiled SQL".to_string()),
-                    });
-                    continue;
-                };
-
-                let start = Instant::now();
-                let result = self.execute_model(
-                    &model.name,
-                    compiled_sql,
-                    &model.config.materialized,
-                    model.config.alias.as_deref(),
-                    model.config.schema.as_deref(),
-                ).await;
-
-                match result {
-                    Ok(rows) => {
+            match node {
+                ManifestNode::Model(model) => {
+                    // Skip ephemeral models (they're CTEs, not executed directly)
+                    if model.config.materialized == Materialization::Ephemeral {
                         results.push(NodeResult {
                             unique_id: unique_id.clone(),
                             name: model.name.clone(),
-                            status: NodeStatus::Success,
-                            duration: start.elapsed(),
-                            rows_affected: Some(rows),
-                            message: None,
+                            status: NodeStatus::Skipped,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("ephemeral (CTE only)".to_string()),
                         });
+                        continue;
                     }
-                    Err(e) => {
+
+                    let Some(compiled_sql) = &model.compiled_sql else {
                         results.push(NodeResult {
                             unique_id: unique_id.clone(),
                             name: model.name.clone(),
                             status: NodeStatus::Error,
-                            duration: start.elapsed(),
+                            duration: Duration::ZERO,
                             rows_affected: None,
-                            message: Some(e.to_string()),
+                            message: Some("No compiled SQL".to_string()),
                         });
+                        continue;
+                    };
+
+                    // For incremental models, check if the target table exists.
+                    // If not, use the full-refresh SQL variant (compiled with is_incremental()=false)
+                    // to avoid referencing {{ this }} which doesn't exist yet.
+                    let effective_sql = if model.config.materialized == Materialization::Incremental {
+                        let table_name = model.config.alias.as_deref().unwrap_or(&model.name);
+                        let table_exists = self.ctx.table(table_name).await.is_ok();
+                        if !table_exists {
+                            if let Some(fr_sql) = &model.compiled_sql_full_refresh {
+                                fr_sql.clone()
+                            } else {
+                                compiled_sql.clone()
+                            }
+                        } else {
+                            compiled_sql.clone()
+                        }
+                    } else {
+                        compiled_sql.clone()
+                    };
+
+                    let start = Instant::now();
+                    let result = self.execute_model(
+                        &model.name,
+                        &effective_sql,
+                        &model.config.materialized,
+                        model.config.alias.as_deref(),
+                        model.config.schema.as_deref(),
+                        model.config.unique_key.as_deref(),
+                        model.config.incremental_strategy.as_deref(),
+                    ).await;
+
+                    match result {
+                        Ok(rows) => {
+                            results.push(NodeResult {
+                                unique_id: unique_id.clone(),
+                                name: model.name.clone(),
+                                status: NodeStatus::Success,
+                                duration: start.elapsed(),
+                                rows_affected: Some(rows),
+                                message: None,
+                            });
+                        }
+                        Err(e) => {
+                            results.push(NodeResult {
+                                unique_id: unique_id.clone(),
+                                name: model.name.clone(),
+                                status: NodeStatus::Error,
+                                duration: start.elapsed(),
+                                rows_affected: None,
+                                message: Some(e.to_string()),
+                            });
+                        }
                     }
                 }
+                ManifestNode::Snapshot(snapshot) => {
+                    let Some(compiled_sql) = &snapshot.compiled_sql else {
+                        results.push(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: snapshot.name.clone(),
+                            status: NodeStatus::Error,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("No compiled SQL".to_string()),
+                        });
+                        continue;
+                    };
+
+                    let start = Instant::now();
+                    let result = self.execute_snapshot(
+                        &snapshot.name,
+                        compiled_sql,
+                        snapshot.config.alias.as_deref(),
+                        snapshot.config.unique_key.as_deref(),
+                        snapshot.config.strategy.as_deref(),
+                        snapshot.config.updated_at.as_deref(),
+                        snapshot.config.check_cols.as_deref(),
+                    ).await;
+
+                    match result {
+                        Ok(rows) => {
+                            results.push(NodeResult {
+                                unique_id: unique_id.clone(),
+                                name: snapshot.name.clone(),
+                                status: NodeStatus::Success,
+                                duration: start.elapsed(),
+                                rows_affected: Some(rows),
+                                message: None,
+                            });
+                        }
+                        Err(e) => {
+                            results.push(NodeResult {
+                                unique_id: unique_id.clone(),
+                                name: snapshot.name.clone(),
+                                status: NodeStatus::Error,
+                                duration: start.elapsed(),
+                                rows_affected: None,
+                                message: Some(e.to_string()),
+                            });
+                        }
+                    }
+                }
+                _ => {}
             }
         }
 
@@ -200,6 +271,8 @@ impl Executor {
         materialization: &Materialization,
         alias: Option<&str>,
         _schema: Option<&str>,
+        unique_key: Option<&str>,
+        incremental_strategy: Option<&str>,
     ) -> anyhow::Result<usize> {
         let table_name = alias.unwrap_or(name);
 
@@ -231,19 +304,103 @@ impl Executor {
                 Ok(row_count)
             }
             Materialization::Incremental => {
-                // For local execution, treat incremental like table
+                // Execute the new SQL to get new batches
                 let df = self.ctx.sql(sql).await?;
-                let batches = df.collect().await?;
-                let row_count: usize = batches.iter().map(|b| b.num_rows()).sum();
+                let new_batches = df.collect().await?;
 
-                if !batches.is_empty() {
-                    let schema = batches[0].schema();
-                    let table =
-                        datafusion::datasource::MemTable::try_new(schema, vec![batches])?;
-                    let _ = self.ctx.deregister_table(table_name);
-                    self.ctx.register_table(table_name, std::sync::Arc::new(table))?;
+                if new_batches.is_empty() {
+                    tracing::info!("Created incremental table: {table_name} (0 rows, no data)");
+                    return Ok(0);
                 }
-                tracing::info!("Created incremental table: {table_name} ({row_count} rows)");
+
+                let new_schema = new_batches[0].schema();
+
+                // Determine strategy: explicit > default based on unique_key
+                let strategy = incremental_strategy.unwrap_or(
+                    if unique_key.is_some() { "delete+insert" } else { "append" }
+                );
+
+                // Check if the old table exists
+                let old_table_exists = self.ctx.table(table_name).await.is_ok();
+
+                let final_batches = if old_table_exists {
+                    match strategy {
+                        "append" => {
+                            // Read old rows, concatenate with new
+                            let old_df = self.ctx.table(table_name).await?;
+                            let old_batches = old_df.collect().await?;
+                            let mut combined = old_batches;
+                            combined.extend(new_batches);
+                            combined
+                        }
+                        "delete+insert" | "merge" => {
+                            if let Some(key) = unique_key {
+                                // Register new batches as a temp table
+                                let temp_name = format!("__new_{table_name}");
+                                let temp_table = datafusion::datasource::MemTable::try_new(
+                                    new_schema.clone(),
+                                    vec![new_batches.clone()],
+                                )?;
+                                let _ = self.ctx.deregister_table(temp_name.as_str());
+                                self.ctx.register_table(
+                                    temp_name.as_str(),
+                                    std::sync::Arc::new(temp_table),
+                                )?;
+
+                                // Filter old rows: keep only those whose key is NOT in new data
+                                let filter_sql = format!(
+                                    "SELECT * FROM {table_name} WHERE {key} NOT IN (SELECT {key} FROM {temp_name})"
+                                );
+                                let filtered_df = self.ctx.sql(&filter_sql).await?;
+                                let filtered_old = filtered_df.collect().await?;
+
+                                // Clean up temp table
+                                let _ = self.ctx.deregister_table(temp_name.as_str());
+
+                                // Concatenate filtered old + new
+                                let mut combined = filtered_old;
+                                combined.extend(new_batches);
+                                combined
+                            } else {
+                                // No unique_key with delete+insert/merge: fall back to append
+                                let old_df = self.ctx.table(table_name).await?;
+                                let old_batches = old_df.collect().await?;
+                                let mut combined = old_batches;
+                                combined.extend(new_batches);
+                                combined
+                            }
+                        }
+                        _ => {
+                            tracing::warn!(
+                                "Unknown incremental strategy '{strategy}', falling back to append"
+                            );
+                            let old_df = self.ctx.table(table_name).await?;
+                            let old_batches = old_df.collect().await?;
+                            let mut combined = old_batches;
+                            combined.extend(new_batches);
+                            combined
+                        }
+                    }
+                } else {
+                    // No old table, just use new batches
+                    new_batches
+                };
+
+                let row_count: usize = final_batches.iter().map(|b| b.num_rows()).sum();
+
+                if !final_batches.is_empty() {
+                    let schema = final_batches[0].schema();
+                    let table = datafusion::datasource::MemTable::try_new(
+                        schema,
+                        vec![final_batches],
+                    )?;
+                    let _ = self.ctx.deregister_table(table_name);
+                    self.ctx
+                        .register_table(table_name, std::sync::Arc::new(table))?;
+                }
+                tracing::info!(
+                    "Created incremental table: {table_name} ({row_count} rows, strategy={strategy})"
+                );
                 Ok(row_count)
             }
             Materialization::Ephemeral => {
@@ -251,6 +408,184 @@ impl Executor {
                 Ok(0)
             }
         }
+    }
+
+    /// Execute a snapshot with SCD Type 2 logic.
+    async fn execute_snapshot(
+        &self,
+        name: &str,
+        sql: &str,
+        alias: Option<&str>,
+        unique_key: Option<&str>,
+        strategy: Option<&str>,
+        updated_at: Option<&str>,
+        check_cols: Option<&[String]>,
+    ) -> anyhow::Result<usize> {
+        let table_name = alias.unwrap_or(name);
+        let strategy = strategy.unwrap_or("timestamp");
+
+        let unique_key = unique_key.ok_or_else(|| {
+            anyhow::anyhow!("Snapshot '{name}' requires a unique_key config")
+        })?;
+
+        // Step 1: Execute the snapshot query and register as temp table
+        let temp_name = format!("__snap_new_{table_name}");
+        let df = self.ctx.sql(sql).await?;
+        let new_batches = df.collect().await?;
+
+        if new_batches.is_empty() {
+            tracing::info!("Snapshot {table_name}: query returned no rows");
+            return Ok(0);
+        }
+
+        let new_schema = new_batches[0].schema();
+        let temp_table = datafusion::datasource::MemTable::try_new(
+            new_schema.clone(),
+            vec![new_batches],
+        )?;
+        let _ = self.ctx.deregister_table(temp_name.as_str());
+        self.ctx.register_table(
+            temp_name.as_str(),
+            std::sync::Arc::new(temp_table),
+        )?;
+
+        // Step 2: Check if target snapshot table already exists
+        let table_exists = self.ctx.table(table_name).await.is_ok();
+
+        let final_batches = if !table_exists {
+            // First run: add SCD columns to new data and register
+            let col_names: Vec<String> = new_schema
+                .fields()
+                .iter()
+                .map(|f| f.name().clone())
+                .collect();
+            let col_list = col_names.join(", ");
+
+            let init_sql = format!(
+                "SELECT {col_list}, \
+                 CURRENT_TIMESTAMP AS dbt_valid_from, \
+                 CAST(NULL AS TIMESTAMP) AS dbt_valid_to, \
+                 CURRENT_TIMESTAMP AS dbt_updated_at, \
+                 MD5(CAST({unique_key} AS VARCHAR) || CAST(CURRENT_TIMESTAMP AS VARCHAR)) AS dbt_scd_id \
+                 FROM {temp_name}"
+            );
+
+            let df = self.ctx.sql(&init_sql).await?;
+            let batches = df.collect().await?;
+            tracing::info!("Snapshot {table_name}: initial load");
+            batches
+        } else {
+            // Subsequent run: SCD Type 2 merge logic
+            let change_condition = match strategy {
+                "timestamp" => {
+                    let updated_at_col = updated_at.ok_or_else(|| {
+                        anyhow::anyhow!(
+                            "Snapshot '{name}' with timestamp strategy requires updated_at config"
+                        )
+                    })?;
+                    format!("old_snap.{updated_at_col} != new_snap.{updated_at_col}")
+                }
+                "check" => {
+                    let cols = check_cols.ok_or_else(|| {
+                        anyhow::anyhow!(
+                            "Snapshot '{name}' with check strategy requires check_cols config"
+                        )
+                    })?;
+                    if cols.is_empty() {
+                        anyhow::bail!("Snapshot '{name}': check_cols must not be empty");
+                    }
+                    cols.iter()
+                        .map(|c| format!("old_snap.{c} != new_snap.{c}"))
+                        .collect::<Vec<_>>()
+                        .join(" OR ")
+                }
+                other => {
+                    anyhow::bail!("Unknown snapshot strategy: '{other}'. Use 'timestamp' or 'check'.");
+                }
+            };
+
+            // Get column names from existing snapshot (excluding SCD columns)
+            let existing_df = self.ctx.table(table_name).await?;
+            let existing_schema = existing_df.schema();
+            let scd_columns = ["dbt_valid_from", "dbt_valid_to", "dbt_updated_at", "dbt_scd_id"];
+            let source_cols: Vec<String> = existing_schema
+                .fields()
+                .iter()
+                .map(|f| f.name().clone())
+                .filter(|n| !scd_columns.contains(&n.as_str()))
+                .collect();
+
+            let old_source_cols = source_cols
+                .iter()
+                .map(|c| format!("old_snap.{c}"))
+                .collect::<Vec<_>>()
+                .join(", ");
+            let new_source_cols = source_cols
+                .iter()
+                .map(|c| format!("new_snap.{c}"))
+                .collect::<Vec<_>>()
+                .join(", ");
+
+            // Query 1: Unchanged active records + already-expired records
+            let unchanged_sql = format!(
+                "SELECT old_snap.* FROM {table_name} old_snap \
+                 LEFT JOIN {temp_name} new_snap ON old_snap.{unique_key} = new_snap.{unique_key} \
+                 WHERE old_snap.dbt_valid_to IS NOT NULL \
+                 OR new_snap.{unique_key} IS NULL \
+                 OR (old_snap.dbt_valid_to IS NULL AND NOT ({change_condition}))"
+            );
+
+            // Query 2: Expire active records that have changed
+            let expire_sql = format!(
+                "SELECT {old_source_cols}, \
+                 old_snap.dbt_valid_from, \
+                 CURRENT_TIMESTAMP AS dbt_valid_to, \
+                 CURRENT_TIMESTAMP AS dbt_updated_at, \
+                 old_snap.dbt_scd_id \
+                 FROM {table_name} old_snap \
+                 JOIN {temp_name} new_snap ON old_snap.{unique_key} = new_snap.{unique_key} \
+                 WHERE old_snap.dbt_valid_to IS NULL AND ({change_condition})"
+            );
+
+            // Query 3: Insert new versions of changed records + entirely new records
+            let insert_sql = format!(
+                "SELECT {new_source_cols}, \
+                 CURRENT_TIMESTAMP AS dbt_valid_from, \
+                 CAST(NULL AS TIMESTAMP) AS dbt_valid_to, \
+                 CURRENT_TIMESTAMP AS dbt_updated_at, \
+                 MD5(CAST(new_snap.{unique_key} AS VARCHAR) || CAST(CURRENT_TIMESTAMP AS VARCHAR)) AS dbt_scd_id \
+                 FROM {temp_name} new_snap \
+                 LEFT JOIN {table_name} old_snap ON old_snap.{unique_key} = new_snap.{unique_key} AND old_snap.dbt_valid_to IS NULL \
+                 WHERE old_snap.{unique_key} IS NULL OR ({change_condition})"
+            );
+
+            let merge_sql = format!(
+                "{unchanged_sql} UNION ALL {expire_sql} UNION ALL {insert_sql}"
+            );
+
+            let df = self.ctx.sql(&merge_sql).await?;
+            let batches = df.collect().await?;
+            tracing::info!("Snapshot {table_name}: SCD Type 2 merge (strategy={strategy})");
+            batches
+        };
+
+        // Clean up temp table
+        let _ = self.ctx.deregister_table(format!("__snap_new_{table_name}").as_str());
+
+        let row_count: usize = final_batches.iter().map(|b| b.num_rows()).sum();
+
+        if !final_batches.is_empty() {
+            let schema = final_batches[0].schema();
+            let table = datafusion::datasource::MemTable::try_new(
+                schema,
+                vec![final_batches],
+            )?;
+            let _ = self.ctx.deregister_table(table_name);
+            self.ctx.register_table(table_name, std::sync::Arc::new(table))?;
+        }
+
+        tracing::info!("Snapshot table: {table_name} ({row_count} rows)");
+        Ok(row_count)
     }
 
     /// Execute an ad-hoc SQL query against the current session context.

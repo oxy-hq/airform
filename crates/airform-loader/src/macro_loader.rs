@@ -56,60 +56,146 @@ pub fn discover_macros(project: &DbtProject) -> anyhow::Result<Vec<MacroDefiniti
 fn extract_macros(contents: &str, file_path: &std::path::Path) -> Vec<MacroDefinition> {
     let mut macros = Vec::new();
 
-    // Pattern: {% macro name(args) %} ... {% endmacro %}
-    // Use a regex to find the macro opening tags, then find the matching endmacro
-    let macro_start_re =
-        Regex::new(r"\{%-?\s*macro\s+(\w+)\s*\(([^)]*)\)\s*-?%\}").unwrap();
+    // Use regex to find the start of macro tags: {% macro name(
+    // Then manually find the matching ) accounting for nested parens
+    let macro_name_re =
+        Regex::new(r"\{%-?\s*macro\s+(\w+)\s*\(").unwrap();
 
     let endmacro_re = Regex::new(r"\{%-?\s*endmacro\s*-?%\}").unwrap();
 
-    let starts: Vec<(usize, usize, String, Vec<String>)> = macro_start_re
-        .captures_iter(contents)
-        .map(|cap| {
-            let full_match = cap.get(0).unwrap();
-            let name = cap[1].to_string();
-            let args_str = cap[2].trim();
-            let args: Vec<String> = if args_str.is_empty() {
-                Vec::new()
-            } else {
-                args_str
-                    .split(',')
-                    .map(|a| {
-                        // Handle default values: arg=default
-                        let a = a.trim();
-                        if let Some((name, _)) = a.split_once('=') {
-                            name.trim().to_string()
-                        } else {
-                            a.to_string()
-                        }
-                    })
-                    .collect()
-            };
-            (full_match.start(), full_match.end(), name, args)
-        })
-        .collect();
+    for cap in macro_name_re.captures_iter(contents) {
+        let full_match = cap.get(0).unwrap();
+        let name = cap[1].to_string();
+        let args_start = full_match.end(); // position right after the opening (
 
-    for (_start, body_start, name, args) in starts {
-        // Find the next {% endmacro %} after this macro's opening tag
-        let rest = &contents[body_start..];
-        if let Some(end_match) = endmacro_re.find(rest) {
-            let body = rest[..end_match.start()].to_string();
-            macros.push(MacroDefinition {
-                name,
-                args,
-                body,
-                file_path: file_path.to_path_buf(),
-            });
-        } else {
+        // Find matching ) accounting for nested parentheses
+        let rest = &contents[args_start..];
+        let mut depth: i32 = 1;
+        let mut args_end_offset = 0;
+        let mut in_string: Option<char> = None;
+        for (i, ch) in rest.char_indices() {
+            if let Some(quote) = in_string {
+                if ch == quote {
+                    in_string = None;
+                }
+            } else {
+                match ch {
+                    '\'' | '"' => in_string = Some(ch),
+                    '(' => depth += 1,
+                    ')' => {
+                        depth -= 1;
+                        if depth == 0 {
+                            args_end_offset = i;
+                            break;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+
+        if depth != 0 {
             tracing::warn!(
-                "Unclosed macro '{}' in {}",
+                "Unmatched parenthesis in macro '{}' in {}",
                 name,
                 file_path.display()
             );
+            continue;
+        }
+
+        let args_str = rest[..args_end_offset].trim();
+        let args = parse_macro_args(args_str);
+
+        // Find the %} that closes the macro tag
+        let after_paren = args_start + args_end_offset + 1; // skip the )
+        let tag_rest = &contents[after_paren..];
+        let close_tag_re = Regex::new(r"^\s*-?%\}").unwrap();
+        if let Some(close_match) = close_tag_re.find(tag_rest) {
+            let body_start = after_paren + close_match.end();
+
+            // Find the next {% endmacro %} after this macro's opening tag
+            let body_rest = &contents[body_start..];
+            if let Some(end_match) = endmacro_re.find(body_rest) {
+                let body = body_rest[..end_match.start()].to_string();
+                macros.push(MacroDefinition {
+                    name,
+                    args,
+                    body,
+                    file_path: file_path.to_path_buf(),
+                });
+            } else {
+                tracing::warn!(
+                    "Unclosed macro '{}' in {}",
+                    name,
+                    file_path.display()
+                );
+            }
         }
     }
 
     macros
+}
+
+/// Parse macro arguments string, properly handling nested parentheses in default values.
+/// E.g., "field_name, divide_by=100.0, divide_var=var('x',false), alias=None"
+fn parse_macro_args(args_str: &str) -> Vec<String> {
+    if args_str.is_empty() {
+        return Vec::new();
+    }
+    let mut args = Vec::new();
+    let mut current = String::new();
+    let mut paren_depth: i32 = 0;
+    let mut bracket_depth: i32 = 0;
+    let mut in_string: Option<char> = None;
+
+    for ch in args_str.chars() {
+        if let Some(quote) = in_string {
+            current.push(ch);
+            if ch == quote {
+                in_string = None;
+            }
+        } else {
+            match ch {
+                '\'' | '"' => {
+                    current.push(ch);
+                    in_string = Some(ch);
+                }
+                '(' => {
+                    paren_depth += 1;
+                    current.push(ch);
+                }
+                ')' => {
+                    paren_depth -= 1;
+                    current.push(ch);
+                }
+                '[' => {
+                    bracket_depth += 1;
+                    current.push(ch);
+                }
+                ']' => {
+                    bracket_depth -= 1;
+                    current.push(ch);
+                }
+                ',' if paren_depth == 0 && bracket_depth == 0 => {
+                    let trimmed = current.trim().to_string();
+                    if !trimmed.is_empty() {
+                        args.push(trimmed);
+                    }
+                    current.clear();
+                }
+                _ => {
+                    current.push(ch);
+                }
+            }
+        }
+    }
+
+    let trimmed = current.trim().to_string();
+    if !trimmed.is_empty() {
+        args.push(trimmed);
+    }
+
+    args
 }
 
 #[cfg(test)]

@@ -217,7 +217,7 @@ async fn main() -> anyhow::Result<()> {
             select,
             exclude,
             threads: _,
-            full_refresh: _,
+            full_refresh,
             query,
             format,
             target,
@@ -229,6 +229,7 @@ async fn main() -> anyhow::Result<()> {
                 query.as_deref(),
                 &format,
                 target.as_deref(),
+                full_refresh,
             )
             .await
         }

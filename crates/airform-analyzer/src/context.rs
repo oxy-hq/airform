@@ -1,3 +1,7 @@
+use crate::cache::AnalysisCache;
+use crate::catalog::Catalog;
+use crate::contracts::{self, ContractViolation};
+use crate::dialect::{self, SqlDialect};
 use crate::error::AnalyzerDiagnostic;
 use crate::lineage::{self, ColumnLineageGraph};
 use airform_core::{Manifest, ManifestNode, Materialization};
@@ -6,6 +10,7 @@ use datafusion::arrow::datatypes::{DataType, Field, Schema, SchemaRef};
 use datafusion::datasource::MemTable;
 use datafusion::prelude::*;
 use std::collections::HashMap;
+use std::path::Path;
 use std::sync::Arc;
 
 /// Result of analyzing a compiled manifest.
@@ -16,6 +21,10 @@ pub struct AnalysisResult {
     pub lineage: ColumnLineageGraph,
     /// Non-fatal diagnostics collected during analysis.
     pub diagnostics: Vec<AnalyzerDiagnostic>,
+    /// Number of models that were served from cache (skipped re-analysis).
+    pub cached_count: usize,
+    /// Contract violations found during analysis.
+    pub contract_violations: Vec<ContractViolation>,
 }
 
 /// Analyzes compiled SQL by producing DataFusion logical plans.
@@ -27,26 +36,45 @@ pub struct Analyzer {
     ctx: SessionContext,
     schemas: HashMap<String, SchemaRef>,
     diagnostics: Vec<AnalyzerDiagnostic>,
+    dialect: SqlDialect,
 }
 
 impl Analyzer {
-    fn new() -> Self {
+    fn new(dialect: SqlDialect) -> Self {
         Self {
             ctx: SessionContext::new(),
             schemas: HashMap::new(),
             diagnostics: Vec::new(),
+            dialect,
         }
     }
 
     /// Run full analysis on a compiled manifest.
+    ///
+    /// Parameters:
+    /// - `manifest`: The compiled manifest with all models, sources, seeds
+    /// - `graph`: The dependency graph
+    /// - `project_dir`: Project root (for loading catalog.yml)
+    /// - `cache`: Optional analysis cache for incremental analysis
     pub async fn analyze(
         manifest: &Manifest,
         graph: &DbtGraph,
+        project_dir: Option<&Path>,
+        mut cache: Option<&mut AnalysisCache>,
+        adapter_type: Option<&str>,
     ) -> anyhow::Result<AnalysisResult> {
-        let mut analyzer = Self::new();
+        let dialect = adapter_type
+            .map(SqlDialect::from_adapter_type)
+            .unwrap_or(SqlDialect::Generic);
+        let mut analyzer = Self::new(dialect);
 
-        // 1. Register sources (from schema.yml column definitions)
-        analyzer.register_sources(manifest).await;
+        // Load catalog for source schema resolution
+        let catalog = project_dir
+            .map(Catalog::load)
+            .unwrap_or_default();
+
+        // 1. Register sources (from schema.yml, catalog, or seed CSV inference)
+        analyzer.register_sources(manifest, &catalog).await;
 
         // 2. Register seeds (from CSV column definitions or schema.yml)
         analyzer.register_seeds(manifest).await;
@@ -54,6 +82,7 @@ impl Analyzer {
         // 3. Walk models in topological order
         let order = graph.topological_sort()?;
         let mut lineage_graph = ColumnLineageGraph::default();
+        let mut cached_count = 0;
 
         for unique_id in &order {
             let Some(ManifestNode::Model(model)) = manifest.nodes.get(unique_id) else {
@@ -69,9 +98,32 @@ impl Analyzer {
                 continue;
             };
 
-            match analyzer.ctx.sql(sql).await {
+            let table_name = model
+                .config
+                .alias
+                .as_deref()
+                .unwrap_or(&model.name);
+
+            // Check incremental cache: skip if compiled SQL and upstream schemas unchanged
+            if let Some(ref cache) = cache {
+                if cache.is_fresh(table_name, sql, &analyzer.schemas) {
+                    if let Some(schema) = cache.restore_schema(table_name) {
+                        tracing::debug!("Cache hit for model {}", model.name);
+                        analyzer.register_empty_table(table_name, schema).await;
+                        cached_count += 1;
+                        continue;
+                    }
+                }
+            }
+
+            // Normalize dialect-specific SQL before planning
+            let normalized_sql = dialect::normalize_sql(sql, &analyzer.dialect);
+
+            match analyzer.ctx.sql(&normalized_sql).await {
                 Ok(df) => {
                     let plan = df.logical_plan();
+
+                    // Expand wildcards: if the plan's output has fields, use them
                     let schema = Arc::new(Schema::new(
                         plan.schema()
                             .fields()
@@ -87,14 +139,37 @@ impl Analyzer {
                     lineage_graph.edges.extend(edges);
 
                     // Register this model's output schema for downstream consumers
-                    let table_name = model
-                        .config
-                        .alias
-                        .as_deref()
-                        .unwrap_or(&model.name);
-                    analyzer.register_empty_table(table_name, schema.clone()).await;
+                    analyzer
+                        .register_empty_table(table_name, schema.clone())
+                        .await;
+
+                    // Update cache
+                    if let Some(ref mut cache) = cache {
+                        cache.update(table_name, sql, &schema, &analyzer.schemas);
+                    }
                 }
                 Err(e) => {
+                    // Fallback: if model has schema.yml columns, register those
+                    // so downstream models can still be analyzed
+                    if !model.columns.is_empty() {
+                        let fields: Vec<Field> = model
+                            .columns
+                            .iter()
+                            .map(|c| {
+                                let dt = dbt_type_to_arrow(c.data_type.as_deref());
+                                Field::new(&c.name, dt, true)
+                            })
+                            .collect();
+                        let schema = Arc::new(Schema::new(fields));
+                        analyzer
+                            .register_empty_table(table_name, schema)
+                            .await;
+                        tracing::debug!(
+                            "SQL planning failed for {}, using schema.yml columns as fallback",
+                            model.name
+                        );
+                    }
+
                     analyzer.diagnostics.push(AnalyzerDiagnostic::SqlError {
                         model: model.name.clone(),
                         message: e.to_string(),
@@ -103,19 +178,22 @@ impl Analyzer {
             }
         }
 
+        let contract_violations =
+            contracts::validate_contracts(manifest, &analyzer.schemas);
+
         Ok(AnalysisResult {
             schemas: analyzer.schemas,
             lineage: lineage_graph,
             diagnostics: analyzer.diagnostics,
+            cached_count,
+            contract_violations,
         })
     }
 
-    /// Register source tables from schema.yml column definitions.
-    /// If a source's columns lack data_type annotations, try to use a matching
-    /// seed CSV's inferred schema instead for better type accuracy.
-    async fn register_sources(&mut self, manifest: &Manifest) {
+    /// Register source tables from schema.yml column definitions, catalog, or seed CSV inference.
+    async fn register_sources(&mut self, manifest: &Manifest, catalog: &Catalog) {
         // Build a map of seed name -> CSV path for fallback type inference
-        let seed_paths: std::collections::HashMap<String, std::path::PathBuf> = manifest
+        let seed_paths: HashMap<String, std::path::PathBuf> = manifest
             .nodes
             .values()
             .filter_map(|n| {
@@ -131,22 +209,51 @@ impl Analyzer {
             let table_name = source.table_identifier();
 
             if source.columns.is_empty() {
-                // No column definitions — try to infer from a matching seed CSV
+                // Try catalog first
+                if let Some(cols) = catalog.lookup(&source.source_name, &source.name) {
+                    let fields: Vec<Field> = cols
+                        .iter()
+                        .map(|c| {
+                            let dt = dbt_type_to_arrow(Some(&c.data_type));
+                            Field::new(&c.name, dt, true)
+                        })
+                        .collect();
+                    let schema = Arc::new(Schema::new(fields));
+                    self.register_empty_table(table_name, schema).await;
+                    continue;
+                }
+
+                // Fall back to matching seed CSV
                 if let Some(csv_path) = seed_paths.get(table_name) {
                     if let Ok(schema) = infer_csv_schema(csv_path) {
                         self.register_empty_table(table_name, Arc::new(schema)).await;
                         continue;
                     }
                 }
+
                 self.diagnostics.push(AnalyzerDiagnostic::SchemaUnavailable {
                     node: format!("source:{}.{}", source.source_name, source.name),
                 });
                 continue;
             }
 
-            // Check if all columns lack data_type — if so, try seed CSV inference
+            // Check if all columns lack data_type — try catalog, then seed CSV
             let all_untyped = source.columns.iter().all(|c| c.data_type.is_none());
             if all_untyped {
+                // Try catalog for typed columns
+                if let Some(cols) = catalog.lookup(&source.source_name, &source.name) {
+                    let fields: Vec<Field> = cols
+                        .iter()
+                        .map(|c| {
+                            let dt = dbt_type_to_arrow(Some(&c.data_type));
+                            Field::new(&c.name, dt, true)
+                        })
+                        .collect();
+                    let schema = Arc::new(Schema::new(fields));
+                    self.register_empty_table(table_name, schema).await;
+                    continue;
+                }
+
                 if let Some(csv_path) = seed_paths.get(table_name) {
                     if let Ok(schema) = infer_csv_schema(csv_path) {
                         self.register_empty_table(table_name, Arc::new(schema)).await;
@@ -177,7 +284,6 @@ impl Analyzer {
             };
 
             if seed.columns.is_empty() {
-                // If no column defs, try to read the CSV header for schema
                 if let Ok(schema) = infer_csv_schema(&seed.path) {
                     self.register_empty_table(&seed.name, Arc::new(schema)).await;
                 } else {
@@ -284,7 +390,7 @@ fn widen_type(current: &DataType, observed: &DataType) -> DataType {
 }
 
 /// Map dbt/schema.yml type strings to Arrow DataType.
-fn dbt_type_to_arrow(type_str: Option<&str>) -> DataType {
+pub(crate) fn dbt_type_to_arrow(type_str: Option<&str>) -> DataType {
     match type_str.map(|s| s.to_lowercase()).as_deref() {
         Some("integer" | "int" | "bigint" | "int64") => DataType::Int64,
         Some("smallint" | "int32") => DataType::Int32,

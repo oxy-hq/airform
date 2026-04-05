@@ -96,6 +96,9 @@ pub struct ModelNode {
     pub raw_sql: String,
     /// Compiled SQL (after Jinja rendering, ref/source resolution)
     pub compiled_sql: Option<String>,
+    /// For incremental models: compiled SQL with is_incremental()=false (full refresh variant)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub compiled_sql_full_refresh: Option<String>,
 
     pub config: NodeConfig,
     pub depends_on: DependsOn,

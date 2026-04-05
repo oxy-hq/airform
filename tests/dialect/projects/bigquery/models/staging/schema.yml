@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: raw
+    tables:
+      - name: raw_users
+        columns:
+          - name: id
+            data_type: integer
+          - name: first_name
+            data_type: string
+          - name: last_name
+            data_type: string
+          - name: email
+            data_type: string
+          - name: country
+            data_type: string
+          - name: revenue
+            data_type: float
+      - name: raw_orders
+        columns:
+          - name: id
+            data_type: integer
+          - name: user_id
+            data_type: integer
+          - name: amount
+            data_type: float
+          - name: status
+            data_type: string
