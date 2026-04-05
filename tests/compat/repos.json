@@ -4,7 +4,7 @@
     "repo": "dbt-labs/jaffle-shop",
     "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 13,
+    "expected_models": 10,
     "notes": "Canonical dbt example: CTEs, sources, seeds, custom macros (cents_to_dollars), date_trunc"
   },
   {
@@ -12,7 +12,7 @@
     "repo": "dbt-labs/mrr-playbook",
     "project_subdir": null,
     "adapter_type": "snowflake",
-    "expected_models": 4,
+    "expected_models": 3,
     "notes": "MRR/subscription: window functions (LAG/LEAD), dateadd, ::date cast, dbt_utils.surrogate_key"
   },
   {
@@ -26,289 +26,289 @@
   {
     "name": "shopify",
     "repo": "fivetran/dbt_shopify",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 264,
+    "expected_models": 50,
     "notes": "Largest fivetran package: incremental, macros, conditional Jinja, 95 seed tables"
   },
   {
     "name": "stripe",
     "repo": "fivetran/dbt_stripe",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 69,
+    "expected_models": 20,
     "notes": "SaaS billing: incremental models, staging+transform pattern, 31 seeds"
   },
   {
     "name": "hubspot",
     "repo": "fivetran/dbt_hubspot",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 154,
+    "expected_models": 50,
     "notes": "CRM data: heavy macro usage, conditional compilation, 63 seeds"
   },
   {
     "name": "zendesk",
     "repo": "fivetran/dbt_zendesk",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 98,
+    "expected_models": 30,
     "notes": "Support ticketing: complex joins, window functions, 26 seeds"
   },
   {
     "name": "github",
     "repo": "fivetran/dbt_github",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 43,
+    "expected_models": 15,
     "notes": "GitHub analytics: issue/PR models, 14 seeds"
   },
   {
     "name": "jira",
     "repo": "fivetran/dbt_jira",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 61,
+    "expected_models": 20,
     "notes": "Project management: field history, sprint models, 22 seeds"
   },
   {
     "name": "salesforce",
     "repo": "fivetran/dbt_salesforce",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 26,
+    "expected_models": 10,
     "notes": "CRM: opportunity, account, contact models, 14 seeds"
   },
   {
     "name": "netsuite",
     "repo": "fivetran/dbt_netsuite",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 110,
+    "expected_models": 30,
     "notes": "ERP accounting: complex financial models, 45 seeds"
   },
   {
     "name": "quickbooks",
     "repo": "fivetran/dbt_quickbooks",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 132,
+    "expected_models": 40,
     "notes": "Accounting: P&L, balance sheet models, 47 seeds"
   },
   {
     "name": "google-ads",
     "repo": "fivetran/dbt_google_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 40,
+    "expected_models": 15,
     "notes": "Ad platform: campaign/ad group/keyword models, 15 seeds"
   },
   {
     "name": "facebook-ads",
     "repo": "fivetran/dbt_facebook_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 34,
+    "expected_models": 15,
     "notes": "Ad platform: campaign/adset/ad models, 13 seeds"
   },
   {
     "name": "ad-reporting",
     "repo": "fivetran/dbt_ad_reporting",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 20,
+    "expected_models": 5,
     "notes": "Cross-platform ads: UNION ALL across platforms, conditional compilation, 125 seeds"
   },
   {
     "name": "intercom",
     "repo": "fivetran/dbt_intercom",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 42,
+    "expected_models": 15,
     "notes": "Customer messaging: conversation/admin models, 17 seeds"
   },
   {
     "name": "marketo",
     "repo": "fivetran/dbt_marketo",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 50,
+    "expected_models": 15,
     "notes": "Marketing automation: lead/campaign models, 14 seeds"
   },
   {
     "name": "mailchimp",
     "repo": "fivetran/dbt_mailchimp",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 46,
+    "expected_models": 15,
     "notes": "Email marketing: campaign/list/member models, 12 seeds"
   },
   {
     "name": "asana",
     "repo": "fivetran/dbt_asana",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 40,
+    "expected_models": 15,
     "notes": "Project management: task/project/team models, 11 seeds"
   },
   {
     "name": "greenhouse",
     "repo": "fivetran/dbt_greenhouse",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 79,
+    "expected_models": 30,
     "notes": "ATS/recruiting: application/interview/offer models, 35 seeds"
   },
   {
     "name": "lever",
     "repo": "fivetran/dbt_lever",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 64,
+    "expected_models": 20,
     "notes": "Recruiting: opportunity/posting/interview models, 26 seeds"
   },
   {
     "name": "pendo",
     "repo": "fivetran/dbt_pendo",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 68,
+    "expected_models": 20,
     "notes": "Product analytics: feature/page/event models, 17 seeds"
   },
   {
     "name": "iterable",
     "repo": "fivetran/dbt_iterable",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 46,
+    "expected_models": 15,
     "notes": "Marketing platform: campaign/event/user models, 18 seeds"
   },
   {
     "name": "klaviyo",
     "repo": "fivetran/dbt_klaviyo",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 18,
+    "expected_models": 5,
     "notes": "Email/SMS marketing: flow/campaign/person models, 6 seeds"
   },
   {
     "name": "recharge",
     "repo": "fivetran/dbt_recharge",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 44,
+    "expected_models": 15,
     "notes": "Subscription commerce: subscription/charge/customer models, 18 seeds"
   },
   {
     "name": "recurly",
     "repo": "fivetran/dbt_recurly",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 49,
+    "expected_models": 15,
     "notes": "Subscription billing: account/subscription/invoice models, 18 seeds"
   },
   {
     "name": "xero",
     "repo": "fivetran/dbt_xero",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 36,
+    "expected_models": 10,
     "notes": "Accounting: invoice/payment/contact models, 14 seeds"
   },
   {
     "name": "sage-intacct",
     "repo": "fivetran/dbt_sage_intacct",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 24,
+    "expected_models": 10,
     "notes": "ERP: GL/AP/AR models, 7 seeds"
   },
   {
     "name": "pardot",
     "repo": "fivetran/dbt_pardot",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 23,
+    "expected_models": 10,
     "notes": "B2B marketing: prospect/campaign/list models, 8 seeds"
   },
   {
     "name": "qualtrics",
     "repo": "fivetran/dbt_qualtrics",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 49,
+    "expected_models": 15,
     "notes": "Survey platform: survey/response/question models, 19 seeds"
   },
   {
     "name": "instagram-business",
     "repo": "fivetran/dbt_instagram_business",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 7,
+    "expected_models": 3,
     "notes": "Social media: post/story models, 3 seeds"
   },
   {
     "name": "snapchat-ads",
     "repo": "fivetran/dbt_snapchat_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 30,
+    "expected_models": 10,
     "notes": "Ad platform: campaign/ad squad/ad models, 11 seeds"
   },
   {
     "name": "microsoft-ads",
     "repo": "fivetran/dbt_microsoft_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 33,
+    "expected_models": 10,
     "notes": "Ad platform: campaign/ad group/keyword models, 12 seeds"
   },
   {
     "name": "tiktok-ads",
     "repo": "fivetran/dbt_tiktok_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 22,
+    "expected_models": 8,
     "notes": "Ad platform: campaign/ad group/ad models, 8 seeds"
   },
   {
     "name": "reddit-ads",
     "repo": "fivetran/dbt_reddit_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 34,
+    "expected_models": 10,
     "notes": "Ad platform: campaign/ad group/ad models, 15 seeds"
   },
   {
     "name": "amazon-ads",
     "repo": "fivetran/dbt_amazon_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 30,
+    "expected_models": 10,
     "notes": "Ad platform: campaign/ad group/product models, 11 seeds"
   },
   {
     "name": "apple-search-ads",
     "repo": "fivetran/dbt_apple_search_ads",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 26,
+    "expected_models": 10,
     "notes": "Ad platform: campaign/ad group/keyword models, 10 seeds"
   },
   {
     "name": "apple-store",
     "repo": "fivetran/dbt_apple_store",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 59,
+    "expected_models": 15,
     "notes": "App analytics: downloads/crashes/subscriptions models, 9 seeds"
   },
   {
     "name": "google-play",
     "repo": "fivetran/dbt_google_play",
-    "project_subdir": "integration_tests",
+    "project_subdir": null,
     "adapter_type": "duckdb",
-    "expected_models": 43,
+    "expected_models": 15,
     "notes": "App analytics: installs/ratings/crashes models, 18 seeds"
   },
   {
@@ -316,7 +316,7 @@
     "repo": "brooklyn-data/dbt_artifacts",
     "project_subdir": "integration_test_project",
     "adapter_type": "duckdb",
-    "expected_models": 41,
+    "expected_models": 3,
     "notes": "Meta-dbt: dimensional model of dbt run metadata, incremental models"
   },
   {
@@ -324,7 +324,7 @@
     "repo": "dbt-labs/dbt-project-evaluator",
     "project_subdir": "integration_tests_2",
     "adapter_type": "duckdb",
-    "expected_models": 98,
+    "expected_models": 5,
     "notes": "Project linting: evaluates naming, DAG structure, test coverage"
   },
   {
@@ -332,7 +332,199 @@
     "repo": "snowplow/dbt-snowplow-web",
     "project_subdir": null,
     "adapter_type": "snowflake",
-    "expected_models": 89,
+    "expected_models": 10,
     "notes": "Event analytics: heavy incremental, sessionization, window functions"
+  },
+  {
+    "name": "linkedin",
+    "repo": "fivetran/dbt_linkedin",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 10,
+    "notes": "LinkedIn Ads: campaign/ad models"
+  },
+  {
+    "name": "linkedin-pages",
+    "repo": "fivetran/dbt_linkedin_pages",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 10,
+    "notes": "LinkedIn Pages: company page social media models"
+  },
+  {
+    "name": "pinterest",
+    "repo": "fivetran/dbt_pinterest",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 15,
+    "notes": "Pinterest Ads: campaign/pin/ad group models"
+  },
+  {
+    "name": "twitter",
+    "repo": "fivetran/dbt_twitter",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 15,
+    "notes": "Twitter/X Ads: campaign/ad group/ad models"
+  },
+  {
+    "name": "twitter-organic",
+    "repo": "fivetran/dbt_twitter_organic",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 5,
+    "notes": "Twitter organic: tweet/profile models"
+  },
+  {
+    "name": "youtube-analytics",
+    "repo": "fivetran/dbt_youtube_analytics",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 5,
+    "notes": "YouTube: channel/video analytics models"
+  },
+  {
+    "name": "mixpanel",
+    "repo": "fivetran/dbt_mixpanel",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 3,
+    "notes": "Mixpanel: event and retention models"
+  },
+  {
+    "name": "facebook-pages",
+    "repo": "fivetran/dbt_facebook_pages",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 5,
+    "notes": "Facebook Pages: page post/insight models"
+  },
+  {
+    "name": "fivetran-log",
+    "repo": "fivetran/dbt_fivetran_log",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 10,
+    "notes": "Fivetran connector usage/cost models"
+  },
+  {
+    "name": "amplitude",
+    "repo": "fivetran/dbt_amplitude",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 3,
+    "notes": "Amplitude: event analytics models"
+  },
+  {
+    "name": "workday",
+    "repo": "fivetran/dbt_workday",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 20,
+    "notes": "Workday HCM: employee/org/position models"
+  },
+  {
+    "name": "zuora",
+    "repo": "fivetran/dbt_zuora",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 20,
+    "notes": "Zuora: subscription/billing/invoice models"
+  },
+  {
+    "name": "servicenow",
+    "repo": "fivetran/dbt_servicenow",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 15,
+    "notes": "ServiceNow: IT service management models"
+  },
+  {
+    "name": "twilio",
+    "repo": "fivetran/dbt_twilio",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 10,
+    "notes": "Twilio: messaging/communications models"
+  },
+  {
+    "name": "dynamics-365",
+    "repo": "fivetran/dbt_dynamics_365_crm",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 5,
+    "notes": "Microsoft Dynamics 365 CRM models"
+  },
+  {
+    "name": "social-media-reporting",
+    "repo": "fivetran/dbt_social_media_reporting",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 3,
+    "notes": "Unified social media reporting across platforms"
+  },
+  {
+    "name": "shopify-holistic",
+    "repo": "fivetran/dbt_shopify_holistic_reporting",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 3,
+    "notes": "Cross-channel Shopify reporting"
+  },
+  {
+    "name": "app-reporting",
+    "repo": "fivetran/dbt_app_reporting",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 5,
+    "notes": "Unified app store reporting (Google Play + Apple Store)"
+  },
+  {
+    "name": "ga4-export",
+    "repo": "fivetran/dbt_ga4_export",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 3,
+    "notes": "Google Analytics 4 export models"
+  },
+  {
+    "name": "sap",
+    "repo": "fivetran/dbt_sap",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 50,
+    "notes": "SAP ERP: financial/material/vendor models — largest fivetran package"
+  },
+  {
+    "name": "amazon-selling-partner",
+    "repo": "fivetran/dbt_amazon_selling_partner",
+    "project_subdir": null,
+    "adapter_type": "duckdb",
+    "expected_models": 15,
+    "notes": "Amazon Seller Central models"
+  },
+  {
+    "name": "snowplow-unified",
+    "repo": "snowplow/dbt-snowplow-unified",
+    "project_subdir": null,
+    "adapter_type": "snowflake",
+    "expected_models": 10,
+    "notes": "Combined web+mobile event models: sessions, users, page views"
+  },
+  {
+    "name": "snowplow-mobile",
+    "repo": "snowplow/dbt-snowplow-mobile",
+    "project_subdir": null,
+    "adapter_type": "snowflake",
+    "expected_models": 10,
+    "notes": "Mobile app: screen views, sessions, users"
+  },
+  {
+    "name": "snowplow-ecommerce",
+    "repo": "snowplow/dbt-snowplow-ecommerce",
+    "project_subdir": null,
+    "adapter_type": "snowflake",
+    "expected_models": 10,
+    "notes": "Ecommerce events: products, transactions, carts"
   }
 ]

@@ -591,43 +591,58 @@ impl JinjaEngine {
     /// Extract config key=value pairs from raw SQL before preprocessing strips the block.
     /// Parses simple patterns like `config(materialized='table', schema='analytics')`.
     fn extract_config_from_raw(sql: &str, config_values: &std::sync::Arc<std::sync::Mutex<std::collections::HashMap<String, String>>>) {
-        // Find config( in {{ config(...) }} blocks
-        for pat in ["{{ config(", "{{config(", "{{- config(", "{{-config("] {
-            if let Some(start) = sql.find(pat) {
-                let config_start = start + pat.len();
-                // Find matching ) by tracking depth
-                let mut depth = 1i32;
-                let mut i = config_start;
-                let bytes = sql.as_bytes();
-                let mut in_string: Option<u8> = None;
-                while i < bytes.len() && depth > 0 {
-                    if let Some(q) = in_string {
-                        if bytes[i] == q { in_string = None; }
-                    } else {
-                        match bytes[i] {
-                            b'\'' | b'"' => in_string = Some(bytes[i]),
-                            b'(' => depth += 1,
-                            b')' => depth -= 1,
-                            _ => {}
-                        }
-                    }
-                    if depth > 0 { i += 1; }
-                }
-                if depth == 0 {
-                    let config_content = &sql[config_start..i];
-                    // Parse key=value pairs (simple string/identifier values)
-                    let mut cv = config_values.lock().unwrap();
-                    for part in Self::split_config_args(config_content) {
-                        if let Some(eq_pos) = part.find('=') {
-                            let key = part[..eq_pos].trim();
-                            let val = part[eq_pos + 1..].trim();
-                            // Strip quotes from string values
-                            let val = val.trim_matches('\'').trim_matches('"');
-                            cv.insert(key.to_string(), val.to_string());
-                        }
+        // Process ALL config blocks in the SQL, not just the first
+        let mut search_from = 0;
+        while search_from < sql.len() {
+            // Find the earliest config( in a {{ }} block
+            let mut best: Option<(usize, usize)> = None; // (block_start, config_start)
+            for pat in ["{{ config(", "{{config(", "{{- config(", "{{-config("] {
+                if let Some(pos) = sql[search_from..].find(pat) {
+                    let abs = search_from + pos;
+                    let cs = abs + pat.len();
+                    if best.is_none() || abs < best.unwrap().0 {
+                        best = Some((abs, cs));
                     }
                 }
-                break; // Only process first config block
+            }
+            let Some((_block_start, config_start)) = best else { break };
+
+            // Find matching ) by tracking depth, handling escaped quotes
+            let mut depth = 1i32;
+            let mut i = config_start;
+            let bytes = sql.as_bytes();
+            let mut in_string: Option<u8> = None;
+            while i < bytes.len() && depth > 0 {
+                if let Some(q) = in_string {
+                    if bytes[i] == b'\\' {
+                        i += 1; // skip escaped character
+                    } else if bytes[i] == q {
+                        in_string = None;
+                    }
+                } else {
+                    match bytes[i] {
+                        b'\'' | b'"' => in_string = Some(bytes[i]),
+                        b'(' => depth += 1,
+                        b')' => depth -= 1,
+                        _ => {}
+                    }
+                }
+                if depth > 0 { i += 1; }
+            }
+            if depth == 0 {
+                let config_content = &sql[config_start..i];
+                let mut cv = config_values.lock().unwrap();
+                for part in Self::split_config_args(config_content) {
+                    if let Some(eq_pos) = part.find('=') {
+                        let key = part[..eq_pos].trim();
+                        let val = part[eq_pos + 1..].trim();
+                        let val = val.trim_matches('\'').trim_matches('"');
+                        cv.insert(key.to_string(), val.to_string());
+                    }
+                }
+                search_from = i + 1;
+            } else {
+                break;
             }
         }
     }
@@ -1243,41 +1258,37 @@ fn parse_ref_args(args: &[Value]) -> Result<(String, Option<String>), JinjaError
 /// Since config() returns "" and values are captured separately, this is safe.
 fn strip_config_blocks(sql: &str) -> String {
     let mut result = sql.to_string();
-    // Match patterns like {{ config(...) }} and {{- config(...) -}}
-    // with possible whitespace/newlines between {{ and config
     loop {
-        // Find {{ or {{- followed by config(
+        // Find `{{` then skip optional `-` and whitespace to check for `config(`
         let start = {
             let mut found = None;
-            for pat in &["{{ config(", "{{config(", "{{- config(", "{{-config(", "{{ \n", "{{ \r\n", "{{\n", "{{\r\n"] {
-                if let Some(pos) = result.find(pat) {
-                    // For multiline patterns, verify config( follows
-                    if pat.contains('\n') {
-                        let after = result[pos + pat.len()..].trim_start();
-                        if !after.starts_with("config(") {
-                            continue;
-                        }
-                    }
-                    match found {
-                        None => found = Some(pos),
-                        Some(prev) if pos < prev => found = Some(pos),
-                        _ => {}
-                    }
+            let mut search = 0;
+            while let Some(pos) = result[search..].find("{{") {
+                let abs = search + pos;
+                let mut j = abs + 2;
+                let bytes = result.as_bytes();
+                // Skip optional `-`
+                if j < bytes.len() && bytes[j] == b'-' {
+                    j += 1;
                 }
+                // Skip whitespace/newlines
+                while j < bytes.len() && matches!(bytes[j], b' ' | b'\t' | b'\n' | b'\r') {
+                    j += 1;
+                }
+                // Check for `config(`
+                if result[j..].starts_with("config(") {
+                    found = Some(abs);
+                    break;
+                }
+                search = abs + 2;
             }
             found
         };
         let Some(start) = start else { break };
 
-        // Verify this is actually a config block by finding config( after {{
-        let inner_start = result[start..].find("config(");
-        if inner_start.is_none() {
-            break;
-        }
-
-        // Find matching }} by tracking parenthesis and brace depth
+        // Find matching }} by tracking parenthesis depth
         let search_start = start + 2; // skip {{
-        let mut paren_depth = 0;
+        let mut paren_depth: i32 = 0;
         let chars: Vec<char> = result[search_start..].chars().collect();
         let mut i = 0;
         let mut found_end = None;
@@ -1295,15 +1306,10 @@ fn strip_config_blocks(sql: &str) -> String {
                     '\'' | '"' => in_string = Some(chars[i]),
                     '(' => paren_depth += 1,
                     ')' => {
-                        paren_depth -= 1;
+                        paren_depth = paren_depth.saturating_sub(1);
                     }
                     '}' if paren_depth <= 0 && i + 1 < chars.len() && chars[i + 1] == '}' => {
-                        // Found }}
                         found_end = Some(search_start + i + 2);
-                        // Check for -}} variant
-                        if i > 0 && chars[i - 1] == '-' {
-                            // already included
-                        }
                         break;
                     }
                     _ => {}
@@ -1339,17 +1345,7 @@ fn strip_list_concat(sql: &str) -> String {
     loop {
         if let Some(rel_pos) = result[last_pos..].find(" + ") {
             let pos = last_pos + rel_pos;
-            let before = &result[..pos];
-            let in_jinja = {
-                let last_open = [before.rfind("{{"), before.rfind("{%")].into_iter().flatten().max();
-                let last_close = [before.rfind("}}"), before.rfind("%}")].into_iter().flatten().max();
-                match (last_open, last_close) {
-                    (Some(o), Some(c)) => o > c,
-                    (Some(_), None) => true,
-                    _ => false,
-                }
-            };
-            if !in_jinja {
+            if !is_inside_jinja(&result, pos) {
                 last_pos = pos + 3;
                 continue;
             }
@@ -1423,38 +1419,59 @@ fn strip_list_concat(sql: &str) -> String {
 
 /// Fix unary negation of function calls: minijinja can't handle `-func(...)`.
 /// Replace `=-func(` with `=0-func(` which uses subtraction instead of negation.
+/// Check whether position `pos` in `sql` is inside a Jinja expression or block
+/// (i.e. between an unclosed `{{`/`{%` and its matching `}}`/`%}`).
+fn is_inside_jinja(sql: &str, pos: usize) -> bool {
+    let before = &sql[..pos];
+    let last_expr_open = before.rfind("{{");
+    let last_expr_close = before.rfind("}}");
+    let in_expr = match (last_expr_open, last_expr_close) {
+        (Some(o), Some(c)) => o > c,
+        (Some(_), None) => true,
+        _ => false,
+    };
+    if in_expr {
+        return true;
+    }
+    let last_block_open = before.rfind("{%");
+    let last_block_close = before.rfind("%}");
+    match (last_block_open, last_block_close) {
+        (Some(o), Some(c)) => o > c,
+        (Some(_), None) => true,
+        _ => false,
+    }
+}
+
 fn fix_unary_negation(sql: &str) -> String {
-    let mut result = sql.to_string();
-    let bytes = result.as_bytes();
+    let chars: Vec<char> = sql.chars().collect();
+    let len = chars.len();
     let mut i = 0;
-    let mut out = String::with_capacity(result.len() + 32);
-    while i < bytes.len() {
-        if bytes[i] == b'=' && i + 1 < bytes.len() {
+    let mut out = String::with_capacity(sql.len() + 32);
+    while i < len {
+        if chars[i] == '=' && i + 1 < len {
             // Skip past any whitespace after =
             let mut j = i + 1;
-            while j < bytes.len() && bytes[j] == b' ' {
+            while j < len && chars[j] == ' ' {
                 j += 1;
             }
             // Check for - followed by identifier char (function call)
-            if j < bytes.len() && bytes[j] == b'-' && j + 1 < bytes.len()
-                && (bytes[j + 1].is_ascii_alphabetic() || bytes[j + 1] == b'_')
+            if j < len && chars[j] == '-' && j + 1 < len
+                && (chars[j + 1].is_ascii_alphabetic() || chars[j + 1] == '_')
             {
                 // Make sure this '=' is not part of ==, !=, >=, <=
-                let prev = if i > 0 { bytes[i - 1] } else { b' ' };
-                if prev != b'!' && prev != b'>' && prev != b'<' && prev != b'=' {
-                    // Replace: output `=` then whitespace then `0-` instead of `-`
-                    out.push(b'=' as char);
+                let prev = if i > 0 { chars[i - 1] } else { ' ' };
+                if prev != '!' && prev != '>' && prev != '<' && prev != '=' {
+                    out.push('=');
                     for k in (i + 1)..j {
-                        out.push(bytes[k] as char);
+                        out.push(chars[k]);
                     }
                     out.push('0');
-                    // Skip past the `=`, whitespace
                     i = j; // now points at `-`
                     continue;
                 }
             }
         }
-        out.push(bytes[i] as char);
+        out.push(chars[i]);
         i += 1;
     }
     out
@@ -1582,36 +1599,11 @@ fn find_kwarg_ternary(sql: &str) -> Option<usize> {
     let len = bytes.len();
     let mut i = 0;
     while i + 4 < len {
-        // Look for " if " or "\nif " patterns
+        // Look for " if " or ")if " patterns
         if (bytes[i] == b' ' || bytes[i] == b')') && &bytes[i + 1..i + 4] == b"if " {
-            // Check this is inside a {{ }} block by looking backwards for {{
-            // and that there's a = before the value before ` if `
-            let before = &sql[..i];
-            // Check we're in a Jinja expression context
-            let in_jinja_expr = {
-                let last_open = before.rfind("{{");
-                let last_close = before.rfind("}}");
-                match (last_open, last_close) {
-                    (Some(o), Some(c)) => o > c,
-                    (Some(_), None) => true,
-                    _ => false,
-                }
-            };
-            // Also check we're in a Jinja block ({% %})
-            let in_jinja_block = if !in_jinja_expr {
-                let last_open = before.rfind("{%");
-                let last_close = before.rfind("%}");
-                match (last_open, last_close) {
-                    (Some(o), Some(c)) => o > c,
-                    (Some(_), None) => true,
-                    _ => false,
-                }
-            } else {
-                false
-            };
-            if in_jinja_expr || in_jinja_block {
+            if is_inside_jinja(sql, i) {
                 // Verify there's a kwarg context: go backwards past value to find =
-                let trimmed = before.trim_end();
+                let trimmed = sql[..i].trim_end();
                 let has_kwarg = {
                     // Check if the value before ` if ` is preceded by `=`
                     // Value can be: 'string', "string", identifier, func_call()
@@ -1735,6 +1727,13 @@ fn preprocess_dicts(sql: &str) -> String {
                 i += 1;
                 continue;
             }
+            // Only replace dicts that are inside a Jinja context
+            let byte_pos: usize = chars[..i].iter().map(|c| c.len_utf8()).sum();
+            if !is_inside_jinja(sql, byte_pos) {
+                result.push(chars[i]);
+                i += 1;
+                continue;
+            }
             // Check if this looks like a Python dict literal
             // Pattern: { followed by optional whitespace/newlines then ' or "
             // Only detect dict if preceded by = ( [ , : or whitespace (not random SQL chars)
@@ -1747,19 +1746,9 @@ fn preprocess_dicts(sql: &str) -> String {
             let in_set_tag = {
                 let before: String = chars[..i].iter().collect();
                 let last_block_open = before.rfind("{%");
-                let last_block_close = before.rfind("%}");
-                let inside_block = match (last_block_open, last_block_close) {
-                    (Some(o), Some(c)) => o > c,
-                    (Some(_), None) => true,
-                    _ => false,
-                };
-                if inside_block {
-                    if let Some(o) = last_block_open {
-                        let tag_content = &before[o..];
-                        tag_content.contains(" set ") || tag_content.contains("-set ") || tag_content.contains(" set\n")
-                    } else {
-                        false
-                    }
+                if let Some(o) = last_block_open {
+                    let tag_content = &before[o..];
+                    tag_content.contains(" set ") || tag_content.contains("-set ") || tag_content.contains(" set\n")
                 } else {
                     false
                 }
@@ -1853,7 +1842,6 @@ mod tests {
             args.get(1).cloned().ok_or_else(|| minijinja::Error::from(minijinja::ErrorKind::MissingArgument))
         });
 
-        // After fix_unary_negation, `=-var(` becomes `=0-var(` which works
         let raw = r#"{% import "ns" as ns %}{{ ns.ts_add(datepart="s", interval=-var("x", 5), tstamp="t") }}"#;
         let fixed = fix_unary_negation(raw);
         assert!(fixed.contains("interval=0-var("), "expected 0-var, got: {}", fixed);
@@ -1861,5 +1849,169 @@ mod tests {
         env.add_template("test", &fixed).unwrap();
         let result = env.get_template("test").unwrap().render(minijinja::context!{}).unwrap();
         assert!(result.contains("-5"), "expected -5 in output: {}", result);
+    }
+
+    #[test]
+    fn test_fix_unary_negation_preserves_comparisons() {
+        // Should NOT modify !=, >=, <=, ==
+        let sql = "WHERE x != -val AND y >= -1 AND z <= -2 AND a == -b";
+        let result = fix_unary_negation(sql);
+        assert_eq!(result, sql);
+    }
+
+    #[test]
+    fn test_strip_config_blocks_basic() {
+        let sql = "{{ config(materialized='table') }}\nSELECT 1";
+        let result = strip_config_blocks(sql);
+        assert_eq!(result, "SELECT 1");
+    }
+
+    #[test]
+    fn test_strip_config_blocks_with_dash() {
+        let sql = "{{- config(materialized='view') -}}\nSELECT 1";
+        let result = strip_config_blocks(sql);
+        assert_eq!(result, "SELECT 1");
+    }
+
+    #[test]
+    fn test_strip_config_blocks_multiline() {
+        let sql = "{{\n  config(\n    materialized='table',\n    schema='analytics'\n  )\n}}\nSELECT 1";
+        let result = strip_config_blocks(sql);
+        assert_eq!(result, "SELECT 1");
+    }
+
+    #[test]
+    fn test_strip_config_blocks_nested_parens() {
+        let sql = "{{ config(materialized='table', pre_hook=sql_header(is_incremental())) }}\nSELECT 1";
+        let result = strip_config_blocks(sql);
+        assert_eq!(result, "SELECT 1");
+    }
+
+    #[test]
+    fn test_strip_jinja_comments() {
+        let sql = "SELECT {# this is a comment #} 1 FROM {# another #} t";
+        let result = strip_jinja_comments(sql);
+        assert_eq!(result, "SELECT  1 FROM  t");
+    }
+
+    #[test]
+    fn test_strip_do_statements() {
+        let sql = "{% do some_list.append('x') %}\nSELECT 1\n{%- do log('msg') %}";
+        let result = strip_do_statements(sql);
+        assert_eq!(result, "SELECT 1\n");
+    }
+
+    #[test]
+    fn test_strip_multi_set() {
+        let sql = "{% set a, b, c = func() %}\nSELECT 1";
+        let result = strip_multi_set(sql);
+        assert!(result.contains("{% set a = none %}"));
+        assert!(result.contains("{% set b = none %}"));
+        assert!(result.contains("{% set c = none %}"));
+        assert!(result.contains("SELECT 1"));
+    }
+
+    #[test]
+    fn test_strip_multi_set_ignores_single() {
+        let sql = "{% set x = 1 %}\nSELECT 1";
+        let result = strip_multi_set(sql);
+        assert_eq!(result, sql);
+    }
+
+    #[test]
+    fn test_preprocess_dicts_inside_jinja() {
+        let sql = "{{ func({'key': 'val'}) }}";
+        let result = preprocess_dicts(sql);
+        assert_eq!(result, "{{ func(none) }}");
+    }
+
+    #[test]
+    fn test_preprocess_dicts_outside_jinja_unchanged() {
+        let sql = "SELECT * FROM t WHERE col = {'not_a_dict'}";
+        let result = preprocess_dicts(sql);
+        // Outside Jinja context, should be left alone
+        assert_eq!(result, sql);
+    }
+
+    #[test]
+    fn test_preprocess_dicts_preserves_set_tag() {
+        let sql = "{% set x = {'a': 1} %}";
+        let result = preprocess_dicts(sql);
+        // Inside {% set %} — should keep dict for minijinja
+        assert_eq!(result, sql);
+    }
+
+    #[test]
+    fn test_strip_list_concat() {
+        let sql = "{% set x = mylist + ['a', 'b'] %}SELECT 1";
+        let result = strip_list_concat(sql);
+        assert!(result.contains("{% set x = mylist %}"));
+    }
+
+    #[test]
+    fn test_strip_list_concat_outside_jinja() {
+        let sql = "SELECT 1 + 2 FROM t";
+        let result = strip_list_concat(sql);
+        assert_eq!(result, sql);
+    }
+
+    #[test]
+    fn test_strip_ternary_in_kwargs() {
+        let sql = "{{ func(key='val' if cond else 'alt') }}";
+        let result = strip_ternary_in_kwargs(sql);
+        assert_eq!(result, "{{ func(key='val') }}");
+    }
+
+    #[test]
+    fn test_strip_ternary_preserves_if_filter() {
+        // `if` used as a filter (selectattr) should not be stripped
+        let sql = "SELECT * FROM t WHERE x if y";
+        let result = strip_ternary_in_kwargs(sql);
+        assert_eq!(result, sql);
+    }
+
+    #[test]
+    fn test_is_inside_jinja() {
+        let sql = "SELECT {{ ref('model') }} FROM {{ source('s', 't') }}";
+        // Inside first {{ }}
+        assert!(is_inside_jinja(sql, 10));
+        // Between the two {{ }} blocks (plain SQL)
+        assert!(!is_inside_jinja(sql, 30));
+    }
+
+    #[test]
+    fn test_is_inside_jinja_block() {
+        let sql = "{% if true %}SELECT 1{% endif %}";
+        assert!(is_inside_jinja(sql, 5));
+        assert!(!is_inside_jinja(sql, 20));
+    }
+
+    #[test]
+    fn test_extract_config_from_raw_basic() {
+        let config_values = std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashMap::new()));
+        let sql = "{{ config(materialized='table', schema='analytics') }}\nSELECT 1";
+        JinjaEngine::extract_config_from_raw(sql, &config_values);
+        let cv = config_values.lock().unwrap();
+        assert_eq!(cv.get("materialized"), Some(&"table".to_string()));
+        assert_eq!(cv.get("schema"), Some(&"analytics".to_string()));
+    }
+
+    #[test]
+    fn test_extract_config_from_raw_multiple_blocks() {
+        let config_values = std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashMap::new()));
+        let sql = "{{ config(materialized='table') }}\n{{ config(schema='staging') }}\nSELECT 1";
+        JinjaEngine::extract_config_from_raw(sql, &config_values);
+        let cv = config_values.lock().unwrap();
+        assert_eq!(cv.get("materialized"), Some(&"table".to_string()));
+        assert_eq!(cv.get("schema"), Some(&"staging".to_string()));
+    }
+
+    #[test]
+    fn test_extract_config_from_raw_escaped_quotes() {
+        let config_values = std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashMap::new()));
+        let sql = r#"{{ config(materialized='table', pre_hook="SET x = 'y'") }}"#;
+        JinjaEngine::extract_config_from_raw(sql, &config_values);
+        let cv = config_values.lock().unwrap();
+        assert_eq!(cv.get("materialized"), Some(&"table".to_string()));
     }
 }

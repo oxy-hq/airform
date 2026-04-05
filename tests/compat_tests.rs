@@ -336,6 +336,35 @@ compat_test!(fivetran_amazon_ads, "fivetran/dbt_amazon_ads", None, "duckdb", 10)
 compat_test!(fivetran_apple_search_ads, "fivetran/dbt_apple_search_ads", None, "duckdb", 10);
 compat_test!(fivetran_apple_store, "fivetran/dbt_apple_store", None, "duckdb", 15);
 compat_test!(fivetran_google_play, "fivetran/dbt_google_play", None, "duckdb", 15);
+compat_test!(fivetran_linkedin, "fivetran/dbt_linkedin", None, "duckdb", 10);
+compat_test!(fivetran_linkedin_pages, "fivetran/dbt_linkedin_pages", None, "duckdb", 10);
+compat_test!(fivetran_pinterest, "fivetran/dbt_pinterest", None, "duckdb", 15);
+compat_test!(fivetran_twitter, "fivetran/dbt_twitter", None, "duckdb", 15);
+compat_test!(fivetran_twitter_organic, "fivetran/dbt_twitter_organic", None, "duckdb", 5);
+compat_test!(fivetran_youtube_analytics, "fivetran/dbt_youtube_analytics", None, "duckdb", 5);
+compat_test!(fivetran_mixpanel, "fivetran/dbt_mixpanel", None, "duckdb", 3);
+compat_test!(fivetran_facebook_pages, "fivetran/dbt_facebook_pages", None, "duckdb", 5);
+compat_test!(fivetran_fivetran_log, "fivetran/dbt_fivetran_log", None, "duckdb", 10);
+compat_test!(fivetran_amplitude, "fivetran/dbt_amplitude", None, "duckdb", 3);
+compat_test!(fivetran_workday, "fivetran/dbt_workday", None, "duckdb", 20);
+compat_test!(fivetran_zuora, "fivetran/dbt_zuora", None, "duckdb", 20);
+compat_test!(fivetran_servicenow, "fivetran/dbt_servicenow", None, "duckdb", 15);
+compat_test!(fivetran_twilio, "fivetran/dbt_twilio", None, "duckdb", 10);
+compat_test!(fivetran_dynamics_365, "fivetran/dbt_dynamics_365_crm", None, "duckdb", 5);
+compat_test!(fivetran_social_media_reporting, "fivetran/dbt_social_media_reporting", None, "duckdb", 3);
+compat_test!(fivetran_shopify_holistic, "fivetran/dbt_shopify_holistic_reporting", None, "duckdb", 3);
+compat_test!(fivetran_app_reporting, "fivetran/dbt_app_reporting", None, "duckdb", 5);
+compat_test!(fivetran_ga4_export, "fivetran/dbt_ga4_export", None, "duckdb", 3);
+compat_test!(fivetran_sap, "fivetran/dbt_sap", None, "duckdb", 50);
+compat_test!(fivetran_amazon_selling_partner, "fivetran/dbt_amazon_selling_partner", None, "duckdb", 15);
+
+// ===========================================================================
+// Snowplow packages (complex incremental + sessionization)
+// ===========================================================================
+
+compat_test!(snowplow_unified, "snowplow/dbt-snowplow-unified", None, "snowflake", 10);
+compat_test!(snowplow_mobile, "snowplow/dbt-snowplow-mobile", None, "snowflake", 10);
+compat_test!(snowplow_ecommerce, "snowplow/dbt-snowplow-ecommerce", None, "snowflake", 10);
 
 // ===========================================================================
 // Community packages
@@ -361,52 +390,30 @@ compat_test!(snowplow_web, "snowplow/dbt-snowplow-web", None, "snowflake", 10);
 // Aggregate test: run all repos and produce a compatibility report
 // ===========================================================================
 
+/// Load repo list from repos.json (single source of truth).
+fn load_repos_json() -> Vec<(String, Option<String>, String, usize)> {
+    let json_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests")
+        .join("compat")
+        .join("repos.json");
+    let content = std::fs::read_to_string(&json_path).expect("read repos.json");
+    let entries: Vec<serde_json::Value> = serde_json::from_str(&content).expect("parse repos.json");
+    entries
+        .iter()
+        .map(|e| {
+            let repo = e["repo"].as_str().unwrap().to_string();
+            let subdir = e["project_subdir"].as_str().map(|s| s.to_string());
+            let adapter = e["adapter_type"].as_str().unwrap_or("duckdb").to_string();
+            let min_models = e["expected_models"].as_u64().unwrap_or(1) as usize;
+            (repo, subdir, adapter, min_models)
+        })
+        .collect()
+}
+
 #[test]
 #[ignore = "compat: requires network, runs all repos"]
 fn compat_report_all() {
-    let repos: Vec<(&str, Option<&str>, &str, usize)> = vec![
-        ("dbt-labs/jaffle-shop", None, "duckdb", 10),
-        ("dbt-labs/mrr-playbook", None, "snowflake", 3),
-        ("dbt-labs/attribution-playbook", None, "snowflake", 1),
-        ("fivetran/dbt_shopify", None, "duckdb", 50),
-        ("fivetran/dbt_stripe", None, "duckdb", 20),
-        ("fivetran/dbt_hubspot", None, "duckdb", 50),
-        ("fivetran/dbt_zendesk", None, "duckdb", 30),
-        ("fivetran/dbt_github", None, "duckdb", 15),
-        ("fivetran/dbt_jira", None, "duckdb", 20),
-        ("fivetran/dbt_salesforce", None, "duckdb", 10),
-        ("fivetran/dbt_netsuite", None, "duckdb", 30),
-        ("fivetran/dbt_quickbooks", None, "duckdb", 40),
-        ("fivetran/dbt_google_ads", None, "duckdb", 15),
-        ("fivetran/dbt_facebook_ads", None, "duckdb", 15),
-        ("fivetran/dbt_ad_reporting", None, "duckdb", 5),
-        ("fivetran/dbt_intercom", None, "duckdb", 15),
-        ("fivetran/dbt_marketo", None, "duckdb", 15),
-        ("fivetran/dbt_mailchimp", None, "duckdb", 15),
-        ("fivetran/dbt_asana", None, "duckdb", 15),
-        ("fivetran/dbt_greenhouse", None, "duckdb", 30),
-        ("fivetran/dbt_lever", None, "duckdb", 20),
-        ("fivetran/dbt_pendo", None, "duckdb", 20),
-        ("fivetran/dbt_iterable", None, "duckdb", 15),
-        ("fivetran/dbt_klaviyo", None, "duckdb", 5),
-        ("fivetran/dbt_recharge", None, "duckdb", 15),
-        ("fivetran/dbt_recurly", None, "duckdb", 15),
-        ("fivetran/dbt_xero", None, "duckdb", 10),
-        ("fivetran/dbt_sage_intacct", None, "duckdb", 10),
-        ("fivetran/dbt_pardot", None, "duckdb", 10),
-        ("fivetran/dbt_qualtrics", None, "duckdb", 15),
-        ("fivetran/dbt_instagram_business", None, "duckdb", 3),
-        ("fivetran/dbt_snapchat_ads", None, "duckdb", 10),
-        ("fivetran/dbt_microsoft_ads", None, "duckdb", 10),
-        ("fivetran/dbt_tiktok_ads", None, "duckdb", 8),
-        ("fivetran/dbt_reddit_ads", None, "duckdb", 10),
-        ("fivetran/dbt_amazon_ads", None, "duckdb", 10),
-        ("fivetran/dbt_apple_search_ads", None, "duckdb", 10),
-        ("fivetran/dbt_apple_store", None, "duckdb", 15),
-        ("fivetran/dbt_google_play", None, "duckdb", 15),
-        ("brooklyn-data/dbt_artifacts", Some("integration_test_project"), "duckdb", 3),
-        ("snowplow/dbt-snowplow-web", None, "snowflake", 10),
-    ];
+    let repos = load_repos_json();
 
     let mut total_models = 0;
     let mut total_compiled = 0;
@@ -420,7 +427,7 @@ fn compat_report_all() {
 
     for (org_repo, subdir, adapter, min_models) in &repos {
         let repo_name = org_repo.split('/').last().unwrap();
-        let r = test_repo_full(org_repo, *subdir, adapter, *min_models);
+        let r = test_repo_full(org_repo, subdir.as_deref(), adapter, *min_models);
 
         println!(
             "{:<30} {:>6} {:>8} {:>8} {:>7} {:>7}",

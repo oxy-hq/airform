@@ -115,14 +115,14 @@ impl Compiler {
             ctx.is_incremental = true;
         }
 
-        // Set `this` relation to the model's resolved relation name
+        // Set `this` relation to the model's resolved relation name (quoted for safety)
         let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
         let this_name = model.config.alias.as_deref().unwrap_or(&model.name);
         ctx.this_relation = Some(if is_local {
             this_name.to_string()
         } else {
             let schema = model.config.schema.as_deref().unwrap_or(&ctx_template.target_schema);
-            format!("{schema}.{this_name}")
+            format!("\"{schema}\".\"{this_name}\"")
         });
 
         // Resolve all ref() calls to relation names

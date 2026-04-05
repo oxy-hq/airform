@@ -4,6 +4,12 @@ use datafusion::prelude::*;
 use std::path::Path;
 use std::time::{Duration, Instant};
 
+/// Quote a SQL identifier to prevent injection via model/column names.
+/// Doubles any internal double-quotes, then wraps in double-quotes.
+fn quote_ident(ident: &str) -> String {
+    format!("\"{}\"", ident.replace('"', "\"\""))
+}
+
 /// Executes compiled SQL against a DataFusion context (local execution).
 pub struct Executor {
     ctx: SessionContext,
@@ -83,7 +89,7 @@ impl Executor {
             .await?;
 
         // Count rows
-        let df = self.ctx.sql(&format!("SELECT count(*) as cnt FROM {table_name}")).await?;
+        let df = self.ctx.sql(&format!("SELECT count(*) as cnt FROM {}", quote_ident(table_name))).await?;
         let batches = df.collect().await?;
         let row_count = if let Some(batch) = batches.first() {
             if batch.num_rows() > 0 {
@@ -348,8 +354,11 @@ impl Executor {
                                 )?;
 
                                 // Filter old rows: keep only those whose key is NOT in new data
+                                let qk = quote_ident(key);
+                                let qt = quote_ident(table_name);
+                                let qtemp = quote_ident(&temp_name);
                                 let filter_sql = format!(
-                                    "SELECT * FROM {table_name} WHERE {key} NOT IN (SELECT {key} FROM {temp_name})"
+                                    "SELECT * FROM {qt} WHERE {qk} NOT IN (SELECT {qk} FROM {qtemp})"
                                 );
                                 let filtered_df = self.ctx.sql(&filter_sql).await?;
                                 let filtered_old = filtered_df.collect().await?;
@@ -427,6 +436,8 @@ impl Executor {
         let unique_key = unique_key.ok_or_else(|| {
             anyhow::anyhow!("Snapshot '{name}' requires a unique_key config")
         })?;
+        let quk = quote_ident(unique_key);
+        let qtable = quote_ident(table_name);
 
         // Step 1: Execute the snapshot query and register as temp table
         let temp_name = format!("__snap_new_{table_name}");
@@ -461,13 +472,14 @@ impl Executor {
                 .collect();
             let col_list = col_names.join(", ");
 
+            let qtemp = quote_ident(&temp_name);
             let init_sql = format!(
                 "SELECT {col_list}, \
                  CURRENT_TIMESTAMP AS dbt_valid_from, \
                  CAST(NULL AS TIMESTAMP) AS dbt_valid_to, \
                  CURRENT_TIMESTAMP AS dbt_updated_at, \
-                 MD5(CAST({unique_key} AS VARCHAR) || CAST(CURRENT_TIMESTAMP AS VARCHAR)) AS dbt_scd_id \
-                 FROM {temp_name}"
+                 MD5(CAST({quk} AS VARCHAR) || CAST(CURRENT_TIMESTAMP AS VARCHAR)) AS dbt_scd_id \
+                 FROM {qtemp}"
             );
 
             let df = self.ctx.sql(&init_sql).await?;
@@ -476,6 +488,7 @@ impl Executor {
             batches
         } else {
             // Subsequent run: SCD Type 2 merge logic
+            let qtemp = quote_ident(&temp_name);
             let change_condition = match strategy {
                 "timestamp" => {
                     let updated_at_col = updated_at.ok_or_else(|| {
@@ -483,7 +496,8 @@ impl Executor {
                             "Snapshot '{name}' with timestamp strategy requires updated_at config"
                         )
                     })?;
-                    format!("old_snap.{updated_at_col} != new_snap.{updated_at_col}")
+                    let qua = quote_ident(updated_at_col);
+                    format!("old_snap.{qua} != new_snap.{qua}")
                 }
                 "check" => {
                     let cols = check_cols.ok_or_else(|| {
@@ -495,7 +509,7 @@ impl Executor {
                         anyhow::bail!("Snapshot '{name}': check_cols must not be empty");
                     }
                     cols.iter()
-                        .map(|c| format!("old_snap.{c} != new_snap.{c}"))
+                        .map(|c| { let qc = quote_ident(c); format!("old_snap.{qc} != new_snap.{qc}") })
                         .collect::<Vec<_>>()
                         .join(" OR ")
                 }
@@ -517,21 +531,21 @@ impl Executor {
 
             let old_source_cols = source_cols
                 .iter()
-                .map(|c| format!("old_snap.{c}"))
+                .map(|c| { let qc = quote_ident(c); format!("old_snap.{qc}") })
                 .collect::<Vec<_>>()
                 .join(", ");
             let new_source_cols = source_cols
                 .iter()
-                .map(|c| format!("new_snap.{c}"))
+                .map(|c| { let qc = quote_ident(c); format!("new_snap.{qc}") })
                 .collect::<Vec<_>>()
                 .join(", ");
 
             // Query 1: Unchanged active records + already-expired records
             let unchanged_sql = format!(
-                "SELECT old_snap.* FROM {table_name} old_snap \
-                 LEFT JOIN {temp_name} new_snap ON old_snap.{unique_key} = new_snap.{unique_key} \
+                "SELECT old_snap.* FROM {qtable} old_snap \
+                 LEFT JOIN {qtemp} new_snap ON old_snap.{quk} = new_snap.{quk} \
                  WHERE old_snap.dbt_valid_to IS NOT NULL \
-                 OR new_snap.{unique_key} IS NULL \
+                 OR new_snap.{quk} IS NULL \
                  OR (old_snap.dbt_valid_to IS NULL AND NOT ({change_condition}))"
             );
 
@@ -542,8 +556,8 @@ impl Executor {
                  CURRENT_TIMESTAMP AS dbt_valid_to, \
                  CURRENT_TIMESTAMP AS dbt_updated_at, \
                  old_snap.dbt_scd_id \
-                 FROM {table_name} old_snap \
-                 JOIN {temp_name} new_snap ON old_snap.{unique_key} = new_snap.{unique_key} \
+                 FROM {qtable} old_snap \
+                 JOIN {qtemp} new_snap ON old_snap.{quk} = new_snap.{quk} \
                  WHERE old_snap.dbt_valid_to IS NULL AND ({change_condition})"
             );
 
@@ -553,10 +567,10 @@ impl Executor {
                  CURRENT_TIMESTAMP AS dbt_valid_from, \
                  CAST(NULL AS TIMESTAMP) AS dbt_valid_to, \
                  CURRENT_TIMESTAMP AS dbt_updated_at, \
-                 MD5(CAST(new_snap.{unique_key} AS VARCHAR) || CAST(CURRENT_TIMESTAMP AS VARCHAR)) AS dbt_scd_id \
-                 FROM {temp_name} new_snap \
-                 LEFT JOIN {table_name} old_snap ON old_snap.{unique_key} = new_snap.{unique_key} AND old_snap.dbt_valid_to IS NULL \
-                 WHERE old_snap.{unique_key} IS NULL OR ({change_condition})"
+                 MD5(CAST(new_snap.{quk} AS VARCHAR) || CAST(CURRENT_TIMESTAMP AS VARCHAR)) AS dbt_scd_id \
+                 FROM {qtemp} new_snap \
+                 LEFT JOIN {qtable} old_snap ON old_snap.{quk} = new_snap.{quk} AND old_snap.dbt_valid_to IS NULL \
+                 WHERE old_snap.{quk} IS NULL OR ({change_condition})"
             );
 
             let merge_sql = format!(
@@ -609,25 +623,27 @@ impl Executor {
                 for test_def in &col.tests {
                     let (test_name, test_sql) = match test_def {
                         TestDef::Simple(name) => {
+                            let qm = quote_ident(model_name);
+                            let qc = quote_ident(&col.name);
                             match name.as_str() {
                                 "not_null" => (
                                     format!("not_null_{model_name}_{}", col.name),
                                     format!(
-                                        "SELECT count(*) as failures FROM {model_name} WHERE {col_name} IS NULL",
-                                        col_name = col.name
+                                        "SELECT count(*) as failures FROM {qm} WHERE {qc} IS NULL"
                                     ),
                                 ),
                                 "unique" => (
                                     format!("unique_{model_name}_{}", col.name),
                                     format!(
-                                        "SELECT {col_name}, count(*) as n FROM {model_name} GROUP BY {col_name} HAVING count(*) > 1",
-                                        col_name = col.name
+                                        "SELECT {qc}, count(*) as n FROM {qm} GROUP BY {qc} HAVING count(*) > 1"
                                     ),
                                 ),
                                 _ => continue,
                             }
                         }
                         TestDef::Complex(map) => {
+                            let qm = quote_ident(model_name);
+                            let qc = quote_ident(&col.name);
                             if let Some(values_val) = map.get("accepted_values") {
                                 let values = extract_accepted_values(values_val);
                                 if values.is_empty() {
@@ -635,14 +651,13 @@ impl Executor {
                                 }
                                 let values_list = values
                                     .iter()
-                                    .map(|v| format!("'{v}'"))
+                                    .map(|v| format!("'{}'", v.replace('\'', "''")))
                                     .collect::<Vec<_>>()
                                     .join(", ");
                                 (
                                     format!("accepted_values_{model_name}_{}", col.name),
                                     format!(
-                                        "SELECT {col_name} FROM {model_name} WHERE {col_name} NOT IN ({values_list})",
-                                        col_name = col.name
+                                        "SELECT {qc} FROM {qm} WHERE {qc} NOT IN ({values_list})"
                                     ),
                                 )
                             } else if let Some(rel_val) = map.get("relationships") {
@@ -650,11 +665,12 @@ impl Executor {
                                 if to_model.is_empty() || field.is_empty() {
                                     continue;
                                 }
+                                let qt = quote_ident(&to_model);
+                                let qf = quote_ident(&field);
                                 (
                                     format!("relationships_{model_name}_{}", col.name),
                                     format!(
-                                        "SELECT {col_name} FROM {model_name} WHERE {col_name} IS NOT NULL AND {col_name} NOT IN (SELECT {field} FROM {to_model})",
-                                        col_name = col.name,
+                                        "SELECT {qc} FROM {qm} WHERE {qc} IS NOT NULL AND {qc} NOT IN (SELECT {qf} FROM {qt})"
                                     ),
                                 )
                             } else {

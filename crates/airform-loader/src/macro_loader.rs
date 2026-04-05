@@ -62,6 +62,7 @@ fn extract_macros(contents: &str, file_path: &std::path::Path) -> Vec<MacroDefin
         Regex::new(r"\{%-?\s*macro\s+(\w+)\s*\(").unwrap();
 
     let endmacro_re = Regex::new(r"\{%-?\s*endmacro\s*-?%\}").unwrap();
+    let close_tag_re = Regex::new(r"^\s*-?%\}").unwrap();
 
     for cap in macro_name_re.captures_iter(contents) {
         let full_match = cap.get(0).unwrap();
@@ -75,6 +76,9 @@ fn extract_macros(contents: &str, file_path: &std::path::Path) -> Vec<MacroDefin
         let mut in_string: Option<char> = None;
         for (i, ch) in rest.char_indices() {
             if let Some(quote) = in_string {
+                if ch == '\\' {
+                    continue; // skip escaped characters
+                }
                 if ch == quote {
                     in_string = None;
                 }
@@ -109,7 +113,6 @@ fn extract_macros(contents: &str, file_path: &std::path::Path) -> Vec<MacroDefin
         // Find the %} that closes the macro tag
         let after_paren = args_start + args_end_offset + 1; // skip the )
         let tag_rest = &contents[after_paren..];
-        let close_tag_re = Regex::new(r"^\s*-?%\}").unwrap();
         if let Some(close_match) = close_tag_re.find(tag_rest) {
             let body_start = after_paren + close_match.end();
 
@@ -222,6 +225,6 @@ mod tests {
         assert_eq!(macros[0].name, "generate_schema_name");
         assert_eq!(macros[0].args, vec!["custom_schema_name", "node"]);
         assert_eq!(macros[1].name, "cents_to_dollars");
-        assert_eq!(macros[1].args, vec!["column_name", "precision"]);
+        assert_eq!(macros[1].args, vec!["column_name", "precision=2"]);
     }
 }

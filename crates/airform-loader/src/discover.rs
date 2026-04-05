@@ -72,8 +72,12 @@ pub fn discover_models(project: &DbtProject) -> anyhow::Result<Vec<ModelFile>> {
         }
     }
 
+    // Sort files by path for deterministic dedup ordering across platforms.
+    files.sort_by(|a, b| a.relative_path.cmp(&b.relative_path));
+
     // Deduplicate models with the same name: prefer `default/` variant over
     // target-specific variants (bigquery/, snowflake/, databricks/, spark/).
+    let total_before_dedup = files.len();
     let mut seen: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
     let mut deduped: Vec<ModelFile> = Vec::with_capacity(files.len());
     for file in files {
@@ -101,7 +105,7 @@ pub fn discover_models(project: &DbtProject) -> anyhow::Result<Vec<ModelFile>> {
         }
     }
 
-    tracing::info!("Discovered {} model files ({} after dedup)", seen.len(), deduped.len());
+    tracing::info!("Discovered {} model files ({} after dedup)", total_before_dedup, deduped.len());
     Ok(deduped)
 }
 
