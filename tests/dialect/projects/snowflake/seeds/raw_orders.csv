@@ -1,0 +1,6 @@
+id,user_id,amount,status
+101,1,49.99,completed
+102,2,25.00,completed
+103,4,99.99,completed
+104,5,15.00,pending
+105,1,75.00,returned

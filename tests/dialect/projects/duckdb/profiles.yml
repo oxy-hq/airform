@@ -1,0 +1,7 @@
+dialect_test:
+  target: dev
+  outputs:
+    dev:
+      type: datafusion
+      schema: public
+      database: main

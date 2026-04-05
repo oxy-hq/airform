@@ -2,7 +2,11 @@
 /dbt-core
 **/target/
 .airform_cache.json
+.airform_analysis_cache.json
 **/.cache/
 **/.sqlmesh/
 *.duckdb
 *.duckdb.wal
+.env
+.test-ports.env
+.claude/

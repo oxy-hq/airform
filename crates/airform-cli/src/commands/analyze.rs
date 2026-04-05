@@ -41,8 +41,25 @@ pub async fn run(
     let compiler = airform_compiler::Compiler::new(engine);
     let compile_result = compiler.compile(&mut manifest, &graph, &ctx)?;
 
-    // Analyze
-    let analysis = airform_analyzer::Analyzer::analyze(&manifest, &graph).await?;
+    // Load incremental analysis cache
+    let target_dir = project_dir.join(&load_state.project.target_path);
+    let mut cache = airform_analyzer::AnalysisCache::load(&target_dir);
+
+    // Analyze (with project_dir for catalog.yml and cache for incremental analysis)
+    let adapter_type = load_state.target.as_ref().map(|t| t.adapter_type.as_str());
+    let analysis = airform_analyzer::Analyzer::analyze(
+        &manifest,
+        &graph,
+        Some(project_dir),
+        Some(&mut cache),
+        adapter_type,
+    )
+    .await?;
+
+    // Save updated cache
+    if let Err(e) = cache.save(&target_dir) {
+        tracing::debug!("Failed to save analysis cache: {e}");
+    }
 
     let duration = start.elapsed();
 
@@ -54,8 +71,15 @@ pub async fn run(
     println!(
         "{}",
         format!(
-            "Analysis complete: {} models compiled, {} schemas resolved, {} diagnostics",
-            compile_result.compiled_count, schema_count, diag_count
+            "Analysis complete: {} models compiled, {} schemas resolved, {} diagnostics{}",
+            compile_result.compiled_count,
+            schema_count,
+            diag_count,
+            if analysis.cached_count > 0 {
+                format!(" ({} from cache)", analysis.cached_count)
+            } else {
+                String::new()
+            }
         )
         .green()
         .bold()
@@ -75,6 +99,15 @@ pub async fn run(
                     tracing::debug!("Schema unavailable: {node}");
                 }
             }
+        }
+    }
+
+    // Print contract violations
+    if !analysis.contract_violations.is_empty() {
+        println!();
+        println!("{}", "Contract violations:".red().bold());
+        for v in &analysis.contract_violations {
+            println!("  {} {}", "ERROR".red(), v);
         }
     }
 
@@ -142,6 +175,13 @@ pub async fn run(
         } else {
             print_lineage_table(&all_edges);
         }
+    }
+
+    if !analysis.contract_violations.is_empty() {
+        return Err(anyhow::anyhow!(
+            "{} contract violation(s) found",
+            analysis.contract_violations.len()
+        ));
     }
 
     Ok(())

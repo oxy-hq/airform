@@ -47,6 +47,7 @@ tokio = { version = "1", features = ["full"] }
 minijinja = { version = "2", features = ["loader"] }
 datafusion = "46"
 regex = "1"
+sqlparser = "0.54"
 petgraph = "0.7"
 globset = "0.4"
 walkdir = "2"
@@ -55,6 +56,8 @@ tabled = "0.18"
 chrono = "0.4"
 colored = "3"
 criterion = { version = "0.5", features = ["html_reports"] }
+ureq = { version = "2", features = ["json"] }
+dotenvy = "0.15"
 
 [dev-dependencies]
 airform-core = { workspace = true }
@@ -68,6 +71,9 @@ airform-analyzer = { workspace = true }
 criterion = { workspace = true }
 anyhow = { workspace = true }
 tokio = { workspace = true }
+serde_json = { workspace = true }
+ureq = { workspace = true }
+dotenvy = { workspace = true }
 
 [[bench]]
 name = "benchmark"

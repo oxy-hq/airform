@@ -7,7 +7,7 @@ pub mod macro_loader;
 pub use project::load_project;
 pub use profile::load_profile;
 pub use schema::load_schema_files;
-pub use discover::{discover_models, discover_seeds};
+pub use discover::{discover_models, discover_seeds, discover_snapshots};
 pub use macro_loader::{discover_macros, MacroDefinition};
 
 use airform_core::{DbtProject, DbtProfile, DbtTarget};
@@ -21,6 +21,7 @@ pub struct LoadState {
     pub target: Option<DbtTarget>,
     pub model_files: Vec<discover::ModelFile>,
     pub seed_files: Vec<discover::SeedFile>,
+    pub snapshot_files: Vec<discover::SnapshotFile>,
     pub schema_files: Vec<schema::SchemaFile>,
     pub macro_definitions: Vec<MacroDefinition>,
 }
@@ -74,6 +75,7 @@ pub fn load_with_target(project_dir: &Path, target_override: Option<&str>) -> an
 
     let model_files = discover_models(&project)?;
     let seed_files = discover_seeds(&project)?;
+    let snapshot_files = discover_snapshots(&project)?;
     let schema_files = load_schema_files(&project)?;
     let macro_definitions = discover_macros(&project)?;
 
@@ -83,6 +85,7 @@ pub fn load_with_target(project_dir: &Path, target_override: Option<&str>) -> an
         target,
         model_files,
         seed_files,
+        snapshot_files,
         schema_files,
         macro_definitions,
     })

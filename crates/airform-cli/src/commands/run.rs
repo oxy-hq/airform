@@ -12,6 +12,7 @@ pub async fn run(
     query: Option<&str>,
     format: &str,
     target_override: Option<&str>,
+    full_refresh: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
     println!("{}", "Running models...".cyan());
@@ -26,6 +27,7 @@ pub async fn run(
         ctx.target_database = target.database.clone().unwrap_or_else(|| "main".to_string());
         ctx.target_type = target.adapter_type.clone();
     }
+    ctx.full_refresh = full_refresh;
 
     // Parse with custom macros
     let mut engine = airform_jinja::JinjaEngine::new();

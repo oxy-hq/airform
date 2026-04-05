@@ -1,0 +1,7 @@
+name: dialect_test_sqlite
+version: '1.0.0'
+config-version: 2
+profile: dialect_test
+
+model-paths: ["models"]
+seed-paths: ["seeds"]

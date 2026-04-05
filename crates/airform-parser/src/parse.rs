@@ -97,6 +97,7 @@ pub fn parse_models(
             original_file_path: model_file.path.clone(),
             raw_sql,
             compiled_sql: None,
+            compiled_sql_full_refresh: None,
             config,
             depends_on,
             description,

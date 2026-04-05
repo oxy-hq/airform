@@ -87,7 +87,7 @@ pub fn extract_lineage_from_plan(plan: &LogicalPlan, model_name: &str) -> Vec<Co
     let projection = find_top_projection(plan);
 
     if let Some(proj) = projection {
-        for (_i, expr) in proj.expr.iter().enumerate() {
+        for (_i, expr) in proj.exprs().iter().enumerate() {
             // Get the output column name: use alias if present, otherwise
             // the bare column name (strip any table qualifier)
             let output_col = match expr {
@@ -121,7 +121,7 @@ pub fn extract_lineage_from_plan(plan: &LogicalPlan, model_name: &str) -> Vec<Co
         }
 
         // Also extract scan dependencies from filter/join conditions
-        extract_scan_deps(&proj.input, model_name, &table_names, &alias_map, &mut edges);
+        extract_scan_deps(proj.input(), model_name, &table_names, &alias_map, &mut edges);
     } else {
         // Fallback: map output fields to source tables
         let output_schema = plan.schema();
@@ -146,8 +146,10 @@ pub fn extract_lineage_from_plan(plan: &LogicalPlan, model_name: &str) -> Vec<Co
 }
 
 /// Find the top-level Projection in a plan, unwrapping SubqueryAlias, Sort, Limit, etc.
-/// Skips wildcard-only projections (`SELECT *`) to find the real projection underneath.
-fn find_top_projection(plan: &LogicalPlan) -> Option<&Projection> {
+/// When encountering a wildcard-only projection (`SELECT *`), tries to find a real
+/// projection underneath. If none exists, expands the wildcard using the input plan's
+/// schema fields to create synthetic Column expressions for lineage tracking.
+fn find_top_projection(plan: &LogicalPlan) -> Option<WildcardExpandedProjection<'_>> {
     match plan {
         LogicalPlan::Projection(proj) => {
             // If projection is just SELECT *, look deeper for the real projection
@@ -155,9 +157,27 @@ fn find_top_projection(plan: &LogicalPlan) -> Option<&Projection> {
             let is_wildcard_only = proj.expr.len() == 1
                 && matches!(proj.expr[0], Expr::Wildcard { .. });
             if is_wildcard_only {
-                find_top_projection(&proj.input)
+                // Try to find a real projection underneath
+                if let Some(inner) = find_top_projection(&proj.input) {
+                    return Some(inner);
+                }
+                // No inner projection found — expand wildcard using input schema
+                let expanded_exprs: Vec<Expr> = proj
+                    .input
+                    .schema()
+                    .fields()
+                    .iter()
+                    .map(|f| Expr::Column(datafusion::common::Column::new_unqualified(f.name())))
+                    .collect();
+                if !expanded_exprs.is_empty() {
+                    return Some(WildcardExpandedProjection::Expanded {
+                        exprs: expanded_exprs,
+                        input: &proj.input,
+                    });
+                }
+                None
             } else {
-                Some(proj)
+                Some(WildcardExpandedProjection::Real(proj))
             }
         }
         LogicalPlan::SubqueryAlias(alias) => find_top_projection(&alias.input),
@@ -165,6 +185,33 @@ fn find_top_projection(plan: &LogicalPlan) -> Option<&Projection> {
         LogicalPlan::Limit(limit) => find_top_projection(&limit.input),
         LogicalPlan::Distinct(distinct) => find_top_projection(distinct.input()),
         _ => None,
+    }
+}
+
+/// Represents either a real Projection node or an expanded wildcard.
+enum WildcardExpandedProjection<'a> {
+    /// A real Projection node from the plan
+    Real(&'a Projection),
+    /// Expanded wildcard: synthetic Column exprs derived from the input schema
+    Expanded {
+        exprs: Vec<Expr>,
+        input: &'a LogicalPlan,
+    },
+}
+
+impl<'a> WildcardExpandedProjection<'a> {
+    fn exprs(&self) -> &[Expr] {
+        match self {
+            WildcardExpandedProjection::Real(proj) => &proj.expr,
+            WildcardExpandedProjection::Expanded { exprs, .. } => exprs,
+        }
+    }
+
+    fn input(&self) -> &LogicalPlan {
+        match self {
+            WildcardExpandedProjection::Real(proj) => &proj.input,
+            WildcardExpandedProjection::Expanded { input, .. } => input,
+        }
     }
 }
 

@@ -35,25 +35,59 @@ impl Compiler {
                 continue;
             };
 
-            // Only compile models for now
-            if let ManifestNode::Model(model) = node {
-                let model = model.clone();
-                match self.compile_model(&model, manifest, ctx_template) {
-                    Ok(compiled_sql) => {
-                        if let Some(ManifestNode::Model(m)) =
-                            manifest.nodes.get_mut(unique_id)
-                        {
-                            m.compiled_sql = Some(compiled_sql);
+            match node {
+                ManifestNode::Model(model) => {
+                    let model = model.clone();
+                    match self.compile_model(&model, manifest, ctx_template) {
+                        Ok(compiled_sql) => {
+                            // For incremental models, also compile a full-refresh variant
+                            // (with is_incremental()=false) for first-run when table doesn't exist
+                            let full_refresh_sql = if model.config.materialized == Materialization::Incremental
+                                && !ctx_template.full_refresh
+                            {
+                                let mut fr_ctx = ctx_template.clone();
+                                fr_ctx.full_refresh = true;
+                                self.compile_model(&model, manifest, &fr_ctx).ok()
+                            } else {
+                                None
+                            };
+
+                            if let Some(ManifestNode::Model(m)) =
+                                manifest.nodes.get_mut(unique_id)
+                            {
+                                m.compiled_sql = Some(compiled_sql);
+                                m.compiled_sql_full_refresh = full_refresh_sql;
+                            }
+                            compiled_count += 1;
                         }
-                        compiled_count += 1;
-                    }
-                    Err(e) => {
-                        errors.push(CompileError {
-                            node_id: unique_id.clone(),
-                            message: e.to_string(),
-                        });
+                        Err(e) => {
+                            errors.push(CompileError {
+                                node_id: unique_id.clone(),
+                                message: format!("{:#}", e),
+                            });
+                        }
                     }
                 }
+                ManifestNode::Snapshot(snapshot) => {
+                    let snapshot = snapshot.clone();
+                    match self.compile_snapshot(&snapshot, manifest, ctx_template) {
+                        Ok(compiled_sql) => {
+                            if let Some(ManifestNode::Snapshot(s)) =
+                                manifest.nodes.get_mut(unique_id)
+                            {
+                                s.compiled_sql = Some(compiled_sql);
+                            }
+                            compiled_count += 1;
+                        }
+                        Err(e) => {
+                            errors.push(CompileError {
+                                node_id: unique_id.clone(),
+                                message: e.to_string(),
+                            });
+                        }
+                    }
+                }
+                _ => {}
             }
         }
 
@@ -74,6 +108,22 @@ impl Compiler {
         // Build context with resolved refs and sources
         let mut ctx = ctx_template.clone();
         ctx.execute = true;
+
+        // Set incremental context: is_incremental is true when model is incremental
+        // and we're not doing a full refresh (matches dbt behavior at compile time)
+        if model.config.materialized == Materialization::Incremental && !ctx.full_refresh {
+            ctx.is_incremental = true;
+        }
+
+        // Set `this` relation to the model's resolved relation name (quoted for safety)
+        let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
+        let this_name = model.config.alias.as_deref().unwrap_or(&model.name);
+        ctx.this_relation = Some(if is_local {
+            this_name.to_string()
+        } else {
+            let schema = model.config.schema.as_deref().unwrap_or(&ctx_template.target_schema);
+            format!("\"{schema}\".\"{this_name}\"")
+        });
 
         // Resolve all ref() calls to relation names
         for ref_call in &model.depends_on.refs {
@@ -115,6 +165,53 @@ impl Compiler {
         let compiled = self.inject_ephemeral_ctes(&rendered, model, manifest, ctx_template)?;
 
         Ok(compiled)
+    }
+
+    /// Compile a single snapshot: render Jinja with resolved refs/sources.
+    fn compile_snapshot(
+        &self,
+        snapshot: &airform_core::SnapshotNode,
+        manifest: &Manifest,
+        ctx_template: &DbtContext,
+    ) -> anyhow::Result<String> {
+        let mut ctx = ctx_template.clone();
+        ctx.execute = true;
+
+        // Resolve all ref() calls to relation names
+        for ref_call in &snapshot.depends_on.refs {
+            if let Some(target) = manifest.resolve_ref(
+                &ref_call.model_name,
+                ref_call.package.as_deref(),
+            ) {
+                let relation = self.node_relation_name(target, ctx_template);
+                ctx.ref_resolutions
+                    .insert(ref_call.model_name.clone(), relation);
+            }
+        }
+
+        // Resolve all source() calls
+        let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
+        for source_call in &snapshot.depends_on.sources {
+            if let Some(source) = manifest.resolve_source(
+                &source_call.source_name,
+                &source_call.table_name,
+            ) {
+                let relation = if is_local {
+                    source.table_identifier().to_string()
+                } else {
+                    source.relation_name()
+                };
+                ctx.source_resolutions.insert(
+                    (source_call.source_name.clone(), source_call.table_name.clone()),
+                    relation,
+                );
+            }
+        }
+
+        // Render Jinja
+        let rendered = self.engine.render(&snapshot.raw_sql, &ctx)?;
+
+        Ok(rendered)
     }
 
     /// For ephemeral dependencies, wrap them as CTEs prepended to the SQL.
