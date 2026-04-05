@@ -1289,33 +1289,36 @@ fn strip_config_blocks(sql: &str) -> String {
         // Find matching }} by tracking parenthesis depth
         let search_start = start + 2; // skip {{
         let mut paren_depth: i32 = 0;
-        let chars: Vec<char> = result[search_start..].chars().collect();
-        let mut i = 0;
+        let rest = &result[search_start..];
         let mut found_end = None;
         let mut in_string: Option<char> = None;
+        let mut char_iter = rest.char_indices().peekable();
 
-        while i < chars.len() {
+        while let Some((_byte_off, ch)) = char_iter.next() {
             if let Some(quote) = in_string {
-                if chars[i] == '\\' {
-                    i += 1;
-                } else if chars[i] == quote {
+                if ch == '\\' {
+                    char_iter.next(); // skip escaped char
+                } else if ch == quote {
                     in_string = None;
                 }
             } else {
-                match chars[i] {
-                    '\'' | '"' => in_string = Some(chars[i]),
+                match ch {
+                    '\'' | '"' => in_string = Some(ch),
                     '(' => paren_depth += 1,
                     ')' => {
                         paren_depth = paren_depth.saturating_sub(1);
                     }
-                    '}' if paren_depth <= 0 && i + 1 < chars.len() && chars[i + 1] == '}' => {
-                        found_end = Some(search_start + i + 2);
-                        break;
+                    '}' if paren_depth <= 0 => {
+                        if let Some(&(next_off, next_ch)) = char_iter.peek() {
+                            if next_ch == '}' {
+                                found_end = Some(search_start + next_off + next_ch.len_utf8());
+                                break;
+                            }
+                        }
                     }
                     _ => {}
                 }
             }
-            i += 1;
         }
 
         if let Some(end) = found_end {
@@ -1383,26 +1386,29 @@ fn strip_list_concat(sql: &str) -> String {
                     j += 1;
                 }
                 if j < after_bytes.len() && after_bytes[j] == b'(' {
-                    // ` + func(...)` — strip function calls
-                    let mut depth = 1;
-                    j += 1;
-                    while j < after_bytes.len() && depth > 0 {
-                        match after_bytes[j] {
-                            b'(' => depth += 1,
-                            b')' => depth -= 1,
-                            _ => {}
-                        }
+                    // ` + func(...)` — only strip in list concat context (left side ends with ] or is a known list pattern)
+                    let before_trimmed = result[..pos].trim_end();
+                    if before_trimmed.ends_with(']') {
+                        let mut depth = 1;
                         j += 1;
-                    }
-                    if depth == 0 {
-                        let end = pos + 3 + j;
-                        result.replace_range(pos..end, "");
-                        continue;
+                        while j < after_bytes.len() && depth > 0 {
+                            match after_bytes[j] {
+                                b'(' => depth += 1,
+                                b')' => depth -= 1,
+                                _ => {}
+                            }
+                            j += 1;
+                        }
+                        if depth == 0 {
+                            let end = pos + 3 + j;
+                            result.replace_range(pos..end, "");
+                            continue;
+                        }
                     }
                 } else {
                     // ` + bare_variable` — strip if preceded by ] (list concat context)
                     let before_trimmed = result[..pos].trim_end();
-                    if before_trimmed.ends_with(']') || before_trimmed.ends_with(')') {
+                    if before_trimmed.ends_with(']') {
                         let end = pos + 3 + j;
                         result.replace_range(pos..end, "");
                         continue;
@@ -1553,8 +1559,33 @@ fn strip_do_statements(sql: &str) -> String {
             .or_else(|| result.find("{%- do "))
             .or_else(|| result.find("{%-do "));
         if let Some(start) = found {
-            if let Some(end_offset) = result[start..].find("%}") {
-                let mut end = start + end_offset + 2;
+            // Find closing %} while respecting string literals
+            let rest = &result[start..];
+            let mut in_string: Option<char> = None;
+            let mut close_pos = None;
+            let bytes = rest.as_bytes();
+            let mut j = 0;
+            while j < bytes.len().saturating_sub(1) {
+                if let Some(quote) = in_string {
+                    if bytes[j] == b'\\' {
+                        j += 1; // skip escaped char
+                    } else if bytes[j] == quote as u8 {
+                        in_string = None;
+                    }
+                } else {
+                    match bytes[j] {
+                        b'\'' | b'"' => in_string = Some(bytes[j] as char),
+                        b'%' if bytes[j + 1] == b'}' => {
+                            close_pos = Some(j + 2);
+                            break;
+                        }
+                        _ => {}
+                    }
+                }
+                j += 1;
+            }
+            if let Some(offset) = close_pos {
+                let mut end = start + offset;
                 // Consume trailing newline
                 if end < result.len() && result.as_bytes()[end] == b'\n' {
                     end += 1;
@@ -1809,22 +1840,7 @@ fn preprocess_dicts(sql: &str) -> String {
 /// - Remove {% do expr %} lines (convert to comments)
 fn preprocess_macro_body(body: &str) -> String {
     let mut result = preprocess_dicts(body);
-    // Replace {% do ... %} with empty — these are expression statements
-    // that minijinja doesn't support.
-    loop {
-        let found = result.find("{% do ")
-            .or_else(|| result.find("{%- do "))
-            .or_else(|| result.find("{%-do "));
-        if let Some(start) = found {
-            if let Some(end_offset) = result[start..].find("%}") {
-                let end = start + end_offset + 2;
-                result.replace_range(start..end, "");
-                continue;
-            }
-        }
-        break;
-    }
-    // Strip list concatenation
+    result = strip_do_statements(&result);
     result = strip_list_concat(&result);
     result
 }
@@ -2013,5 +2029,36 @@ mod tests {
         JinjaEngine::extract_config_from_raw(sql, &config_values);
         let cv = config_values.lock().unwrap();
         assert_eq!(cv.get("materialized"), Some(&"table".to_string()));
+    }
+
+    #[test]
+    fn test_strip_do_with_string_containing_percent_brace() {
+        let sql = r#"{% do log("hello %} world") %}SELECT 1"#;
+        let result = strip_do_statements(sql);
+        assert_eq!(result, "SELECT 1");
+    }
+
+    #[test]
+    fn test_strip_list_concat_preserves_func_addition() {
+        // func() + other_func() is arithmetic, not list concat
+        let sql = "{% set x = func() + other_func() %}SELECT 1";
+        let result = strip_list_concat(sql);
+        assert_eq!(result, sql);
+    }
+
+    #[test]
+    fn test_strip_list_concat_strips_list_plus_func() {
+        // ['a'] + func() IS list concat
+        let sql = "{% set x = ['a'] + func() %}SELECT 1";
+        let result = strip_list_concat(sql);
+        assert!(result.contains("['a']"), "should keep the list: {}", result);
+        assert!(!result.contains("func()"), "should strip func(): {}", result);
+    }
+
+    #[test]
+    fn test_strip_config_blocks_with_unicode() {
+        let sql = "{{ config(materialized='table', description='données utilisateur') }}\nSELECT 1";
+        let result = strip_config_blocks(sql);
+        assert_eq!(result, "SELECT 1");
     }
 }
