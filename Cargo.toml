@@ -45,7 +45,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tokio = { version = "1", features = ["full"] }
 minijinja = { version = "2", features = ["loader"] }
-datafusion = "46"
+datafusion = "53"
 regex = "1"
 sqlparser = "0.54"
 petgraph = "0.7"
