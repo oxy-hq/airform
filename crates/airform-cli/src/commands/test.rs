@@ -6,42 +6,15 @@ use std::collections::HashSet;
 use std::path::Path;
 use std::time::Instant;
 
+use super::common;
+
 pub async fn run(project_dir: &Path, select: Option<&str>, target_override: Option<&str>) -> anyhow::Result<()> {
     let start = Instant::now();
     println!("{}", "Running tests...".cyan());
 
-    // Load (with optional target override)
-    let load_state = airform_loader::load_with_target(project_dir, target_override)?;
-
-    // Build context
-    let mut ctx = airform_jinja::DbtContext::new(&load_state.project.name);
-    if let Some(target) = &load_state.target {
-        ctx.target_schema = target.schema.clone().unwrap_or_else(|| "public".to_string());
-        ctx.target_database = target.database.clone().unwrap_or_else(|| "main".to_string());
-        ctx.target_type = target.adapter_type.clone();
-    }
-
-    // Parse
-    let engine = airform_jinja::JinjaEngine::new();
-    let mut manifest = airform_parser::parse(&load_state, &engine)?;
-
-    // Build graph
-    let graph = airform_graph::build_graph(&manifest)?;
-
-    // Compile
-    let compiler = airform_compiler::Compiler::new(engine);
-    let compile_result = compiler.compile(&mut manifest, &graph, &ctx)?;
-
-    if !compile_result.errors.is_empty() {
-        println!("{}", "Compilation errors:".red().bold());
-        for err in &compile_result.errors {
-            println!("  {} {}: {}", "ERROR".red(), err.node_id, err.message);
-        }
-        anyhow::bail!(
-            "Compilation failed with {} errors",
-            compile_result.errors.len()
-        );
-    }
+    let output = common::load_and_compile(project_dir, target_override, false)?;
+    let manifest = output.manifest;
+    let graph = output.graph;
 
     // Determine selection
     let selected = if let Some(select) = select {

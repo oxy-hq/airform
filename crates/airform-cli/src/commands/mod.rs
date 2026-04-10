@@ -1,6 +1,7 @@
 pub mod analyze;
 pub mod build;
 pub mod clean;
+pub mod common;
 pub mod compile;
 pub mod debug;
 pub mod docs;
