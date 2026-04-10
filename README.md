@@ -28,6 +28,10 @@ Compile, run, and test [dbt](https://www.getdbt.com/) projects locally using [Ap
 
 ## Installation
 
+```bash
+bash <(curl -sSfL https://raw.githubusercontent.com/oxy-hq/airform/main/install.sh)
+```
+
 ### From source
 
 ```bash

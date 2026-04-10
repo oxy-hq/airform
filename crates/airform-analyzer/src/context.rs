@@ -310,7 +310,7 @@ impl Analyzer {
     /// Register an empty table with the given schema in the DataFusion context.
     async fn register_empty_table(&mut self, name: &str, schema: SchemaRef) {
         self.schemas.insert(name.to_string(), schema.clone());
-        let table = MemTable::try_new(schema, vec![]).unwrap();
+        let table = MemTable::try_new(schema, vec![vec![]]).unwrap();
         let _ = self.ctx.deregister_table(name);
         let _ = self.ctx.register_table(name, Arc::new(table));
     }
