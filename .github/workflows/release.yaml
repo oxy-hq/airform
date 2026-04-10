@@ -45,7 +45,7 @@ jobs:
           key: ${{ matrix.target }}
 
       - name: Build
-        run: cargo build --release
+        run: cargo build --release -p airform
 
       - name: Rename binary
         run: mv target/release/airform airform-${{ matrix.target }}

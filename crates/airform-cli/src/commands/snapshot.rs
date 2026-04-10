@@ -89,9 +89,8 @@ pub async fn run(
     }
 
     // Execute only snapshot nodes
-    let selected_refs: Vec<&str> = selected.iter().map(|s| s.as_str()).collect();
     let exec_result = executor
-        .execute(&manifest, &graph, Some(&selected_refs))
+        .execute(&manifest, &graph, Some(&selected))
         .await?;
 
     let duration = start.elapsed();
