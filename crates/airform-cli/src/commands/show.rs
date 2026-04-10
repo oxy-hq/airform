@@ -42,6 +42,17 @@ pub async fn run(
     executor.load_seeds(&manifest).await?;
     executor.execute(&manifest, &graph, None).await?;
 
+    // Validate the model name is a safe identifier (prevent SQL injection)
+    if !select
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.')
+    {
+        anyhow::bail!(
+            "Invalid model name '{}': must contain only alphanumeric characters, underscores, and dots",
+            select
+        );
+    }
+
     // Query the selected model
     let query = format!("SELECT * FROM {select} LIMIT {limit}");
     match executor.execute_query(&query).await {

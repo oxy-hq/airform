@@ -4,11 +4,11 @@ use std::path::Path;
 pub async fn run(
     project_dir: &Path,
     _select: Option<&str>,
-    _target_override: Option<&str>,
+    target_override: Option<&str>,
 ) -> anyhow::Result<()> {
     println!("{}", "Checking source freshness...".cyan());
 
-    let load_state = airform_loader::load_with_target(project_dir, _target_override)?;
+    let load_state = airform_loader::load_with_target(project_dir, target_override)?;
 
     let mut engine = airform_jinja::JinjaEngine::new();
     let macro_defs: Vec<(String, Vec<String>, String)> = load_state
@@ -43,9 +43,12 @@ pub async fn run(
             "No sources with loaded_at_field defined. Nothing to check.".yellow()
         );
     } else {
+        // Note: actual freshness querying (MAX(loaded_at_field) against warn/error
+        // thresholds) requires a warehouse connection and is not yet implemented
+        // for the local DataFusion executor.
         println!(
             "{}",
-            format!("Checked freshness for {checked} source(s).").green()
+            format!("Found {checked} source(s) with freshness config (freshness querying not yet supported in local mode).").yellow()
         );
     }
 

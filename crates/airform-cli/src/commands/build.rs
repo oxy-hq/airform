@@ -8,7 +8,7 @@ use std::time::Instant;
 pub async fn run(
     project_dir: &Path,
     select: Option<&str>,
-    _exclude: Option<&str>,
+    exclude: Option<&str>,
     format: &str,
     target_override: Option<&str>,
     full_refresh: bool,
@@ -58,7 +58,24 @@ pub async fn run(
     let selected = if let Some(select) = select {
         let criteria = parse_selection(select);
         let selector = NodeSelector::new(&manifest, &graph);
-        Some(selector.select(&criteria))
+        let mut selected = selector.select(&criteria);
+
+        if let Some(exclude) = exclude {
+            let exclude_criteria = parse_selection(exclude);
+            let excluded = selector.select(&exclude_criteria);
+            let excluded_set: std::collections::HashSet<_> = excluded.into_iter().collect();
+            selected.retain(|id| !excluded_set.contains(id));
+        }
+
+        Some(selected)
+    } else if let Some(exclude) = exclude {
+        let selector = NodeSelector::new(&manifest, &graph);
+        let mut selected = selector.select(&airform_graph::selector::SelectionCriteria::All);
+        let exclude_criteria = parse_selection(exclude);
+        let excluded = selector.select(&exclude_criteria);
+        let excluded_set: std::collections::HashSet<_> = excluded.into_iter().collect();
+        selected.retain(|id| !excluded_set.contains(id));
+        Some(selected)
     } else {
         None
     };
@@ -85,8 +102,6 @@ pub async fn run(
     let exec_result = executor
         .execute(&manifest, &graph, selected.as_deref())
         .await?;
-
-    let duration_models = start.elapsed();
 
     // Print model/snapshot results
     let is_machine = format == "json" || format == "csv";

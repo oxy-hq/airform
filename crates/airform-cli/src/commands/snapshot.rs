@@ -9,7 +9,7 @@ use std::time::Instant;
 pub async fn run(
     project_dir: &Path,
     select: Option<&str>,
-    _exclude: Option<&str>,
+    exclude: Option<&str>,
     format: &str,
     target_override: Option<&str>,
     full_refresh: bool,
@@ -64,7 +64,7 @@ pub async fn run(
         .collect();
 
     // If user provided a --select filter, intersect with snapshot nodes
-    let selected: Vec<String> = if let Some(select) = select {
+    let mut selected: Vec<String> = if let Some(select) = select {
         let criteria = parse_selection(select);
         let selector = NodeSelector::new(&manifest, &graph);
         let user_selected: Vec<String> = selector.select(&criteria).iter().map(|s| s.to_string()).collect();
@@ -75,6 +75,18 @@ pub async fn run(
     } else {
         snapshot_ids
     };
+
+    // Subtract excluded nodes
+    if let Some(exclude) = exclude {
+        let exclude_criteria = parse_selection(exclude);
+        let selector = NodeSelector::new(&manifest, &graph);
+        let excluded: std::collections::HashSet<String> = selector
+            .select(&exclude_criteria)
+            .into_iter()
+            .map(|s| s.to_string())
+            .collect();
+        selected.retain(|id| !excluded.contains(id));
+    }
 
     if selected.is_empty() {
         println!("{}", "No snapshot nodes found.".yellow());

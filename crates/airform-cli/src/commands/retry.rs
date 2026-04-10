@@ -38,13 +38,8 @@ pub async fn run(project_dir: &Path, target_override: Option<&str>) -> anyhow::R
         println!("  {}", id);
     }
 
-    // Extract model names from unique_ids (format: "model.project.name")
-    let model_names: Vec<&str> = failed_ids
-        .iter()
-        .filter_map(|id| id.rsplit('.').next())
-        .collect();
-
-    let select = model_names.join(" ");
+    // Pass full unique_ids as the selector — the selection engine handles unique_id matching
+    let select = failed_ids.join(" ");
     super::run::run(
         project_dir,
         Some(&select),

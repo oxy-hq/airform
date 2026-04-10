@@ -755,6 +755,11 @@ impl Executor {
                 continue;
             };
 
+            // Derive model name from depends_on refs (first ref, if any)
+            let model_name = test.depends_on.refs.first()
+                .map(|r| r.model_name.clone())
+                .unwrap_or_default();
+
             let start = Instant::now();
             match self.run_test_sql(compiled_sql).await {
                 Ok(failure_count) => {
@@ -765,7 +770,7 @@ impl Executor {
                     };
                     results.push(TestResult {
                         test_name: test.name.clone(),
-                        model_name: String::new(),
+                        model_name: model_name.clone(),
                         column_name: String::new(),
                         status,
                         failures: failure_count,
@@ -776,7 +781,7 @@ impl Executor {
                 Err(e) => {
                     results.push(TestResult {
                         test_name: test.name.clone(),
-                        model_name: String::new(),
+                        model_name,
                         column_name: String::new(),
                         status: TestStatus::Error,
                         failures: 0,
