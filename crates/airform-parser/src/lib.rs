@@ -3,7 +3,7 @@ mod source_parser;
 mod seed_parser;
 mod snapshot_parser;
 
-pub use parse::parse_models;
+pub use parse::{parse_models, parse_singular_tests};
 pub use source_parser::parse_sources;
 pub use seed_parser::parse_seeds;
 pub use snapshot_parser::parse_snapshots;
@@ -43,6 +43,14 @@ pub fn parse(load_state: &LoadState, engine: &JinjaEngine) -> anyhow::Result<Man
         &load_state.project,
         &load_state.snapshot_files,
         &load_state.schema_files,
+        engine,
+        &mut manifest,
+    )?;
+
+    // Parse singular test SQL files
+    parse_singular_tests(
+        &load_state.project,
+        &load_state.test_files,
         engine,
         &mut manifest,
     )?;

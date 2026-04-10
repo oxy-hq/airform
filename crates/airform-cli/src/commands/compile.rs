@@ -5,7 +5,7 @@ use std::time::Instant;
 pub fn run(
     project_dir: &Path,
     select: Option<&str>,
-    _exclude: Option<&str>,
+    exclude: Option<&str>,
     format: &str,
     target_override: Option<&str>,
     no_cache: bool,
@@ -90,7 +90,15 @@ pub fn run(
             println!();
             let criteria = airform_graph::selector::parse_selection(select);
             let selector = airform_graph::NodeSelector::new(&manifest, &graph);
-            let selected = selector.select(&criteria);
+            let mut selected = selector.select(&criteria);
+
+            // Subtract excluded nodes
+            if let Some(exclude) = exclude {
+                let exclude_criteria = airform_graph::selector::parse_selection(exclude);
+                let excluded = selector.select(&exclude_criteria);
+                let excluded_set: std::collections::HashSet<_> = excluded.into_iter().collect();
+                selected.retain(|id| !excluded_set.contains(id));
+            }
 
             for id in &selected {
                 if let Some(airform_core::ManifestNode::Model(m)) = manifest.nodes.get(id) {

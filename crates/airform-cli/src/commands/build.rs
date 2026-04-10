@@ -1,4 +1,4 @@
-use airform_executor::{NodeStatus, Executor};
+use airform_executor::{Executor, NodeStatus, TestStatus};
 use airform_graph::selector::parse_selection;
 use airform_graph::NodeSelector;
 use colored::Colorize;
@@ -8,14 +8,13 @@ use std::time::Instant;
 pub async fn run(
     project_dir: &Path,
     select: Option<&str>,
-    exclude: Option<&str>,
-    query: Option<&str>,
+    _exclude: Option<&str>,
     format: &str,
     target_override: Option<&str>,
     full_refresh: bool,
 ) -> anyhow::Result<()> {
     let start = Instant::now();
-    println!("{}", "Running models...".cyan());
+    println!("{}", "Building project (seeds → models → snapshots → tests)...".cyan());
 
     // Load (with optional target override)
     let load_state = airform_loader::load_with_target(project_dir, target_override)?;
@@ -59,31 +58,12 @@ pub async fn run(
     let selected = if let Some(select) = select {
         let criteria = parse_selection(select);
         let selector = NodeSelector::new(&manifest, &graph);
-        let mut selected = selector.select(&criteria);
-
-        // Subtract excluded nodes
-        if let Some(exclude) = exclude {
-            let exclude_criteria = parse_selection(exclude);
-            let excluded = selector.select(&exclude_criteria);
-            let excluded_set: std::collections::HashSet<_> = excluded.into_iter().collect();
-            selected.retain(|id| !excluded_set.contains(id));
-        }
-
-        Some(selected)
-    } else if let Some(exclude) = exclude {
-        // No select but exclude: start with all nodes, subtract excluded
-        let selector = NodeSelector::new(&manifest, &graph);
-        let mut selected = selector.select(&airform_graph::selector::SelectionCriteria::All);
-        let exclude_criteria = parse_selection(exclude);
-        let excluded = selector.select(&exclude_criteria);
-        let excluded_set: std::collections::HashSet<_> = excluded.into_iter().collect();
-        selected.retain(|id| !excluded_set.contains(id));
-        Some(selected)
+        Some(selector.select(&criteria))
     } else {
         None
     };
 
-    // Execute - load seeds first, then models
+    // Execute
     let executor = Executor::new();
 
     // Register information schema tables
@@ -91,7 +71,8 @@ pub async fn run(
         tracing::debug!("Could not register info schema: {e}");
     }
 
-    // Load seeds before model execution
+    // 1. Load seeds
+    println!("{}", "Loading seeds...".dimmed());
     let seed_results = executor.load_seeds(&manifest).await?;
     for sr in &seed_results {
         if sr.status == NodeStatus::Error {
@@ -99,35 +80,20 @@ pub async fn run(
         }
     }
 
+    // 2. Execute models (and snapshots, since execute handles both)
+    println!("{}", "Running models and snapshots...".dimmed());
     let exec_result = executor
         .execute(&manifest, &graph, selected.as_deref())
         .await?;
 
-    let duration = start.elapsed();
+    let duration_models = start.elapsed();
 
-    // Handle ad-hoc query mode
-    if let Some(query_sql) = query {
-        println!();
-        println!("{}", format!("Running query: {query_sql}").dimmed());
-        match executor.execute_query(query_sql).await {
-            Ok(batches) => {
-                print_query_results(&batches, format)?;
-            }
-            Err(e) => {
-                println!("{} {}", "Query error:".red(), e);
-                std::process::exit(1);
-            }
-        }
-        return Ok(());
-    }
-
-    // Print results
+    // Print model/snapshot results
     let is_machine = format == "json" || format == "csv";
 
-    if is_machine {
-        print_results_machine(&exec_result, &manifest, format, duration)?;
-    } else {
+    if !is_machine {
         println!();
+        println!("{}", "Model results:".bold());
         for result in &exec_result.results {
             let status_colored = match result.status {
                 NodeStatus::Success => "OK".green(),
@@ -163,15 +129,83 @@ pub async fn run(
                 result.duration.as_secs_f64()
             );
         }
+    }
 
+    // 3. Run tests
+    println!();
+    if !is_machine {
+        println!("{}", "Test results:".bold());
+    }
+    let test_results = executor.execute_tests(&manifest).await?;
+    let duration = start.elapsed();
+
+    let mut pass_count = 0;
+    let mut fail_count = 0;
+    let mut test_error_count = 0;
+
+    if !is_machine {
+        for result in &test_results {
+            let status_colored = match result.status {
+                TestStatus::Pass => {
+                    pass_count += 1;
+                    "PASS".green()
+                }
+                TestStatus::Fail => {
+                    fail_count += 1;
+                    "FAIL".red()
+                }
+                TestStatus::Error => {
+                    test_error_count += 1;
+                    "ERROR".red()
+                }
+            };
+
+            let failures_info = if result.failures > 0 {
+                format!(" ({} failures)", result.failures)
+            } else {
+                String::new()
+            };
+
+            let msg = result
+                .message
+                .as_deref()
+                .map(|m| format!(" - {m}"))
+                .unwrap_or_default();
+
+            println!(
+                "  {} {}{}{} [{:.2}s]",
+                status_colored,
+                result.test_name.bold(),
+                failures_info,
+                msg.dimmed(),
+                result.duration.as_secs_f64()
+            );
+        }
+    } else {
+        for result in &test_results {
+            match result.status {
+                TestStatus::Pass => pass_count += 1,
+                TestStatus::Fail => fail_count += 1,
+                TestStatus::Error => test_error_count += 1,
+            }
+        }
+    }
+
+    // Print summary
+    if is_machine {
+        print_results_machine(&exec_result, &test_results, format, duration)?;
+    } else {
         println!();
         println!(
             "{}",
             format!(
-                "Done. {} succeeded, {} errored, {} skipped in {:.2}s",
+                "Done. Models: {} succeeded, {} errored, {} skipped. Tests: {} passed, {} failed, {} errors. Total: {:.2}s",
                 exec_result.success_count(),
                 exec_result.error_count(),
                 exec_result.skipped_count(),
+                pass_count,
+                fail_count,
+                test_error_count,
                 duration.as_secs_f64()
             )
             .bold()
@@ -187,126 +221,22 @@ pub async fn run(
     // Write compiled SQL files
     write_compiled_sql(project_dir, &load_state.project, &manifest)?;
 
-    if exec_result.error_count() > 0 {
+    if exec_result.error_count() > 0 || fail_count > 0 || test_error_count > 0 {
         std::process::exit(1);
     }
 
     Ok(())
 }
 
-fn print_query_results(
-    batches: &[datafusion::arrow::record_batch::RecordBatch],
-    format: &str,
-) -> anyhow::Result<()> {
-    if batches.is_empty() {
-        println!("(no results)");
-        return Ok(());
-    }
-
-    match format {
-        "json" => {
-            let mut rows = Vec::new();
-            for batch in batches {
-                let schema = batch.schema();
-                for row_idx in 0..batch.num_rows() {
-                    let mut row = serde_json::Map::new();
-                    for col_idx in 0..batch.num_columns() {
-                        let col_name = schema.field(col_idx).name().clone();
-                        let array = batch.column(col_idx);
-                        let value = arrow_value_to_json(array, row_idx);
-                        row.insert(col_name, value);
-                    }
-                    rows.push(serde_json::Value::Object(row));
-                }
-            }
-            println!("{}", serde_json::to_string_pretty(&rows)?);
-        }
-        "csv" => {
-            if let Some(first_batch) = batches.first() {
-                let schema = first_batch.schema();
-                let headers: Vec<&str> = schema.fields().iter().map(|f| f.name().as_str()).collect();
-                println!("{}", headers.join(","));
-            }
-            for batch in batches {
-                for row_idx in 0..batch.num_rows() {
-                    let mut cols = Vec::new();
-                    for col_idx in 0..batch.num_columns() {
-                        let array = batch.column(col_idx);
-                        let value = arrow_value_to_string(array, row_idx);
-                        cols.push(value);
-                    }
-                    println!("{}", cols.join(","));
-                }
-            }
-        }
-        _ => {
-            // Table format using DataFusion's built-in pretty printing
-            let formatted = datafusion::arrow::util::pretty::pretty_format_batches(batches)?;
-            println!("{formatted}");
-        }
-    }
-
-    Ok(())
-}
-
-fn arrow_value_to_json(
-    array: &dyn datafusion::arrow::array::Array,
-    row: usize,
-) -> serde_json::Value {
-    use datafusion::arrow::array::*;
-    use datafusion::arrow::datatypes::DataType;
-
-    if array.is_null(row) {
-        return serde_json::Value::Null;
-    }
-
-    match array.data_type() {
-        DataType::Int8 => serde_json::json!(array.as_any().downcast_ref::<Int8Array>().unwrap().value(row)),
-        DataType::Int16 => serde_json::json!(array.as_any().downcast_ref::<Int16Array>().unwrap().value(row)),
-        DataType::Int32 => serde_json::json!(array.as_any().downcast_ref::<Int32Array>().unwrap().value(row)),
-        DataType::Int64 => serde_json::json!(array.as_any().downcast_ref::<Int64Array>().unwrap().value(row)),
-        DataType::UInt8 => serde_json::json!(array.as_any().downcast_ref::<UInt8Array>().unwrap().value(row)),
-        DataType::UInt16 => serde_json::json!(array.as_any().downcast_ref::<UInt16Array>().unwrap().value(row)),
-        DataType::UInt32 => serde_json::json!(array.as_any().downcast_ref::<UInt32Array>().unwrap().value(row)),
-        DataType::UInt64 => serde_json::json!(array.as_any().downcast_ref::<UInt64Array>().unwrap().value(row)),
-        DataType::Float32 => serde_json::json!(array.as_any().downcast_ref::<Float32Array>().unwrap().value(row)),
-        DataType::Float64 => serde_json::json!(array.as_any().downcast_ref::<Float64Array>().unwrap().value(row)),
-        DataType::Boolean => serde_json::json!(array.as_any().downcast_ref::<BooleanArray>().unwrap().value(row)),
-        DataType::Utf8 => serde_json::json!(array.as_any().downcast_ref::<StringArray>().unwrap().value(row)),
-        _ => serde_json::json!(arrow_value_to_string(array, row)),
-    }
-}
-
-fn arrow_value_to_string(
-    array: &dyn datafusion::arrow::array::Array,
-    row: usize,
-) -> String {
-    use datafusion::arrow::array::*;
-    use datafusion::arrow::datatypes::DataType;
-
-    if array.is_null(row) {
-        return String::new();
-    }
-
-    match array.data_type() {
-        DataType::Utf8 => array.as_any().downcast_ref::<StringArray>().unwrap().value(row).to_string(),
-        DataType::Int64 => array.as_any().downcast_ref::<Int64Array>().unwrap().value(row).to_string(),
-        DataType::Int32 => array.as_any().downcast_ref::<Int32Array>().unwrap().value(row).to_string(),
-        DataType::Float64 => array.as_any().downcast_ref::<Float64Array>().unwrap().value(row).to_string(),
-        DataType::Boolean => array.as_any().downcast_ref::<BooleanArray>().unwrap().value(row).to_string(),
-        _ => format!("{:?}", array.as_any()),
-    }
-}
-
 fn print_results_machine(
     exec_result: &airform_executor::ExecutionResult,
-    _manifest: &airform_core::Manifest,
+    test_results: &[airform_executor::TestResult],
     format: &str,
     duration: std::time::Duration,
 ) -> anyhow::Result<()> {
     match format {
         "json" => {
-            let results: Vec<serde_json::Value> = exec_result
+            let model_results: Vec<serde_json::Value> = exec_result
                 .results
                 .iter()
                 .map(|r| {
@@ -320,8 +250,21 @@ fn print_results_machine(
                     })
                 })
                 .collect();
+            let test_json: Vec<serde_json::Value> = test_results
+                .iter()
+                .map(|r| {
+                    serde_json::json!({
+                        "test_name": r.test_name,
+                        "status": format!("{:?}", r.status),
+                        "failures": r.failures,
+                        "duration_secs": r.duration.as_secs_f64(),
+                        "message": r.message,
+                    })
+                })
+                .collect();
             let output = serde_json::json!({
-                "results": results,
+                "results": model_results,
+                "test_results": test_json,
                 "elapsed_secs": duration.as_secs_f64(),
                 "success_count": exec_result.success_count(),
                 "error_count": exec_result.error_count(),
@@ -330,15 +273,24 @@ fn print_results_machine(
             println!("{}", serde_json::to_string_pretty(&output)?);
         }
         "csv" => {
-            println!("unique_id,name,status,duration_secs,rows_affected,message");
+            println!("type,unique_id,name,status,duration_secs,rows_affected,message");
             for r in &exec_result.results {
                 println!(
-                    "{},{},{},{:.4},{},{}",
+                    "model,{},{},{},{:.4},{},{}",
                     r.unique_id,
                     r.name,
                     r.status,
                     r.duration.as_secs_f64(),
                     r.rows_affected.map(|v| v.to_string()).unwrap_or_default(),
+                    r.message.as_deref().unwrap_or(""),
+                );
+            }
+            for r in test_results {
+                println!(
+                    "test,,{},{:?},{:.4},,{}",
+                    r.test_name,
+                    r.status,
+                    r.duration.as_secs_f64(),
                     r.message.as_deref().unwrap_or(""),
                 );
             }

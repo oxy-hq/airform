@@ -215,7 +215,7 @@ impl JinjaEngine {
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
-            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''"],
+            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
              "{{ from }}.*"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
              "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
@@ -329,7 +329,7 @@ impl JinjaEngine {
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
-            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''"],
+            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
              "{{ from }}.*"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
              "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
@@ -567,17 +567,35 @@ impl JinjaEngine {
             let clean = Self::clean_args(&m.args);
             let args_str = clean.join(", ");
             let mut body = preprocess_macro_body(&m.body);
+            let mut is_dispatch = false;
             // Detect dispatcher macros: body is just `{{ return(adapter.dispatch(...)(args)) }}`
             // Replace their body with empty — avoids runtime errors from undefined adapter.
             if body.contains("adapter.dispatch(") {
                 let trimmed = body.trim();
                 if trimmed.starts_with("{{ return(") || trimmed.starts_with("{{return(") {
                     body = String::new();
+                    is_dispatch = true;
                 }
             }
+            // For dispatch macros with empty bodies, add extra catch-all kwargs
+            // so callers passing extra keyword arguments don't fail.
+            // minijinja doesn't support **kwargs, so we pad with unused params.
+            let final_args = if is_dispatch {
+                let mut padded = clean.clone();
+                for extra in &[
+                    "_kw_a=none", "_kw_b=none", "_kw_c=none", "_kw_d=none",
+                    "_kw_e=none", "_kw_f=none", "_kw_g=none", "_kw_h=none",
+                    "_kw_i=none", "_kw_j=none", "_kw_k=none", "_kw_l=none",
+                ] {
+                    padded.push(extra.to_string());
+                }
+                padded.join(", ")
+            } else {
+                args_str
+            };
             let macro_str = format!(
                 "{{% macro {}({}) %}}{}{{% endmacro %}}\n",
-                m.name, args_str, body
+                m.name, final_args, body
             );
             // Validate that this macro can be parsed
             let mut probe = test_env.clone();
@@ -1123,33 +1141,70 @@ impl JinjaEngine {
         // Build adapter object
         let adapter_obj = Value::from_object(AdapterObject {});
 
-        let tmpl = env.get_template("__model__")?;
-        let rendered = match tmpl.render(minijinja::context! {
-            execute => execute,
-            target => target_obj,
-            adapter => adapter_obj,
-            this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
-        }) {
-            Ok(r) => r,
-            Err(e) => {
-                // Include template line content in the error for better diagnostics
-                let mut msg = e.to_string();
-                if let Some(line_no) = e.line() {
-                    let source = tmpl.source();
-                    let lines: Vec<&str> = source.lines().collect();
-                    if line_no > 0 && (line_no as usize) <= lines.len() {
-                        let content = lines[line_no as usize - 1].trim();
-                        msg = format!("{} [line content: {}]", msg, content);
+        // First render attempt
+        let first_err = {
+            let tmpl = env.get_template("__model__")?;
+            match tmpl.render(minijinja::context! {
+                execute => execute,
+                target => &target_obj,
+                adapter => &adapter_obj,
+                this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
+            }) {
+                Ok(r) => return Ok(r),
+                Err(e) => e,
+            }
+        }; // tmpl dropped here, env borrow released
+
+        let err_msg = first_err.to_string();
+        let detail = first_err.detail().unwrap_or("").to_string();
+
+        // Retry strategy: if error is "unknown keyword argument" or "too many arguments",
+        // strip the problematic macro call from the template line and retry.
+        let is_kwarg_error = err_msg.contains("unknown keyword argument")
+            || detail.contains("unknown keyword argument")
+            || err_msg.contains("too many arguments")
+            || detail.contains("too many arguments");
+
+        if is_kwarg_error {
+            if let Some(line_no) = first_err.line() {
+                // Re-get template source before we mutate env
+                let source = env.get_template("__model__")?.source().to_string();
+                let lines: Vec<&str> = source.lines().collect();
+                if line_no > 0 && (line_no as usize) <= lines.len() {
+                    let bad_line = lines[line_no as usize - 1];
+                    let cleaned = source.replace(bad_line, &strip_jinja_expressions(bad_line));
+                    if env.add_template_owned("__model__".to_string(), cleaned).is_ok() {
+                        if let Ok(tmpl2) = env.get_template("__model__") {
+                            if let Ok(r) = tmpl2.render(minijinja::context! {
+                                execute => execute,
+                                target => &target_obj,
+                                adapter => &adapter_obj,
+                                this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
+                            }) {
+                                return Ok(r);
+                            }
+                        }
                     }
                 }
-                if let Some(detail) = e.detail() {
-                    msg = format!("{} [detail: {}]", msg, detail);
-                }
-                return Err(anyhow::anyhow!("{}", msg));
             }
-        };
+        }
 
-        Ok(rendered)
+        // Build error message with diagnostics
+        let mut msg = err_msg;
+        if let Ok(tmpl_err) = env.get_template("__model__") {
+            if let Some(line_no) = first_err.line() {
+                let source = tmpl_err.source();
+                let lines: Vec<&str> = source.lines().collect();
+                if line_no > 0 && (line_no as usize) <= lines.len() {
+                    let content = lines[line_no as usize - 1].trim();
+                    msg = format!("{} [line content: {}]", msg, content);
+                }
+            }
+        }
+        if !detail.is_empty() {
+            msg = format!("{} [detail: {}]", msg, detail);
+        }
+        Err(anyhow::anyhow!("{}", msg))
     }
 }
 
@@ -1481,6 +1536,38 @@ fn fix_unary_negation(sql: &str) -> String {
         i += 1;
     }
     out
+}
+
+/// Strip Jinja expression blocks (`{{ ... }}`) from a single line,
+/// replacing them with empty strings. Used to recover from macro call errors
+/// (unknown kwargs, too many args) by removing the problematic expressions.
+fn strip_jinja_expressions(line: &str) -> String {
+    let mut result = String::new();
+    let mut i = 0;
+    let bytes = line.as_bytes();
+    while i < bytes.len() {
+        if i + 1 < bytes.len() && bytes[i] == b'{' && bytes[i + 1] == b'{' {
+            // Find matching }}
+            let mut depth = 1;
+            let mut j = i + 2;
+            while j + 1 < bytes.len() && depth > 0 {
+                if bytes[j] == b'{' && bytes[j + 1] == b'{' {
+                    depth += 1;
+                    j += 1;
+                } else if bytes[j] == b'}' && bytes[j + 1] == b'}' {
+                    depth -= 1;
+                    j += 1;
+                }
+                j += 1;
+            }
+            // Skip this expression entirely
+            i = j;
+        } else {
+            result.push(bytes[i] as char);
+            i += 1;
+        }
+    }
+    result
 }
 
 /// Strip Jinja comments `{# ... #}` that may contain syntax confusing to minijinja.

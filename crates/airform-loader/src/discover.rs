@@ -147,6 +147,55 @@ pub fn discover_seeds(project: &DbtProject) -> anyhow::Result<Vec<SeedFile>> {
     Ok(files)
 }
 
+/// A discovered singular test file on disk
+#[derive(Debug, Clone)]
+pub struct TestFile {
+    /// Absolute path to the SQL file
+    pub path: PathBuf,
+    /// Path relative to the test directory
+    pub relative_path: PathBuf,
+    /// Test name (filename without extension)
+    pub name: String,
+}
+
+/// Walk test directories and discover all .sql singular test files
+pub fn discover_tests(project: &DbtProject) -> anyhow::Result<Vec<TestFile>> {
+    let mut files = Vec::new();
+
+    for test_dir in &project.test_paths {
+        let dir = project.project_root.join(test_dir);
+        if !dir.exists() {
+            tracing::debug!("Test path does not exist: {}", dir.display());
+            continue;
+        }
+
+        for entry in WalkDir::new(&dir)
+            .follow_links(true)
+            .into_iter()
+            .filter_map(|e| e.ok())
+        {
+            let path = entry.path();
+            if path.extension().is_some_and(|ext| ext == "sql") {
+                let relative_path = path.strip_prefix(&dir).unwrap_or(path).to_path_buf();
+                let name = path
+                    .file_stem()
+                    .unwrap_or_default()
+                    .to_string_lossy()
+                    .to_string();
+
+                files.push(TestFile {
+                    path: path.to_path_buf(),
+                    relative_path,
+                    name,
+                });
+            }
+        }
+    }
+
+    tracing::info!("Discovered {} singular test files", files.len());
+    Ok(files)
+}
+
 /// Walk snapshot directories and discover all .sql snapshot files
 pub fn discover_snapshots(project: &DbtProject) -> anyhow::Result<Vec<SnapshotFile>> {
     let mut files = Vec::new();

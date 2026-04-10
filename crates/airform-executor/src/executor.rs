@@ -109,6 +109,21 @@ impl Executor {
     }
 
     /// Execute all compiled models in topological order.
+    /// Execute a list of hook SQL statements (pre-hook, post-hook, on-run-start, on-run-end).
+    /// Errors are logged but do not abort execution.
+    pub async fn execute_hooks(&self, hooks: &[String], context: &str) {
+        for hook in hooks {
+            let sql = hook.trim();
+            if sql.is_empty() {
+                continue;
+            }
+            tracing::info!("{context}: {sql}");
+            if let Err(e) = self.execute_query(sql).await {
+                tracing::warn!("{context} failed: {e}");
+            }
+        }
+    }
+
     pub async fn execute(
         &self,
         manifest: &Manifest,
@@ -182,6 +197,12 @@ impl Executor {
                     };
 
                     let start = Instant::now();
+
+                    // Execute pre-hooks
+                    if !model.config.pre_hook.is_empty() {
+                        self.execute_hooks(&model.config.pre_hook, &format!("pre-hook({})", model.name)).await;
+                    }
+
                     let result = self.execute_model(
                         &model.name,
                         &effective_sql,
@@ -191,6 +212,11 @@ impl Executor {
                         model.config.unique_key.as_deref(),
                         model.config.incremental_strategy.as_deref(),
                     ).await;
+
+                    // Execute post-hooks
+                    if !model.config.post_hook.is_empty() {
+                        self.execute_hooks(&model.config.post_hook, &format!("post-hook({})", model.name)).await;
+                    }
 
                     match result {
                         Ok(rows) => {
@@ -709,6 +735,54 @@ impl Executor {
                             });
                         }
                     }
+                }
+            }
+        }
+
+        // Run singular tests (ManifestNode::Test nodes with compiled SQL)
+        for (_id, node) in &manifest.nodes {
+            let test = match node {
+                ManifestNode::Test(t) => t,
+                _ => continue,
+            };
+
+            // Only run singular tests (those without test_metadata; generic tests are handled above)
+            if test.test_metadata.is_some() {
+                continue;
+            }
+
+            let Some(compiled_sql) = &test.compiled_sql else {
+                continue;
+            };
+
+            let start = Instant::now();
+            match self.run_test_sql(compiled_sql).await {
+                Ok(failure_count) => {
+                    let status = if failure_count == 0 {
+                        TestStatus::Pass
+                    } else {
+                        TestStatus::Fail
+                    };
+                    results.push(TestResult {
+                        test_name: test.name.clone(),
+                        model_name: String::new(),
+                        column_name: String::new(),
+                        status,
+                        failures: failure_count,
+                        duration: start.elapsed(),
+                        message: None,
+                    });
+                }
+                Err(e) => {
+                    results.push(TestResult {
+                        test_name: test.name.clone(),
+                        model_name: String::new(),
+                        column_name: String::new(),
+                        status: TestStatus::Error,
+                        failures: 0,
+                        duration: start.elapsed(),
+                        message: Some(e.to_string()),
+                    });
                 }
             }
         }
