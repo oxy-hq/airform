@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/airform.svg" alt="airform" width="60%">
+</p>
+
 # Airform
 
 **A Rust-powered, dbt-compatible SQL transformation engine.**

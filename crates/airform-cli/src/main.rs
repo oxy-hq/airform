@@ -91,6 +91,52 @@ enum Commands {
         target: Option<String>,
     },
 
+    /// Build the full project (seeds → models → snapshots → tests)
+    Build {
+        /// Select specific models to build
+        #[arg(short, long)]
+        select: Option<String>,
+
+        /// Exclude specific models
+        #[arg(long)]
+        exclude: Option<String>,
+
+        /// Full refresh (ignore incremental logic)
+        #[arg(long)]
+        full_refresh: bool,
+
+        /// Which target to use from profiles.yml
+        #[arg(short, long)]
+        target: Option<String>,
+
+        /// Output format (table, json, csv)
+        #[arg(long, default_value = "table")]
+        format: String,
+    },
+
+    /// Execute snapshot nodes
+    Snapshot {
+        /// Select specific snapshots to run
+        #[arg(short, long)]
+        select: Option<String>,
+
+        /// Exclude specific snapshots
+        #[arg(long)]
+        exclude: Option<String>,
+
+        /// Full refresh (ignore incremental logic)
+        #[arg(long)]
+        full_refresh: bool,
+
+        /// Which target to use from profiles.yml
+        #[arg(short, long)]
+        target: Option<String>,
+
+        /// Output format (table, json, csv)
+        #[arg(long, default_value = "table")]
+        format: String,
+    },
+
     /// Run tests
     Test {
         /// Select specific models/tests
@@ -176,6 +222,39 @@ enum Commands {
         #[arg(long)]
         check: bool,
     },
+
+    /// Compile and preview query results without persisting
+    Show {
+        /// Model to preview
+        #[arg(short, long)]
+        select: String,
+
+        /// Number of rows to show
+        #[arg(long, default_value = "5")]
+        limit: usize,
+
+        /// Which target to use from profiles.yml
+        #[arg(short, long)]
+        target: Option<String>,
+    },
+
+    /// Retry failed nodes from the last run
+    Retry {
+        /// Which target to use from profiles.yml
+        #[arg(short, long)]
+        target: Option<String>,
+    },
+
+    /// Check source freshness
+    SourceFreshness {
+        /// Select specific sources
+        #[arg(short, long)]
+        select: Option<String>,
+
+        /// Which target to use from profiles.yml
+        #[arg(short, long)]
+        target: Option<String>,
+    },
 }
 
 #[tokio::main]
@@ -233,6 +312,40 @@ async fn main() -> anyhow::Result<()> {
             )
             .await
         }
+        Commands::Build {
+            select,
+            exclude,
+            full_refresh,
+            target,
+            format,
+        } => {
+            commands::build::run(
+                &project_dir,
+                select.as_deref(),
+                exclude.as_deref(),
+                &format,
+                target.as_deref(),
+                full_refresh,
+            )
+            .await
+        }
+        Commands::Snapshot {
+            select,
+            exclude,
+            full_refresh,
+            target,
+            format,
+        } => {
+            commands::snapshot::run(
+                &project_dir,
+                select.as_deref(),
+                exclude.as_deref(),
+                &format,
+                target.as_deref(),
+                full_refresh,
+            )
+            .await
+        }
         Commands::Test { select, target } => {
             commands::test::run(&project_dir, select.as_deref(), target.as_deref()).await
         }
@@ -282,5 +395,16 @@ async fn main() -> anyhow::Result<()> {
         Commands::Clean => commands::clean::run(&project_dir),
         Commands::DocsGenerate => commands::docs::run(&project_dir),
         Commands::Format { check } => commands::format::run(&project_dir, check),
+        Commands::Show {
+            select,
+            limit,
+            target,
+        } => commands::show::run(&project_dir, &select, limit, target.as_deref()).await,
+        Commands::Retry { target } => {
+            commands::retry::run(&project_dir, target.as_deref()).await
+        }
+        Commands::SourceFreshness { select, target } => {
+            commands::freshness::run(&project_dir, select.as_deref(), target.as_deref()).await
+        }
     }
 }

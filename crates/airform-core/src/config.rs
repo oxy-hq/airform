@@ -1,6 +1,25 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
+
+/// Deserialize a field that can be either a single string or a list of strings.
+/// dbt allows both `on-run-start: "{{ macro() }}"` and `on-run-start: ["{{ a() }}", "{{ b() }}"]`.
+fn string_or_vec<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum StringOrVec {
+        String(String),
+        Vec(Vec<String>),
+    }
+
+    match StringOrVec::deserialize(deserializer)? {
+        StringOrVec::String(s) => Ok(vec![s]),
+        StringOrVec::Vec(v) => Ok(v),
+    }
+}
 
 /// Environment configuration for dev/staging/prod
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -81,6 +100,14 @@ pub struct DbtProject {
     /// Environment configurations (dev, staging, prod)
     #[serde(default)]
     pub environments: Vec<Environment>,
+
+    /// SQL statements to run at the start of a dbt run
+    #[serde(default, alias = "on-run-start", deserialize_with = "string_or_vec")]
+    pub on_run_start: Vec<String>,
+
+    /// SQL statements to run at the end of a dbt run
+    #[serde(default, alias = "on-run-end", deserialize_with = "string_or_vec")]
+    pub on_run_end: Vec<String>,
 
     /// dbt_project.yml location on disk
     #[serde(skip)]
@@ -220,6 +247,14 @@ pub struct NodeConfig {
     #[serde(default)]
     pub check_cols: Option<Vec<String>>,
 
+    /// SQL statements to run before the model
+    #[serde(default, alias = "pre-hook")]
+    pub pre_hook: Vec<String>,
+
+    /// SQL statements to run after the model
+    #[serde(default, alias = "post-hook")]
+    pub post_hook: Vec<String>,
+
     /// Any extra config keys
     #[serde(flatten)]
     pub extra: HashMap<String, serde_yaml::Value>,
@@ -242,6 +277,8 @@ impl Default for NodeConfig {
             strategy: None,
             updated_at: None,
             check_cols: None,
+            pre_hook: Vec::new(),
+            post_hook: Vec::new(),
             extra: HashMap::new(),
         }
     }

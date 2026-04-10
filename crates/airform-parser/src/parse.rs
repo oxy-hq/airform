@@ -1,9 +1,9 @@
 use airform_core::{
     ColumnDef, DbtProject, DependsOn, Manifest, ManifestNode, Materialization, ModelNode,
-    NodeConfig, ResourceType, TestDef,
+    NodeConfig, ResourceType, TestDef, TestNode,
 };
 use airform_jinja::{DbtContext, JinjaEngine};
-use airform_loader::discover::ModelFile;
+use airform_loader::discover::{ModelFile, TestFile};
 use airform_loader::schema::{SchemaFile, SchemaModel};
 use std::collections::HashMap;
 
@@ -47,6 +47,12 @@ pub fn parse_models(
         }
         if let Some(uk) = config_from_sql.get("unique_key") {
             config.unique_key = Some(uk.clone());
+        }
+        if let Some(hook) = config_from_sql.get("pre_hook").or_else(|| config_from_sql.get("pre-hook")) {
+            config.pre_hook = vec![hook.clone()];
+        }
+        if let Some(hook) = config_from_sql.get("post_hook").or_else(|| config_from_sql.get("post-hook")) {
+            config.post_hook = vec![hook.clone()];
         }
 
         // Find schema.yml metadata for this model
@@ -232,4 +238,47 @@ fn find_schema_model<'a>(
         }
     }
     None
+}
+
+/// Parse all singular test SQL files into TestNodes and add them to the manifest.
+pub fn parse_singular_tests(
+    project: &DbtProject,
+    test_files: &[TestFile],
+    engine: &JinjaEngine,
+    manifest: &mut Manifest,
+) -> anyhow::Result<()> {
+    for test_file in test_files {
+        let raw_sql = std::fs::read_to_string(&test_file.path)?;
+        let unique_id = format!("test.{}.{}", project.name, test_file.name);
+
+        // First pass: render with execute=false to extract refs/sources
+        let ctx = DbtContext::new(&project.name);
+        let _ = engine.render(&raw_sql, &ctx);
+
+        let refs = ctx.take_refs();
+        let sources = ctx.take_sources();
+
+        let depends_on = DependsOn {
+            refs,
+            sources,
+            macros: Vec::new(),
+        };
+
+        let node = TestNode {
+            unique_id: unique_id.clone(),
+            name: test_file.name.clone(),
+            package_name: project.name.clone(),
+            resource_type: ResourceType::Test,
+            raw_sql,
+            compiled_sql: None,
+            depends_on,
+            config: NodeConfig::default(),
+            test_metadata: None,
+        };
+
+        manifest.add_node(ManifestNode::Test(node));
+    }
+
+    tracing::info!("Parsed {} singular tests", test_files.len());
+    Ok(())
 }

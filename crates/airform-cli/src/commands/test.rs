@@ -1,44 +1,42 @@
 use airform_executor::{Executor, NodeStatus, TestStatus};
+use airform_graph::selector::parse_selection;
+use airform_graph::NodeSelector;
 use colored::Colorize;
+use std::collections::HashSet;
 use std::path::Path;
 use std::time::Instant;
 
-pub async fn run(project_dir: &Path, _select: Option<&str>, target_override: Option<&str>) -> anyhow::Result<()> {
+use super::common;
+
+pub async fn run(project_dir: &Path, select: Option<&str>, target_override: Option<&str>) -> anyhow::Result<()> {
     let start = Instant::now();
     println!("{}", "Running tests...".cyan());
 
-    // Load (with optional target override)
-    let load_state = airform_loader::load_with_target(project_dir, target_override)?;
+    let output = common::load_and_compile(project_dir, target_override, false)?;
+    let manifest = output.manifest;
+    let graph = output.graph;
 
-    // Build context
-    let mut ctx = airform_jinja::DbtContext::new(&load_state.project.name);
-    if let Some(target) = &load_state.target {
-        ctx.target_schema = target.schema.clone().unwrap_or_else(|| "public".to_string());
-        ctx.target_database = target.database.clone().unwrap_or_else(|| "main".to_string());
-        ctx.target_type = target.adapter_type.clone();
-    }
+    // Determine selection
+    let selected = if let Some(select) = select {
+        let criteria = parse_selection(select);
+        let selector = NodeSelector::new(&manifest, &graph);
+        Some(selector.select(&criteria))
+    } else {
+        None
+    };
 
-    // Parse
-    let engine = airform_jinja::JinjaEngine::new();
-    let mut manifest = airform_parser::parse(&load_state, &engine)?;
-
-    // Build graph
-    let graph = airform_graph::build_graph(&manifest)?;
-
-    // Compile
-    let compiler = airform_compiler::Compiler::new(engine);
-    let compile_result = compiler.compile(&mut manifest, &graph, &ctx)?;
-
-    if !compile_result.errors.is_empty() {
-        println!("{}", "Compilation errors:".red().bold());
-        for err in &compile_result.errors {
-            println!("  {} {}: {}", "ERROR".red(), err.node_id, err.message);
-        }
-        anyhow::bail!(
-            "Compilation failed with {} errors",
-            compile_result.errors.len()
-        );
-    }
+    // Build a set of selected model names for filtering tests
+    let selected_model_names: Option<HashSet<String>> = selected.as_ref().map(|ids| {
+        ids.iter()
+            .filter_map(|id| {
+                if let Some(airform_core::ManifestNode::Model(m)) = manifest.nodes.get(id) {
+                    Some(m.name.clone())
+                } else {
+                    None
+                }
+            })
+            .collect()
+    });
 
     // Execute - first load seeds, then run models, then run tests
     let executor = Executor::new();
@@ -52,7 +50,7 @@ pub async fn run(project_dir: &Path, _select: Option<&str>, target_override: Opt
     }
 
     // Execute models so the tables exist for tests
-    let exec_result = executor.execute(&manifest, &graph, None).await?;
+    let exec_result = executor.execute(&manifest, &graph, selected.as_deref()).await?;
 
     if exec_result.error_count() > 0 {
         println!(
@@ -65,8 +63,16 @@ pub async fn run(project_dir: &Path, _select: Option<&str>, target_override: Opt
         );
     }
 
-    // Run tests
-    let test_results = executor.execute_tests(&manifest).await?;
+    // Run tests (filter by selection if provided)
+    let all_test_results = executor.execute_tests(&manifest).await?;
+    let test_results: Vec<_> = if let Some(ref names) = selected_model_names {
+        all_test_results
+            .into_iter()
+            .filter(|r| names.contains(&r.model_name))
+            .collect()
+    } else {
+        all_test_results
+    };
     let duration = start.elapsed();
 
     // Print results

@@ -68,6 +68,25 @@ impl Compiler {
                         }
                     }
                 }
+                ManifestNode::Test(test) => {
+                    let test = test.clone();
+                    match self.compile_test(&test, manifest, ctx_template) {
+                        Ok(compiled_sql) => {
+                            if let Some(ManifestNode::Test(t)) =
+                                manifest.nodes.get_mut(unique_id)
+                            {
+                                t.compiled_sql = Some(compiled_sql);
+                            }
+                            compiled_count += 1;
+                        }
+                        Err(e) => {
+                            errors.push(CompileError {
+                                node_id: unique_id.clone(),
+                                message: format!("{:#}", e),
+                            });
+                        }
+                    }
+                }
                 ManifestNode::Snapshot(snapshot) => {
                     let snapshot = snapshot.clone();
                     match self.compile_snapshot(&snapshot, manifest, ctx_template) {
@@ -210,6 +229,53 @@ impl Compiler {
 
         // Render Jinja
         let rendered = self.engine.render(&snapshot.raw_sql, &ctx)?;
+
+        Ok(rendered)
+    }
+
+    /// Compile a singular test: render Jinja with resolved refs/sources.
+    fn compile_test(
+        &self,
+        test: &airform_core::TestNode,
+        manifest: &Manifest,
+        ctx_template: &DbtContext,
+    ) -> anyhow::Result<String> {
+        let mut ctx = ctx_template.clone();
+        ctx.execute = true;
+
+        // Resolve all ref() calls to relation names
+        for ref_call in &test.depends_on.refs {
+            if let Some(target) = manifest.resolve_ref(
+                &ref_call.model_name,
+                ref_call.package.as_deref(),
+            ) {
+                let relation = self.node_relation_name(target, ctx_template);
+                ctx.ref_resolutions
+                    .insert(ref_call.model_name.clone(), relation);
+            }
+        }
+
+        // Resolve all source() calls
+        let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
+        for source_call in &test.depends_on.sources {
+            if let Some(source) = manifest.resolve_source(
+                &source_call.source_name,
+                &source_call.table_name,
+            ) {
+                let relation = if is_local {
+                    source.table_identifier().to_string()
+                } else {
+                    source.relation_name()
+                };
+                ctx.source_resolutions.insert(
+                    (source_call.source_name.clone(), source_call.table_name.clone()),
+                    relation,
+                );
+            }
+        }
+
+        // Render Jinja
+        let rendered = self.engine.render(&test.raw_sql, &ctx)?;
 
         Ok(rendered)
     }

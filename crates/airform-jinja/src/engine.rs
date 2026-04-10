@@ -215,7 +215,7 @@ impl JinjaEngine {
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
-            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''"],
+            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
              "{{ from }}.*"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
              "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
@@ -329,7 +329,7 @@ impl JinjaEngine {
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
-            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''"],
+            ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
              "{{ from }}.*"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
              "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
@@ -410,6 +410,8 @@ impl JinjaEngine {
              "{% for col in source_columns %}{% if not loop.first %}, {% endif %}{{ col.name }}{% endfor %}"),
             ("max_bool", &["field=none", "boolean_field=none"],
              "MAX({{ field if field else boolean_field }})"),
+            ("fivetran_date_spine", &["datepart", "start_date", "end_date"],
+             "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
         ];
 
         // ── snowplow_utils namespace (stubs) ─────────────────────────────
@@ -435,11 +437,11 @@ impl JinjaEngine {
             ("get_run_limits", &["min_last_success=none", "max_last_success=none", "models_matched_from_manifest=none", "has_matched_all_models=none", "start_date=none"],
              ""),
             ("base_create_snowplow_incremental_manifest", &[], ""),
-            ("base_create_snowplow_sessions_lifecycle_manifest", &["session_identifiers=none", "session_sql=none", "session_timestamp=none", "user_identifiers=none", "user_sql=none", "quarantined_sessions=none", "derived_tstamp_partitioned=none", "days_late_allowed=none", "max_session_days=none", "app_ids=none", "snowplow_events_database=none", "snowplow_events_schema=none", "snowplow_events_table=none", "event_limits_table=none", "incremental_manifest_table=none", "lifecycle_manifest_table=none"],
+            ("base_create_snowplow_sessions_lifecycle_manifest", &["session_identifiers=none", "session_sql=none", "session_timestamp=none", "user_identifiers=none", "user_sql=none", "quarantined_sessions=none", "derived_tstamp_partitioned=none", "days_late_allowed=none", "max_session_days=none", "app_ids=none", "snowplow_events_database=none", "snowplow_events_schema=none", "snowplow_events_table=none", "event_limits_table=none", "incremental_manifest_table=none", "lifecycle_manifest_table=none", "allow_null_dvce_tstamps=none"],
              ""),
             ("is_run_with_new_events", &["package_name=none"],
              "true"),
-            ("base_create_snowplow_events_this_run", &["sessions_this_run_table=none", "session_identifiers=none", "session_sql=none", "session_timestamp=none", "derived_tstamp_partitioned=none", "days_late_allowed=none", "max_session_days=none", "app_ids=none", "snowplow_events_database=none", "snowplow_events_schema=none", "snowplow_events_table=none", "entities_or_sdes=none"],
+            ("base_create_snowplow_events_this_run", &["sessions_this_run_table=none", "session_identifiers=none", "session_sql=none", "session_timestamp=none", "derived_tstamp_partitioned=none", "days_late_allowed=none", "max_session_days=none", "app_ids=none", "snowplow_events_database=none", "snowplow_events_schema=none", "snowplow_events_table=none", "entities_or_sdes=none", "custom_sql=none", "allow_null_dvce_tstamps=none"],
              ""),
             ("base_create_snowplow_quarantined_sessions", &[], ""),
             ("base_create_snowplow_sessions_this_run", &["lifecycle_manifest_table=none", "new_event_limits_table=none"],
@@ -1001,7 +1003,9 @@ impl JinjaEngine {
             } else if let Some(default) = default {
                 Ok(default.clone())
             } else {
-                Ok(Value::UNDEFINED)
+                // Return empty list instead of UNDEFINED so that operations like
+                // var('a') + var('b') (list concat) don't fail with "unsupported types"
+                Ok(Value::from(Vec::<Value>::new()))
             }
         });
 
@@ -1123,33 +1127,83 @@ impl JinjaEngine {
         // Build adapter object
         let adapter_obj = Value::from_object(AdapterObject {});
 
-        let tmpl = env.get_template("__model__")?;
-        let rendered = match tmpl.render(minijinja::context! {
-            execute => execute,
-            target => target_obj,
-            adapter => adapter_obj,
-            this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
-        }) {
-            Ok(r) => r,
-            Err(e) => {
-                // Include template line content in the error for better diagnostics
-                let mut msg = e.to_string();
-                if let Some(line_no) = e.line() {
-                    let source = tmpl.source();
-                    let lines: Vec<&str> = source.lines().collect();
-                    if line_no > 0 && (line_no as usize) <= lines.len() {
-                        let content = lines[line_no as usize - 1].trim();
-                        msg = format!("{} [line content: {}]", msg, content);
-                    }
-                }
-                if let Some(detail) = e.detail() {
-                    msg = format!("{} [detail: {}]", msg, detail);
-                }
-                return Err(anyhow::anyhow!("{}", msg));
+        // First render attempt
+        let first_err = {
+            let tmpl = env.get_template("__model__")?;
+            match tmpl.render(minijinja::context! {
+                execute => execute,
+                target => &target_obj,
+                adapter => &adapter_obj,
+                this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
+            }) {
+                Ok(r) => return Ok(r),
+                Err(e) => e,
             }
-        };
+        }; // tmpl dropped here, env borrow released
 
-        Ok(rendered)
+        // Retry strategy: if error is "unknown keyword argument" or "too many arguments",
+        // strip the problematic macro call from the template line and retry.
+        // Loop to handle multiple bad lines (up to a reasonable limit).
+        let mut last_err = first_err;
+        for _attempt in 0..10 {
+            let err_str = last_err.to_string();
+            let det = last_err.detail().unwrap_or("").to_string();
+            let is_kwarg_error = err_str.contains("unknown keyword argument")
+                || det.contains("unknown keyword argument")
+                || err_str.contains("too many arguments")
+                || det.contains("too many arguments");
+
+            if !is_kwarg_error {
+                break;
+            }
+
+            let Some(line_no) = last_err.line() else { break };
+
+            let source = env.get_template("__model__")?.source().to_string();
+            let lines: Vec<&str> = source.lines().collect();
+            if line_no == 0 || (line_no as usize) > lines.len() {
+                break;
+            }
+            let bad_line = lines[line_no as usize - 1];
+            let stripped = strip_jinja_expressions(bad_line);
+            // Use replacen to only replace the first occurrence of this exact line
+            let cleaned = source.replacen(bad_line, &stripped, 1);
+            if env.add_template_owned("__model__".to_string(), cleaned).is_err() {
+                break;
+            }
+
+            let render_result = {
+                let Ok(tmpl2) = env.get_template("__model__") else { break };
+                tmpl2.render(minijinja::context! {
+                    execute => execute,
+                    target => &target_obj,
+                    adapter => &adapter_obj,
+                    this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
+                })
+            };
+            match render_result {
+                Ok(r) => return Ok(r),
+                Err(e) => { last_err = e; }
+            }
+        }
+
+        // Build error message with diagnostics
+        let final_detail = last_err.detail().unwrap_or("").to_string();
+        let mut msg = last_err.to_string();
+        if let Ok(tmpl_err) = env.get_template("__model__") {
+            if let Some(line_no) = last_err.line() {
+                let source = tmpl_err.source();
+                let lines: Vec<&str> = source.lines().collect();
+                if line_no > 0 && (line_no as usize) <= lines.len() {
+                    let content = lines[line_no as usize - 1].trim();
+                    msg = format!("{} [line content: {}]", msg, content);
+                }
+            }
+        }
+        if !final_detail.is_empty() {
+            msg = format!("{} [detail: {}]", msg, final_detail);
+        }
+        Err(anyhow::anyhow!("{}", msg))
     }
 }
 
@@ -1481,6 +1535,38 @@ fn fix_unary_negation(sql: &str) -> String {
         i += 1;
     }
     out
+}
+
+/// Strip Jinja expression blocks (`{{ ... }}`) from a single line,
+/// replacing them with empty strings. Used to recover from macro call errors
+/// (unknown kwargs, too many args) by removing the problematic expressions.
+fn strip_jinja_expressions(line: &str) -> String {
+    let mut result = String::new();
+    let chars: Vec<char> = line.chars().collect();
+    let mut i = 0;
+    while i < chars.len() {
+        if i + 1 < chars.len() && chars[i] == '{' && chars[i + 1] == '{' {
+            // Find matching }}
+            let mut depth = 1;
+            let mut j = i + 2;
+            while j + 1 < chars.len() && depth > 0 {
+                if chars[j] == '{' && chars[j + 1] == '{' {
+                    depth += 1;
+                    j += 1;
+                } else if chars[j] == '}' && chars[j + 1] == '}' {
+                    depth -= 1;
+                    j += 1;
+                }
+                j += 1;
+            }
+            // Skip this expression entirely
+            i = j;
+        } else {
+            result.push(chars[i]);
+            i += 1;
+        }
+    }
+    result
 }
 
 /// Strip Jinja comments `{# ... #}` that may contain syntax confusing to minijinja.
