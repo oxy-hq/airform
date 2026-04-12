@@ -164,7 +164,6 @@ impl Compiler {
                 );
             }
         }
-
         // Render Jinja
         let rendered = self.engine.render(&model.raw_sql, &ctx)?;
 

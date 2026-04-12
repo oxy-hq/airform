@@ -1,5 +1,6 @@
 use crate::context::DbtContext;
 use airform_core::{RefCall, SourceCall};
+use jinja2::add_jinja2_compat;
 use minijinja::{Environment, Error as JinjaError, ErrorKind, Value};
 use std::cell::RefCell;
 use std::fmt;
@@ -38,131 +39,16 @@ impl JinjaEngine {
     pub fn new() -> Self {
         let mut env = Environment::new();
 
+        // Add full Jinja2 compatibility (all filters, methods, tests, globals)
+        add_jinja2_compat(&mut env);
+
         // Lenient undefined handling (dbt is permissive with undefined vars)
         env.set_undefined_behavior(minijinja::UndefinedBehavior::Chainable);
 
-        // Handle unknown method calls — supports list.append(), dict.items(), etc.
-        env.set_unknown_method_callback(|_state, value, method, args| {
-            match method {
-                // list.append(item) — mutates list, returns None (we return "")
-                "append" => {
-                    let _ = (value, args);
-                    Ok(Value::from(""))
-                }
-                // list.extend(items) — mutates list, returns None
-                "extend" => {
-                    Ok(Value::from(""))
-                }
-                // dict.items() — return empty list for undefined dicts
-                "items" => {
-                    if let Some(obj) = value.as_object() {
-                        if let Some(iter) = obj.try_iter() {
-                            let items: Vec<Value> = iter
-                                .map(|k| {
-                                    let v = obj.get_value(&k).unwrap_or(Value::UNDEFINED);
-                                    Value::from(vec![k, v])
-                                })
-                                .collect();
-                            return Ok(Value::from(items));
-                        }
-                    }
-                    Ok(Value::from(Vec::<Value>::new()))
-                }
-                // dict.values()
-                "values" => {
-                    if let Some(obj) = value.as_object() {
-                        if let Some(iter) = obj.try_iter() {
-                            let vals: Vec<Value> = iter
-                                .filter_map(|k| obj.get_value(&k))
-                                .collect();
-                            return Ok(Value::from(vals));
-                        }
-                    }
-                    Ok(Value::from(Vec::<Value>::new()))
-                }
-                // dict.keys()
-                "keys" => {
-                    if let Some(obj) = value.as_object() {
-                        if let Some(iter) = obj.try_iter() {
-                            let keys: Vec<Value> = iter.collect();
-                            return Ok(Value::from(keys));
-                        }
-                    }
-                    Ok(Value::from(Vec::<Value>::new()))
-                }
-                // dict.get(key, default)
-                "get" => {
-                    let key = args.first().cloned().unwrap_or(Value::UNDEFINED);
-                    let default = args.get(1).cloned().unwrap_or(Value::UNDEFINED);
-                    if let Some(obj) = value.as_object() {
-                        if let Some(val) = obj.get_value(&key) {
-                            return Ok(val);
-                        }
-                    }
-                    Ok(default)
-                }
-                // dict.update(other) — no-op
-                "update" => {
-                    Ok(Value::from(""))
-                }
-                // list.pop() / dict.pop() — no-op, return undefined
-                "pop" => {
-                    Ok(args.get(1).cloned().unwrap_or(Value::UNDEFINED))
-                }
-                // str.strip() / str.lstrip() / str.rstrip()
-                "strip" => {
-                    Ok(Value::from(value.to_string().trim().to_string()))
-                }
-                "lstrip" => {
-                    Ok(Value::from(value.to_string().trim_start().to_string()))
-                }
-                "rstrip" => {
-                    Ok(Value::from(value.to_string().trim_end().to_string()))
-                }
-                // str.replace(old, new)
-                "replace" => {
-                    let old = args.first().map(|v| v.to_string()).unwrap_or_default();
-                    let new = args.get(1).map(|v| v.to_string()).unwrap_or_default();
-                    Ok(Value::from(value.to_string().replace(&old, &new)))
-                }
-                // str.startswith / str.endswith
-                "startswith" => {
-                    let prefix = args.first().map(|v| v.to_string()).unwrap_or_default();
-                    Ok(Value::from(value.to_string().starts_with(&prefix)))
-                }
-                "endswith" => {
-                    let suffix = args.first().map(|v| v.to_string()).unwrap_or_default();
-                    Ok(Value::from(value.to_string().ends_with(&suffix)))
-                }
-                // str.split(sep)
-                "split" => {
-                    let sep = args.first().map(|v| v.to_string()).unwrap_or_else(|| " ".to_string());
-                    let parts: Vec<Value> = value.to_string().split(&sep).map(|s| Value::from(s.to_string())).collect();
-                    Ok(Value::from(parts))
-                }
-                // For unknown methods on unknown types, return empty string to avoid breaking
-                _ => {
-                    // If the value is undefined (chainable), just return empty
-                    if value.is_undefined() {
-                        Ok(Value::from(""))
-                    } else {
-                        Err(JinjaError::new(
-                            ErrorKind::UnknownMethod,
-                            format!("{}: no method named {}", value.kind(), method),
-                        ))
-                    }
-                }
-            }
-        });
-
-        // Register custom filters
-        env.add_filter("as_bool", |val: Value| -> bool {
-            if let Some(s) = val.as_str() {
-                matches!(s.to_lowercase().as_str(), "true" | "1" | "yes")
-            } else {
-                !val.is_undefined() && !val.is_none() && val.is_true()
-            }
-        });
+        // jinja2::add_jinja2_compat() already provides:
+        // - Full Python method compatibility (items, keys, values, get, strip, replace, etc.)
+        // - as_bool filter
+        // - All 51 Jinja2 filters, 33 tests, 7 globals
 
         // Override length filter to handle non-iterable types gracefully
         env.add_filter("length", |val: Value| -> Value {
@@ -261,7 +147,7 @@ impl JinjaEngine {
             ("now", &[], "CURRENT_TIMESTAMP"),
             ("group_by", &["n"],
              "GROUP BY {% for i in range(1, n + 1) %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}"),
-            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'"],
+            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'", "where=none"],
              ""),
             ("get_single_value", &["table", "column", "default=none"],
              "{{ default }}"),
@@ -329,6 +215,8 @@ impl JinjaEngine {
             ("now", &[], "CURRENT_TIMESTAMP"),
             ("generate_series", &["start_val=0", "stop_val=none", "step=none", "upper_bound=none"],
              "GENERATE_SERIES({{ start_val }}, {{ stop_val if stop_val else upper_bound }}{% if step %}, {{ step }}{% endif %})"),
+            ("escape_single_quotes", &["value"],
+             "{{ value | replace(\"'\", \"''\") }}"),
         ];
 
         // ── dbt_utils namespace ──────────────────────────────────────────
@@ -351,7 +239,7 @@ impl JinjaEngine {
              "CASE WHEN {{ denominator }} = 0 THEN NULL ELSE {{ numerator }} / {{ denominator }} END"),
             ("group_by", &["n"],
              "GROUP BY {% for i in range(1, n + 1) %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}"),
-            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'"],
+            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'", "where=none"],
              ""),
             ("get_single_value", &["table", "column", "default=none"],
              "{{ default }}"),
@@ -602,19 +490,41 @@ impl JinjaEngine {
     /// Preprocesses macro bodies to handle dict literals and {% do %} statements.
     /// Validates each macro individually and skips those that fail to parse.
     fn build_namespace_template(macros: &[LoadedMacro]) -> String {
-        let test_env = Environment::new();
-        let mut s = String::new();
+        let mut test_env = Environment::new();
+        add_jinja2_compat(&mut test_env);
+        // Collect macro names for dispatch resolution
+        let macro_names: std::collections::HashSet<String> =
+            macros.iter().map(|m| m.name.clone()).collect();
+
+        // First pass: build macro strings and track which ones pass the probe
+        struct MacroEntry {
+            name: String,
+            macro_str: String,
+            dispatch_target: Option<String>, // set if this is a dispatcher macro
+            passed_probe: bool,
+        }
+        let mut entries: Vec<MacroEntry> = Vec::new();
+
         for m in macros {
             let clean = Self::clean_args(&m.args);
             let args_str = clean.join(", ");
             let mut body = preprocess_macro_body(&m.body);
+            let mut dispatch_target = None;
+
             // Detect dispatcher macros: body is just `{{ return(adapter.dispatch('name')(args)) }}`
-            // Replace with a direct call to default__name(args) since adapter is not in macro scope.
+            // Replace with a direct call to the best available variant.
             if body.contains("adapter.dispatch(") {
                 let trimmed = body.trim();
                 if trimmed.starts_with("{{ return(") || trimmed.starts_with("{{return(") {
                     if let Some(dispatched) = extract_dispatch_name(&body) {
-                        body = format!("{{{{ default__{}({}) | trim }}}}", dispatched, args_str);
+                        // Try prefixes in order: default__, postgres__ (DuckDB is PG-compatible)
+                        let target = ["default__", "postgres__"]
+                            .iter()
+                            .map(|prefix| format!("{}{}", prefix, dispatched))
+                            .find(|name| macro_names.contains(name))
+                            .unwrap_or_else(|| format!("default__{}", dispatched));
+                        dispatch_target = Some(target.clone());
+                        body = format!("{{{{ {}({}) | trim }}}}", target, args_str);
                     } else {
                         body = String::new();
                     }
@@ -626,9 +536,48 @@ impl JinjaEngine {
             );
             // Validate that this macro can be parsed
             let mut probe = test_env.clone();
-            if probe.add_template_owned(format!("__probe_{}", m.name), macro_str.clone()).is_ok() {
-                s.push_str(&macro_str);
+            let passed = probe.add_template_owned(format!("__probe_{}", m.name), macro_str.clone()).is_ok();
+            entries.push(MacroEntry {
+                name: m.name.clone(),
+                macro_str,
+                dispatch_target,
+                passed_probe: passed,
+            });
+        }
+
+        // Collect names of macros that passed the probe
+        let included_names: std::collections::HashSet<&str> = entries.iter()
+            .filter(|e| e.passed_probe)
+            .map(|e| e.name.as_str())
+            .collect();
+
+        // Second pass: build the template, fixing dispatchers whose targets were skipped
+        let mut s = String::new();
+        for entry in &entries {
+            if !entry.passed_probe {
+                continue;
             }
+            if let Some(target) = &entry.dispatch_target {
+                if !included_names.contains(target.as_str()) {
+                    // Target macro was skipped — make dispatcher body empty
+                    // so it doesn't call an undefined macro at render time
+                    tracing::debug!(
+                        "Dispatch target '{}' not available for '{}', using empty body",
+                        target, entry.name
+                    );
+                    let clean = Self::clean_args(
+                        &macros.iter().find(|m| m.name == entry.name)
+                            .map(|m| m.args.clone()).unwrap_or_default()
+                    );
+                    let args_str = clean.join(", ");
+                    s.push_str(&format!(
+                        "{{% macro {}({}) %}}{{% endmacro %}}\n",
+                        entry.name, args_str
+                    ));
+                    continue;
+                }
+            }
+            s.push_str(&entry.macro_str);
         }
         s
     }
@@ -824,6 +773,8 @@ impl JinjaEngine {
     pub fn render(&self, sql: &str, ctx: &DbtContext) -> anyhow::Result<String> {
         let mut env = self.env.clone();
 
+        // dbt and adapter globals are added later, after all template registration
+
         // Register namespace templates so {% import "dbt" as dbt %} works
         for ns in &self.builtin_namespaces {
             let tmpl = Self::build_namespace_template(&ns.macros);
@@ -835,6 +786,7 @@ impl JinjaEngine {
         let safe_macros: Vec<&LoadedMacro> = self.custom_macros.iter().collect();
 
         // Register custom macros as a project-level namespace template
+        // Auto-import builtin namespaces so macros can call dbt.type_string(), etc.
         let mut project_ns_ok = false;
         if !safe_macros.is_empty() && !ctx.project_name.is_empty() {
             let safe_owned: Vec<LoadedMacro> = safe_macros.iter().map(|m| (*m).clone()).collect();
@@ -849,10 +801,18 @@ impl JinjaEngine {
         let mut macro_prefix = String::new();
 
         // Auto-import all builtin namespaces
+        // Use a prefixed alias for "dbt" to avoid shadowing the dbt global
+        // (add_jinja2_compat breaks imported-template macros when an import
+        // variable shadows a global of the same name).
         for ns in &self.builtin_namespaces {
+            let alias = if ns.name == "dbt" {
+                "_dbt_macros".to_string()
+            } else {
+                ns.name.to_string()
+            };
             macro_prefix.push_str(&format!(
                 "{{% import \"{}\" as {} %}}\n",
-                ns.name, ns.name
+                ns.name, alias
             ));
         }
 
@@ -866,18 +826,26 @@ impl JinjaEngine {
 
         // Add bare macros with preprocessed bodies (only those that parse)
         {
-            let test_env = Environment::new();
+            let mut test_env = Environment::new();
+            add_jinja2_compat(&mut test_env);
+            let bare_macro_names: std::collections::HashSet<String> =
+                safe_macros.iter().map(|m| m.name.clone()).collect();
             for m in &safe_macros {
                 let clean = Self::clean_args(&m.args);
                 let args_str = clean.join(", ");
                 let mut body = preprocess_macro_body(&m.body);
                 // Detect dispatcher macros: body is just `{{ return(adapter.dispatch('name')(args)) }}`
-                // Replace with a direct call to default__name(args) since adapter is not in macro scope.
+                // Replace with a direct call to the best available variant.
                 if body.contains("adapter.dispatch(") {
                     let trimmed = body.trim();
                     if trimmed.starts_with("{{ return(") || trimmed.starts_with("{{return(") {
                         if let Some(dispatched) = extract_dispatch_name(&body) {
-                            body = format!("{{{{ default__{}({}) | trim }}}}", dispatched, args_str);
+                            let target = ["default__", "postgres__"]
+                                .iter()
+                                .map(|prefix| format!("{}{}", prefix, dispatched))
+                                .find(|name| bare_macro_names.contains(name))
+                                .unwrap_or_else(|| format!("default__{}", dispatched));
+                            body = format!("{{{{ {}({}) | trim }}}}", target, args_str);
                         } else {
                             body = String::new();
                         }
@@ -900,14 +868,18 @@ impl JinjaEngine {
 
 
 
-
         // Register the template; fall back to import-only prefix on parse errors
         if env.add_template_owned("__model__".to_string(), full_template).is_err() {
             let mut fallback_prefix = String::new();
             for ns in &self.builtin_namespaces {
+                let alias = if ns.name == "dbt" {
+                    "_dbt_macros".to_string()
+                } else {
+                    ns.name.to_string()
+                };
                 fallback_prefix.push_str(&format!(
                     "{{% import \"{}\" as {} %}}\n",
-                    ns.name, ns.name
+                    ns.name, alias
                 ));
             }
             if project_ns_ok {
@@ -1139,7 +1111,13 @@ impl JinjaEngine {
                             });
                             // Only add columns that have aliases — base columns come from *
                             if let Some(a) = alias {
-                                alias_parts.push(format!("{} as {}", name, a));
+                                // Quote column names that are SQL reserved keywords
+                                let quoted_name = if is_sql_reserved_keyword(&name) {
+                                    format!("\"{}\"", name)
+                                } else {
+                                    name
+                                };
+                                alias_parts.push(format!("{} as {}", quoted_name, a));
                             }
                         }
                         if !alias_parts.is_empty() {
@@ -1225,6 +1203,11 @@ impl JinjaEngine {
         // Build dbt namespace object — accessible from inside macros (unlike {% import %})
         let dbt_obj = Value::from_object(DbtNamespaceObject {});
 
+        // Add dbt and adapter as globals so they're accessible in ALL templates,
+        // including namespace templates where macros call dbt.type_string() etc.
+        env.add_global("dbt", dbt_obj.clone());
+        env.add_global("adapter", adapter_obj.clone());
+
         // First render attempt
         let first_err = {
             let tmpl = env.get_template("__model__")?;
@@ -1290,8 +1273,16 @@ impl JinjaEngine {
         // Build error message with diagnostics
         let final_detail = last_err.detail().unwrap_or("").to_string();
         let mut msg = last_err.to_string();
-        if let Ok(tmpl_err) = env.get_template("__model__") {
-            if let Some(line_no) = last_err.line() {
+        // Read line content from the template that actually errored (not always __model__)
+        if let Some(line_no) = last_err.line() {
+            let err_tmpl_name = last_err.name().unwrap_or("__model__");
+            let tmpl_to_read = if err_tmpl_name == "__model__" {
+                env.get_template("__model__").ok()
+            } else {
+                env.get_template(err_tmpl_name).ok()
+                    .or_else(|| env.get_template("__model__").ok())
+            };
+            if let Some(tmpl_err) = tmpl_to_read {
                 let source = tmpl_err.source();
                 let lines: Vec<&str> = source.lines().collect();
                 if line_no > 0 && (line_no as usize) <= lines.len() {
@@ -1461,6 +1452,22 @@ impl minijinja::value::Object for DbtNamespaceObject {
                 let stop = args.get(1).map(|v| v.to_string()).unwrap_or_default();
                 Ok(Value::from(format!("GENERATE_SERIES({start}, {stop})")))
             }
+            "escape_single_quotes" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(val.replace('\'', "''")))
+            }
+            "cast_bool_to_text" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("CAST({field} AS VARCHAR)")))
+            }
+            "last_day" => {
+                let date = get_method_arg(args, 0, &["date"]);
+                Ok(Value::from(format!("LAST_DAY({date})")))
+            }
+            "now" => Ok(Value::from("CURRENT_TIMESTAMP")),
+            "current_timestamp_in_utc" => {
+                Ok(Value::from("CURRENT_TIMESTAMP"))
+            }
             _ => {
                 // Fall back to trying template-level macro
                 Ok(Value::from(""))
@@ -1504,6 +1511,13 @@ impl minijinja::value::Object for AdapterObject {
                 Ok(Value::from_object(DispatchResult { target_name }))
             }
             "set_query_tag" | "set_query_comment" => {
+                Ok(Value::from(""))
+            }
+            "quote" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("\"{val}\"")))
+            }
+            "rename_relation" | "drop_relation" | "create_schema" | "drop_schema" => {
                 Ok(Value::from(""))
             }
             _ => {
@@ -1739,6 +1753,30 @@ fn strip_list_concat(sql: &str) -> String {
         }
     }
     result
+}
+
+/// Check if a column name is a SQL reserved keyword that needs quoting.
+fn is_sql_reserved_keyword(name: &str) -> bool {
+    matches!(
+        name.to_uppercase().as_str(),
+        "ORDER" | "SELECT" | "FROM" | "WHERE" | "GROUP" | "HAVING" | "LIMIT"
+            | "OFFSET" | "INSERT" | "UPDATE" | "DELETE" | "CREATE" | "DROP"
+            | "ALTER" | "TABLE" | "INDEX" | "VIEW" | "JOIN" | "LEFT" | "RIGHT"
+            | "INNER" | "OUTER" | "CROSS" | "ON" | "AND" | "OR" | "NOT" | "IN"
+            | "IS" | "NULL" | "TRUE" | "FALSE" | "AS" | "CASE" | "WHEN" | "THEN"
+            | "ELSE" | "END" | "BETWEEN" | "LIKE" | "EXISTS" | "ALL" | "ANY"
+            | "UNION" | "EXCEPT" | "INTERSECT" | "INTO" | "VALUES" | "SET"
+            | "DEFAULT" | "PRIMARY" | "KEY" | "FOREIGN" | "REFERENCES" | "CHECK"
+            | "UNIQUE" | "CONSTRAINT" | "DISTINCT" | "ASC" | "DESC" | "BY"
+            | "WITH" | "RECURSIVE" | "OVER" | "PARTITION" | "WINDOW" | "ROWS"
+            | "RANGE" | "RANK" | "ROW" | "FETCH" | "NEXT" | "ONLY" | "PERCENT"
+            | "ROLLUP" | "CUBE" | "GROUPING" | "FILTER" | "CURRENT" | "DATE"
+            | "TIME" | "TIMESTAMP" | "INTERVAL" | "YEAR" | "MONTH" | "DAY"
+            | "HOUR" | "MINUTE" | "SECOND" | "ZONE" | "BOTH" | "LEADING"
+            | "TRAILING" | "FOR" | "SOME" | "TO" | "USER" | "GRANT" | "REVOKE"
+            | "COLUMN" | "TYPE" | "FULL" | "NATURAL" | "USING" | "DO" | "IF"
+            | "BEGIN" | "COMMIT" | "ROLLBACK" | "START" | "TRANSACTION"
+    )
 }
 
 /// Fix unary negation of function calls: minijinja can't handle `-func(...)`.
@@ -2360,6 +2398,75 @@ mod tests {
         let cv = config_values.lock().unwrap();
         assert_eq!(cv.get("materialized"), Some(&"table".to_string()));
         assert_eq!(cv.get("schema"), Some(&"analytics".to_string()));
+    }
+
+    #[test]
+    fn test_globals_in_imported_templates() {
+        let mut env = Environment::new();
+        add_jinja2_compat(&mut env);
+        env.set_undefined_behavior(minijinja::UndefinedBehavior::Chainable);
+
+        // Register templates FIRST (before globals) — matching actual engine order
+        env.add_template_owned("myns".to_string(), r#"{% macro get_cols() %}{% set columns = [{"name": "test", "datatype": dbt.type_string()}] %}{% for c in columns %}{{ c.name }}:{{ c.datatype }}{% endfor %}{% endmacro %}"#.to_string()).unwrap();
+        env.add_template_owned("model".to_string(), r#"{% import "myns" as myns %}RESULT={{ myns.get_cols() }}"#.to_string()).unwrap();
+
+        // Add globals AFTER template registration
+        env.add_global("dbt", Value::from_object(DbtNamespaceObject {}));
+
+        let tmpl = env.get_template("model").unwrap();
+        // Also pass dbt in render context (like the engine does)
+        let result = tmpl.render(minijinja::context! {
+            dbt => Value::from_object(DbtNamespaceObject {}),
+        }).unwrap();
+        assert!(result.contains("VARCHAR"), "Expected VARCHAR in result: {}", result);
+    }
+
+    #[test]
+    fn test_engine_dbt_global_in_project_macros() {
+        // Use the actual JinjaEngine to render a model that calls a project
+        // macro which uses dbt.type_string() inside a {% set %} with dict literals.
+        let mut engine = JinjaEngine::new();
+
+        // Add a custom macro that mimics amazon-selling-partner's exact pattern
+        engine.load_macros(&[(
+            "get_type_test".to_string(),
+            vec![],
+            r#"
+{% set columns = [
+    {"name": "charge_kind", "datatype": dbt.type_string()},
+    {"name": "currency_amount", "datatype": dbt.type_float()},
+    {"name": "index", "datatype": dbt.type_int()}
+] %}
+{% for c in columns %}{{ c.name }}:{{ c.datatype }},{% endfor %}
+"#.to_string(),
+        )]);
+
+        let ctx = DbtContext {
+            project_name: "test_project".to_string(),
+            execute: false,
+            vars: std::collections::HashMap::new(),
+            target_name: "dev".to_string(),
+            target_schema: "public".to_string(),
+            target_database: "db".to_string(),
+            target_type: "duckdb".to_string(),
+            refs: std::sync::Arc::new(std::sync::Mutex::new(vec![])),
+            sources: std::sync::Arc::new(std::sync::Mutex::new(vec![])),
+            config_values: std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashMap::new())),
+            ref_resolutions: std::collections::HashMap::new(),
+            source_resolutions: std::collections::HashMap::new(),
+            full_refresh: false,
+            is_incremental: false,
+            this_relation: None,
+        };
+
+        // Model SQL that calls the project macro via the namespace
+        let sql = "SELECT {{ test_project.get_type_test() }} as result";
+        let result = engine.render(sql, &ctx);
+        match &result {
+            Ok(r) => eprintln!("Engine test result: {}", r),
+            Err(e) => eprintln!("Engine test error: {}", e),
+        }
+        assert!(result.is_ok(), "Engine render failed: {:?}", result.err());
     }
 
     #[test]

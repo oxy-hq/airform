@@ -13,10 +13,9 @@
 //! Run:
 //!   cargo test --test test_compat_execution -- --include-ignored
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use airform_compiler::Compiler;
-use airform_core::Materialization;
 use airform_executor::{Executor, NodeStatus};
 use airform_graph::build_graph;
 use airform_jinja::{DbtContext, JinjaEngine};
@@ -35,6 +34,7 @@ fn project_exists(name: &str) -> bool {
 
 /// Report from testing a single compat project.
 #[derive(Debug)]
+#[allow(dead_code)]
 struct ProjectReport {
     name: String,
     load_ok: bool,
@@ -72,6 +72,7 @@ impl ProjectReport {
         }
     }
 
+    #[allow(dead_code)]
     fn compile_success_rate(&self) -> f64 {
         if self.models_found == 0 {
             return 0.0;
@@ -187,6 +188,8 @@ async fn execute_project(name: &str) -> ProjectReport {
         .unwrap_or_else(|| "main".to_string());
 
     let mut ctx = DbtContext::new(&load_state.project.name);
+    ctx.execute = true;
+    ctx.populate_vars(&load_state.project.vars);
     if let Some(target) = &load_state.target {
         ctx.target_schema = target.schema.clone().unwrap_or_else(|| "main".to_string());
         ctx.target_database = target.database.clone().unwrap_or_else(|| "main".to_string());
@@ -216,6 +219,11 @@ async fn execute_project(name: &str) -> ProjectReport {
             report.errors.push(format!("seed: {}", e));
             return report;
         }
+    }
+
+    // Register empty tables for sources not backed by seeds
+    if let Err(e) = executor.register_sources(&manifest).await {
+        report.errors.push(format!("register_sources: {}", e));
     }
 
     // Execute
@@ -262,6 +270,7 @@ fn compat_compile_report() {
         .unwrap()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
+        .filter(|e| !e.file_name().to_string_lossy().starts_with('.'))
         .collect();
     entries.sort_by_key(|e| e.file_name());
 
@@ -356,6 +365,7 @@ async fn compat_execution_report() {
         .unwrap()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
+        .filter(|e| !e.file_name().to_string_lossy().starts_with('.'))
         .collect();
     entries.sort_by_key(|e| e.file_name());
 

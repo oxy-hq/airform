@@ -523,6 +523,88 @@ impl Executor {
         Ok(results)
     }
 
+    /// Register empty tables for all source definitions that weren't already
+    /// backed by a seed. This prevents "table not found" cascading errors
+    /// when models reference source tables that only exist in a real warehouse.
+    pub async fn register_sources(&self, manifest: &Manifest) -> anyhow::Result<usize> {
+        use datafusion::arrow::datatypes::{DataType, Field, Schema};
+        use std::sync::Arc;
+
+        let mut registered = 0;
+
+        // Collect source tables we need to register, grouped by (schema, table)
+        let mut to_register: std::collections::HashMap<(String, String), Vec<Field>> =
+            std::collections::HashMap::new();
+
+        for source in manifest.sources.values() {
+            let table_name = source.table_identifier().to_string();
+            let schema_name = source.schema.as_deref().unwrap_or("public").to_string();
+            let key = (schema_name.clone(), table_name.clone());
+
+            if to_register.contains_key(&key) {
+                continue;
+            }
+
+            let fields: Vec<Field> = if source.columns.is_empty() {
+                vec![Field::new("_placeholder", DataType::Utf8, true)]
+            } else {
+                source
+                    .columns
+                    .iter()
+                    .map(|c| {
+                        let dt = match c.data_type.as_deref() {
+                            Some("string") | Some("text") | Some("varchar") | Some("TEXT") => DataType::Utf8,
+                            Some("integer") | Some("int") | Some("INT") | Some("bigint") | Some("BIGINT") => DataType::Int64,
+                            Some("float") | Some("double") | Some("FLOAT") | Some("DOUBLE") | Some("numeric") | Some("NUMERIC") => DataType::Float64,
+                            Some("boolean") | Some("bool") | Some("BOOLEAN") => DataType::Boolean,
+                            Some("date") | Some("DATE") => DataType::Date32,
+                            Some("timestamp") | Some("TIMESTAMP") | Some("datetime") => DataType::Utf8,
+                            _ => DataType::Utf8,
+                        };
+                        Field::new(&c.name, dt, true)
+                    })
+                    .collect()
+            };
+
+            to_register.insert(key, fields);
+        }
+
+        tracing::info!("register_sources: {} unique source tables to register", to_register.len());
+
+        for ((schema_name, table_name), fields) in &to_register {
+            if let Err(e) = self.ensure_schema(schema_name).await {
+                tracing::warn!("ensure_schema({}) failed: {}", schema_name, e);
+                continue;
+            }
+
+            let arrow_schema = Arc::new(Schema::new(fields.clone()));
+            let table_ref = datafusion::common::TableReference::full("datafusion", schema_name.as_str(), table_name.as_str());
+
+            let empty_table = match datafusion::datasource::MemTable::try_new(
+                arrow_schema,
+                vec![vec![]],
+            ) {
+                Ok(t) => t,
+                Err(e) => {
+                    tracing::warn!("MemTable::try_new for {}.{} failed: {}", schema_name, table_name, e);
+                    continue;
+                }
+            };
+
+            match self.ctx.register_table(table_ref, Arc::new(empty_table)) {
+                Ok(_) => {
+                    registered += 1;
+                }
+                Err(_) => {
+                    tracing::debug!("register_table {}.{}: already exists", schema_name, table_name);
+                }
+            }
+        }
+
+        tracing::info!("Registered {} empty source tables", registered);
+        Ok(registered)
+    }
+
     /// Create a schema in DataFusion if it doesn't already exist.
     async fn ensure_schema(&self, schema: &str) -> anyhow::Result<()> {
         let sql = format!("CREATE SCHEMA IF NOT EXISTS {}", quote_ident(schema));
