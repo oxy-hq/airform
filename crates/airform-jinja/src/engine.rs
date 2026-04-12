@@ -1,8 +1,16 @@
 use crate::context::DbtContext;
 use airform_core::{RefCall, SourceCall};
 use minijinja::{Environment, Error as JinjaError, ErrorKind, Value};
+use std::cell::RefCell;
 use std::fmt;
 use std::sync::Arc;
+
+thread_local! {
+    /// Captures the most recent value passed to `return()` in a Jinja macro.
+    /// Used by `fill_staging_columns` to receive structured column lists
+    /// (since Jinja macros render to text, losing structured data).
+    static LAST_RETURN_VALUE: RefCell<Option<Value>> = RefCell::new(None);
+}
 
 /// A custom macro loaded from a macro file.
 #[derive(Debug, Clone)]
@@ -185,7 +193,7 @@ impl JinjaEngine {
         // ── Bare macros (available without namespace prefix) ──────────────
         let bare: &[(&str, &[&str], &str)] = &[
             ("date_trunc", &["datepart", "field"],
-             "DATE_TRUNC({{ datepart }}, {{ field }})"),
+             "DATE_TRUNC('{{ datepart }}', {{ field }})"),
             ("dateadd", &["datepart", "interval", "from_date_or_timestamp"],
              "{{ from_date_or_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}"),
             ("datediff", &["first_date", "second_date", "datepart"],
@@ -216,18 +224,18 @@ impl JinjaEngine {
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
-             "{{ from }}.*"),
+             "{% if relation_alias is not none %}{{ relation_alias }}.*{% else %}*{% endif %}"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
-             "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
+             "SELECT UNNEST(GENERATE_SERIES(CAST({{ start_date }} AS DATE), CAST({{ end_date }} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
             ("pivot", &["column", "values", "alias=true", "agg='sum'", "cmp='='", "prefix=''", "suffix=''", "then_value='1'", "else_value='0'", "quote_identifiers=true", "distinct=false", "field_to_agg=none", "aliases=none"],
              "{% for v in values %}{{ agg }}({% if distinct %}DISTINCT {% endif %}CASE WHEN {{ column }} {{ cmp }} '{{ v }}' THEN {{ then_value }} ELSE {{ else_value }} END) AS {{ prefix }}{{ v }}{{ suffix }}{% if not loop.last %},\n{% endif %}{% endfor %}"),
             ("unpivot", &["relation=none", "cast_to='varchar'", "exclude=[]", "remove=[]", "field_name='field_name'", "value_name='value'"],
              "/* unpivot not supported in airform */ SELECT * FROM {{ relation }}"),
             ("union_data", &["table_identifier=none", "database_variable=none", "schema_variable=none", "default_database=none", "default_schema=none", "default_variable=none", "union_schema_variable=none", "union_database_variable=none"],
-             "SELECT * FROM {{ source(var(schema_variable, default_schema) if schema_variable else 'raw', table_identifier if table_identifier else 'unknown') }}"),
+             "SELECT * FROM {{ var(schema_variable, default_schema) }}.{{ table_identifier }}"),
             ("enabled_vars", &["vars=[]"], "true"),
             ("fill_staging_columns", &["source_columns", "staging_columns"],
-             "{% for col in staging_columns %}{% if not loop.first %}, {% endif %}{{ col.name }}{% endfor %}"),
+             "{{ _fill_staging_columns_impl() }}"),
             ("string_agg", &["field=none", "delimiter=','", "field_to_agg=none"],
              "STRING_AGG({{ field if field else field_to_agg }}, {{ delimiter }})"),
             ("json_parse", &["string", "string_path"],
@@ -238,8 +246,8 @@ impl JinjaEngine {
             ("timestamp_diff", &["first_timestamp=none", "second_timestamp=none", "datepart='day'", "first_date=none", "second_date=none"],
              "DATE_DIFF('{{ datepart }}', {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }})"),
             ("ceiling", &["val"], "CEIL({{ val }})"),
-            ("percentile", &["field=none", "percentile_val=none", "partition_field=none", "percent=none", "percentile_field=none"],
-             "PERCENTILE_CONT({{ percentile_val if percentile_val else percent }}) WITHIN GROUP (ORDER BY {{ field if field else percentile_field }})"),
+            ("percentile", &["field_name=none", "partition_field=none", "percentile_value=none", "field=none", "percentile_val=none", "percent=none", "percentile_field=none"],
+             "PERCENTILE_CONT({{ percentile_value if percentile_value else (percentile_val if percentile_val else percent) }}) WITHIN GROUP (ORDER BY {{ field_name if field_name else (field if field else percentile_field) }})"),
             ("hash", &["field"],
              "MD5(CAST({{ field }} AS VARCHAR))"),
             ("position", &["substring_text", "string_text"],
@@ -254,7 +262,7 @@ impl JinjaEngine {
             ("group_by", &["n"],
              "GROUP BY {% for i in range(1, n + 1) %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}"),
             ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'"],
-             "{{ default }}"),
+             ""),
             ("get_single_value", &["table", "column", "default=none"],
              "{{ default }}"),
             ("get_url_host", &["field"],
@@ -280,7 +288,7 @@ impl JinjaEngine {
         // ── dbt namespace ────────────────────────────────────────────────
         let dbt_macros: &[(&str, &[&str], &str)] = &[
             ("date_trunc", &["datepart", "field"],
-             "DATE_TRUNC({{ datepart }}, {{ field }})"),
+             "DATE_TRUNC('{{ datepart }}', {{ field }})"),
             ("dateadd", &["datepart", "interval", "from_date_or_timestamp"],
              "{{ from_date_or_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}"),
             ("datediff", &["first_date", "second_date", "datepart"],
@@ -330,9 +338,9 @@ impl JinjaEngine {
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
-             "{{ from }}.*"),
+             "{% if relation_alias is not none %}{{ relation_alias }}.*{% else %}*{% endif %}"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
-             "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
+             "SELECT UNNEST(GENERATE_SERIES(CAST({{ start_date }} AS DATE), CAST({{ end_date }} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
             ("pivot", &["column", "values", "alias=true", "agg='sum'", "cmp='='", "prefix=''", "suffix=''", "then_value='1'", "else_value='0'", "quote_identifiers=true", "distinct=false", "field_to_agg=none", "aliases=none"],
              "{% for v in values %}{{ agg }}({% if distinct %}DISTINCT {% endif %}CASE WHEN {{ column }} {{ cmp }} '{{ v }}' THEN {{ then_value }} ELSE {{ else_value }} END) AS {{ prefix }}{{ v }}{{ suffix }}{% if not loop.last %},\n{% endif %}{% endfor %}"),
             ("unpivot", &["relation=none", "cast_to='varchar'", "exclude=[]", "remove=[]", "field_name='field_name'", "value_name='value'"],
@@ -344,7 +352,7 @@ impl JinjaEngine {
             ("group_by", &["n"],
              "GROUP BY {% for i in range(1, n + 1) %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}"),
             ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'"],
-             "{{ default }}"),
+             ""),
             ("get_single_value", &["table", "column", "default=none"],
              "{{ default }}"),
             ("get_url_host", &["field"],
@@ -367,11 +375,11 @@ impl JinjaEngine {
         // ── fivetran_utils namespace ─────────────────────────────────────
         let fivetran_utils_macros: &[(&str, &[&str], &str)] = &[
             ("union_data", &["table_identifier=none", "database_variable=none", "schema_variable=none", "default_database=none", "default_schema=none", "default_variable=none", "union_schema_variable=none", "union_database_variable=none"],
-             "SELECT * FROM {{ source(var(schema_variable, default_schema) if schema_variable else 'raw', table_identifier if table_identifier else 'unknown') }}"),
+             "SELECT * FROM {{ var(schema_variable, default_schema) }}.{{ table_identifier }}"),
             ("enabled_vars", &["vars=[]"], "true"),
             ("enabled_vars_one_true", &["vars=[]"], "true"),
             ("fill_staging_columns", &["source_columns", "staging_columns"],
-             "{% for col in staging_columns %}{% if not loop.first %}, {% endif %}{{ col.name }}{% endfor %}"),
+             "{{ _fill_staging_columns_impl() }}"),
             ("string_agg", &["field=none", "delimiter=','", "field_to_agg=none"],
              "STRING_AGG({{ field if field else field_to_agg }}, {{ delimiter }})"),
             ("json_parse", &["string", "string_path"],
@@ -382,10 +390,10 @@ impl JinjaEngine {
             ("timestamp_diff", &["first_timestamp=none", "second_timestamp=none", "datepart='day'", "first_date=none", "second_date=none"],
              "DATE_DIFF('{{ datepart }}', {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }})"),
             ("ceiling", &["val"], "CEIL({{ val }})"),
-            ("percentile", &["field=none", "percentile_val=none", "partition_field=none", "percent=none", "percentile_field=none"],
-             "PERCENTILE_CONT({{ percentile_val if percentile_val else percent }}) WITHIN GROUP (ORDER BY {{ field if field else percentile_field }})"),
+            ("percentile", &["field_name=none", "partition_field=none", "percentile_value=none", "field=none", "percentile_val=none", "percent=none", "percentile_field=none"],
+             "PERCENTILE_CONT({{ percentile_value if percentile_value else (percentile_val if percentile_val else percent) }}) WITHIN GROUP (ORDER BY {{ field_name if field_name else (field if field else percentile_field) }})"),
             ("source_relation", &["union_schema_variable=none", "union_database_variable=none"],
-             ""),
+             ", CAST('' AS VARCHAR) AS source_relation"),
             ("persist_pass_through_columns", &["pass_through_variable=none", "identifier=none", "transform=none"],
              "{% if var(pass_through_variable, []) %}{% for col in var(pass_through_variable, []) %}, {% if col is mapping %}{{ col.alias if col.alias else col.name }}{% else %}{{ col }}{% endif %}{% endfor %}{% endif %}"),
             ("fill_pass_through_columns", &["pass_through_variable=none"],
@@ -403,7 +411,7 @@ impl JinjaEngine {
             ("apply_source_relation", &[],
              ""),
             ("get_base_dates", &["start_date=none", "end_date=none", "n_dateparts=1", "datepart='day'"],
-             ""),
+             "SELECT UNNEST(GENERATE_SERIES(CAST({% if start_date %}{{ start_date }}{% else %}CURRENT_DATE - INTERVAL '{{ n_dateparts }}' {{ datepart }}{% endif %} AS DATE), CAST({% if end_date %}{{ end_date }}{% else %}CURRENT_DATE{% endif %} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
             ("get_columns_in_relation", &["relation"],
              ""),
             ("add_renamed_columns", &["source_columns=[]", "renamed_columns=[]"],
@@ -411,7 +419,7 @@ impl JinjaEngine {
             ("max_bool", &["field=none", "boolean_field=none"],
              "MAX({{ field if field else boolean_field }})"),
             ("fivetran_date_spine", &["datepart", "start_date", "end_date"],
-             "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
+             "SELECT UNNEST(GENERATE_SERIES(CAST({{ start_date }} AS DATE), CAST({{ end_date }} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
         ];
 
         // ── snowplow_utils namespace (stubs) ─────────────────────────────
@@ -485,10 +493,41 @@ impl JinjaEngine {
             ("core_web_vital_results_query", &[], "''"),
         ];
 
+        // ── dbt_date namespace ───────────────────────────────────────────
+        let dbt_date_macros: &[(&str, &[&str], &str)] = &[
+            ("get_base_dates", &["start_date=none", "end_date=none", "n_dateparts=1", "datepart='day'"],
+             "SELECT UNNEST(GENERATE_SERIES(CAST({% if start_date %}{{ start_date }}{% else %}CURRENT_DATE - INTERVAL '{{ n_dateparts }}' {{ datepart }}{% endif %} AS DATE), CAST({% if end_date %}{{ end_date }}{% else %}CURRENT_DATE{% endif %} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
+            ("day_of_week", &["date=none", "isoweek=true"],
+             "EXTRACT(DOW FROM {{ date }})"),
+            ("n_days_ago", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE - INTERVAL '{{ n }}' DAY"),
+            ("n_days_away", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE + INTERVAL '{{ n }}' DAY"),
+            ("n_months_ago", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE - INTERVAL '{{ n }}' MONTH"),
+            ("n_months_away", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE + INTERVAL '{{ n }}' MONTH"),
+            ("n_weeks_ago", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE - INTERVAL '{{ n }}' WEEK"),
+            ("n_weeks_away", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE + INTERVAL '{{ n }}' WEEK"),
+            ("now", &["tz=none"],
+             "CURRENT_TIMESTAMP"),
+            ("today", &["tz=none"],
+             "CURRENT_DATE"),
+            ("yesterday", &["tz=none"],
+             "CURRENT_DATE - INTERVAL '1' DAY"),
+            ("tomorrow", &["tz=none"],
+             "CURRENT_DATE + INTERVAL '1' DAY"),
+            ("date_part", &["datepart", "date"],
+             "EXTRACT({{ datepart }} FROM {{ date }})"),
+        ];
+
         // Register namespaces
         for (ns_name, ns_macros) in [
             ("dbt", dbt_macros as &[_]),
             ("dbt_utils", dbt_utils_macros),
+            ("dbt_date", dbt_date_macros),
             ("fivetran_utils", fivetran_utils_macros),
             ("snowplow_utils", snowplow_utils_macros),
             ("snowplow_web", snowplow_web_macros),
@@ -569,12 +608,16 @@ impl JinjaEngine {
             let clean = Self::clean_args(&m.args);
             let args_str = clean.join(", ");
             let mut body = preprocess_macro_body(&m.body);
-            // Detect dispatcher macros: body is just `{{ return(adapter.dispatch(...)(args)) }}`
-            // Replace their body with empty — avoids runtime errors from undefined adapter.
+            // Detect dispatcher macros: body is just `{{ return(adapter.dispatch('name')(args)) }}`
+            // Replace with a direct call to default__name(args) since adapter is not in macro scope.
             if body.contains("adapter.dispatch(") {
                 let trimmed = body.trim();
                 if trimmed.starts_with("{{ return(") || trimmed.starts_with("{{return(") {
-                    body = String::new();
+                    if let Some(dispatched) = extract_dispatch_name(&body) {
+                        body = format!("{{{{ default__{}({}) | trim }}}}", dispatched, args_str);
+                    } else {
+                        body = String::new();
+                    }
                 }
             }
             let macro_str = format!(
@@ -828,13 +871,16 @@ impl JinjaEngine {
                 let clean = Self::clean_args(&m.args);
                 let args_str = clean.join(", ");
                 let mut body = preprocess_macro_body(&m.body);
-                // Detect dispatcher macros: body is just `{{ return(adapter.dispatch(...)(args)) }}`
-                // Replace their body with empty — the platform-specific variant
-                // (default__name or postgres__name) will be available as a separate macro.
+                // Detect dispatcher macros: body is just `{{ return(adapter.dispatch('name')(args)) }}`
+                // Replace with a direct call to default__name(args) since adapter is not in macro scope.
                 if body.contains("adapter.dispatch(") {
                     let trimmed = body.trim();
                     if trimmed.starts_with("{{ return(") || trimmed.starts_with("{{return(") {
-                        body = String::new();
+                        if let Some(dispatched) = extract_dispatch_name(&body) {
+                            body = format!("{{{{ default__{}({}) | trim }}}}", dispatched, args_str);
+                        } else {
+                            body = String::new();
+                        }
                     }
                 }
                 let macro_str = format!(
@@ -1003,9 +1049,10 @@ impl JinjaEngine {
             } else if let Some(default) = default {
                 Ok(default.clone())
             } else {
-                // Return empty list instead of UNDEFINED so that operations like
-                // var('a') + var('b') (list concat) don't fail with "unsupported types"
-                Ok(Value::from(Vec::<Value>::new()))
+                // Return empty string for undefined vars. This produces cleaner
+                // compiled SQL than [] (empty list) which creates invalid "FROM []".
+                // Templates should use var('x', []) or var('x', '') for defaults.
+                Ok(Value::from(""))
             }
         });
 
@@ -1049,11 +1096,59 @@ impl JinjaEngine {
             },
         );
 
-        // Register return() function (dbt macro helper — just passes through the value)
+        // Register return() function (dbt macro helper — stores value in thread-local
+        // for fill_staging_columns to consume, renders as empty string like dbt's return())
         env.add_function(
             "return",
             |args: &[Value]| -> Result<Value, JinjaError> {
-                Ok(args.first().cloned().unwrap_or(Value::UNDEFINED))
+                let val = args.first().cloned().unwrap_or(Value::UNDEFINED);
+                LAST_RETURN_VALUE.with(|v| *v.borrow_mut() = Some(val.clone()));
+                Ok(Value::from(""))
+            },
+        );
+
+        // Register _fill_staging_columns_impl() — reads the column list from thread-local
+        // (set by the most recent return() call from a get_*_columns macro)
+        env.add_function(
+            "_fill_staging_columns_impl",
+            || -> Result<Value, JinjaError> {
+                let columns = LAST_RETURN_VALUE.with(|v| v.borrow_mut().take());
+                if let Some(cols) = columns {
+                    if let Ok(iter) = cols.try_iter() {
+                        let mut alias_parts = Vec::new();
+                        for item in iter {
+                            let name: String = item
+                                .get_attr("name")
+                                .ok()
+                                .map(|v: Value| v.to_string())
+                                .unwrap_or_default();
+                            if name.is_empty() {
+                                continue;
+                            }
+                            let alias: Option<String> = item.get_attr("alias").ok().and_then(|v: Value| {
+                                let s = v.to_string();
+                                if s.is_empty()
+                                    || s == "undefined"
+                                    || s == "none"
+                                    || s == "None"
+                                {
+                                    None
+                                } else {
+                                    Some(s)
+                                }
+                            });
+                            // Only add columns that have aliases — base columns come from *
+                            if let Some(a) = alias {
+                                alias_parts.push(format!("{} as {}", name, a));
+                            }
+                        }
+                        if !alias_parts.is_empty() {
+                            // Output * plus alias mappings
+                            return Ok(Value::from(format!("*,\n    {}", alias_parts.join(",\n    "))));
+                        }
+                    }
+                }
+                Ok(Value::from("*"))
             },
         );
 
@@ -1127,6 +1222,9 @@ impl JinjaEngine {
         // Build adapter object
         let adapter_obj = Value::from_object(AdapterObject {});
 
+        // Build dbt namespace object — accessible from inside macros (unlike {% import %})
+        let dbt_obj = Value::from_object(DbtNamespaceObject {});
+
         // First render attempt
         let first_err = {
             let tmpl = env.get_template("__model__")?;
@@ -1134,6 +1232,7 @@ impl JinjaEngine {
                 execute => execute,
                 target => &target_obj,
                 adapter => &adapter_obj,
+                dbt => &dbt_obj,
                 this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
             }) {
                 Ok(r) => return Ok(r),
@@ -1178,6 +1277,7 @@ impl JinjaEngine {
                     execute => execute,
                     target => &target_obj,
                     adapter => &adapter_obj,
+                    dbt => &dbt_obj,
                     this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
                 })
             };
@@ -1222,6 +1322,153 @@ struct TargetObj {
     profile_name: String,
 }
 
+/// Global dbt namespace object — accessible from inside macros (unlike {% import %}).
+/// Extract an argument by position or by kwargs name from method args.
+/// MiniJinja passes kwargs as the last element of args (a Kwargs map).
+fn get_method_arg(args: &[Value], pos: usize, kwarg_names: &[&str]) -> String {
+    // First try positional (non-kwargs values)
+    if let Some(val) = args.get(pos) {
+        if !val.is_kwargs() {
+            return val.to_string();
+        }
+    }
+    // Try kwargs (last arg if it's a kwargs map)
+    if let Some(last) = args.last() {
+        if last.is_kwargs() {
+            for name in kwarg_names {
+                if let Ok(val) = last.get_attr(name) {
+                    let s = val.to_string();
+                    if !s.is_empty() && s != "undefined" {
+                        return s;
+                    }
+                }
+            }
+        }
+    }
+    String::new()
+}
+
+/// Provides dbt.type_string(), dbt.date_trunc(), etc.
+#[derive(Debug)]
+struct DbtNamespaceObject {}
+
+impl fmt::Display for DbtNamespaceObject {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "<dbt>")
+    }
+}
+
+impl minijinja::value::Object for DbtNamespaceObject {
+    fn call_method(
+        self: &Arc<Self>,
+        _state: &minijinja::State,
+        method: &str,
+        args: &[Value],
+    ) -> Result<Value, JinjaError> {
+        match method {
+            "type_string" => Ok(Value::from("VARCHAR")),
+            "type_timestamp" => Ok(Value::from("TIMESTAMP")),
+            "type_int" => Ok(Value::from("INTEGER")),
+            "type_bigint" => Ok(Value::from("BIGINT")),
+            "type_float" => Ok(Value::from("DOUBLE")),
+            "type_numeric" => Ok(Value::from("NUMERIC")),
+            "type_boolean" => Ok(Value::from("BOOLEAN")),
+            "date_trunc" => {
+                let datepart = get_method_arg(args, 0, &["datepart"]);
+                let field = get_method_arg(args, 1, &["field", "relation"]);
+                Ok(Value::from(format!("DATE_TRUNC('{datepart}', {field})")))
+            }
+            "dateadd" => {
+                let datepart = get_method_arg(args, 0, &["datepart"]);
+                let interval = get_method_arg(args, 1, &["interval"]);
+                let from_date = get_method_arg(args, 2, &["from_date_or_timestamp"]);
+                Ok(Value::from(format!("{from_date} + INTERVAL '{interval}' {datepart}")))
+            }
+            "datediff" => {
+                let datepart = get_method_arg(args, 0, &["datepart"]);
+                let first_date = get_method_arg(args, 1, &["first_date"]);
+                let second_date = get_method_arg(args, 2, &["second_date"]);
+                Ok(Value::from(format!(
+                    "DATE_DIFF('{datepart}', {first_date}, {second_date})"
+                )))
+            }
+            "safe_cast" => {
+                let field = get_method_arg(args, 0, &["field"]);
+                let r#type = get_method_arg(args, 1, &["type"]);
+                Ok(Value::from(format!("TRY_CAST({field} AS {type})")))
+            }
+            "cast" => {
+                let field = get_method_arg(args, 0, &["field"]);
+                let r#type = get_method_arg(args, 1, &["type"]);
+                Ok(Value::from(format!("CAST({field} AS {type})")))
+            }
+            "current_timestamp" | "current_timestamp_backcompat" => {
+                Ok(Value::from("CURRENT_TIMESTAMP"))
+            }
+            "current_timestamp_in_utc_backcompat" => {
+                Ok(Value::from("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"))
+            }
+            "concat" => {
+                let fields: Vec<String> = args.iter().map(|v| v.to_string()).collect();
+                Ok(Value::from(format!("CONCAT({})", fields.join(", "))))
+            }
+            "split_part" => {
+                let string = get_method_arg(args, 0, &["string_text", "string"]);
+                let delimiter = get_method_arg(args, 1, &["delimiter_text", "delimiter"]);
+                let part = get_method_arg(args, 2, &["part_number", "part"]);
+                Ok(Value::from(format!("SPLIT_PART({string}, {delimiter}, {part})")))
+            }
+            "hash" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("MD5({field})")))
+            }
+            "position" => {
+                let substr = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let string = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("POSITION({substr} IN {string})")))
+            }
+            "length" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("LENGTH({field})")))
+            }
+            "right" => {
+                let string = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let length = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("RIGHT({string}, {length})")))
+            }
+            "replace" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let old = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                let new = args.get(2).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("REPLACE({field}, {old}, {new})")))
+            }
+            "except" => Ok(Value::from("EXCEPT")),
+            "listagg" | "string_agg" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let delimiter = args.get(1).map(|v| v.to_string()).unwrap_or("','".to_string());
+                Ok(Value::from(format!("STRING_AGG({field}, {delimiter})")))
+            }
+            "bool_or" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("BOOL_OR({val})")))
+            }
+            "any_value" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("ANY_VALUE({val})")))
+            }
+            "generate_series" => {
+                let start = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let stop = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("GENERATE_SERIES({start}, {stop})")))
+            }
+            _ => {
+                // Fall back to trying template-level macro
+                Ok(Value::from(""))
+            }
+        }
+    }
+}
+
 /// Stub adapter object that provides dbt adapter methods.
 #[derive(Debug)]
 struct AdapterObject {}
@@ -1244,7 +1491,9 @@ impl minijinja::value::Object for AdapterObject {
                 Ok(Value::from(Vec::<Value>::new()))
             }
             "get_relation" => {
-                Ok(Value::UNDEFINED)
+                // Return a truthy relation stub so that `if relation is not none` checks pass
+                // and the macro generates the actual SQL instead of the empty warning branch.
+                Ok(Value::from("__relation__"))
             }
             "dispatch" => {
                 let macro_name = args
@@ -1304,6 +1553,21 @@ fn parse_ref_args(args: &[Value]) -> Result<(String, Option<String>), JinjaError
             "ref() requires 1 or 2 arguments",
         )),
     }
+}
+
+/// Extract the dispatched macro name from an adapter.dispatch() call.
+/// e.g., `{{ return(adapter.dispatch('cents_to_dollars')(column_name)) }}` -> Some("cents_to_dollars")
+fn extract_dispatch_name(body: &str) -> Option<String> {
+    let dispatch_pos = body.find("adapter.dispatch(")?;
+    let after_dispatch = &body[dispatch_pos + "adapter.dispatch(".len()..];
+    // Find the quote-delimited name: 'name' or "name"
+    let quote = after_dispatch.chars().next()?;
+    if quote != '\'' && quote != '"' {
+        return None;
+    }
+    let name_start = 1;
+    let name_end = after_dispatch[name_start..].find(quote)?;
+    Some(after_dispatch[name_start..name_start + name_end].to_string())
 }
 
 /// Strip {{ config(...) }} blocks from SQL.

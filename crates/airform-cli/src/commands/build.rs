@@ -27,7 +27,7 @@ pub async fn run(
     let selected = common::apply_selection(&manifest, &graph, select, exclude);
 
     // Execute
-    let executor = Executor::new();
+    let executor = Executor::new(&output.target_schema);
 
     // Register information schema tables
     if let Err(e) =

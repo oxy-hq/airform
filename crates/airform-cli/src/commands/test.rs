@@ -39,7 +39,7 @@ pub async fn run(project_dir: &Path, select: Option<&str>, target_override: Opti
     });
 
     // Execute - first load seeds, then run models, then run tests
-    let executor = Executor::new();
+    let executor = Executor::new(&output.target_schema);
 
     // Load seeds
     let seed_results = executor.load_seeds(&manifest).await?;

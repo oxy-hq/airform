@@ -68,6 +68,51 @@ impl DbtContext {
         }
     }
 
+    /// Populate vars from dbt_project.yml `vars:` section.
+    /// Handles both top-level vars and package-scoped vars (nested under package name).
+    /// Converts serde_yaml::Value to String for use in var() calls.
+    pub fn populate_vars(&mut self, project_vars: &std::collections::HashMap<String, serde_yaml::Value>) {
+        for (key, value) in project_vars {
+            match value {
+                // Package-scoped vars: { package_name: { var_name: value } }
+                serde_yaml::Value::Mapping(map) => {
+                    for (k, v) in map {
+                        if let serde_yaml::Value::String(var_name) = k {
+                            let str_val = match v {
+                                serde_yaml::Value::String(s) => s.clone(),
+                                serde_yaml::Value::Bool(b) => b.to_string(),
+                                serde_yaml::Value::Number(n) => n.to_string(),
+                                serde_yaml::Value::Null => continue,
+                                other => match serde_yaml::to_string(other) {
+                                    Ok(s) => s.trim().to_string(),
+                                    Err(_) => continue,
+                                },
+                            };
+                            self.vars.insert(var_name.clone(), str_val);
+                        }
+                    }
+                    // Also store the package key itself if it's a known pattern
+                    // (some projects use `var('package_name:key')`)
+                }
+                serde_yaml::Value::String(s) => {
+                    self.vars.insert(key.clone(), s.clone());
+                }
+                serde_yaml::Value::Bool(b) => {
+                    self.vars.insert(key.clone(), b.to_string());
+                }
+                serde_yaml::Value::Number(n) => {
+                    self.vars.insert(key.clone(), n.to_string());
+                }
+                serde_yaml::Value::Null => continue,
+                other => {
+                    if let Ok(s) = serde_yaml::to_string(other) {
+                        self.vars.insert(key.clone(), s.trim().to_string());
+                    }
+                }
+            }
+        }
+    }
+
     pub fn take_refs(&self) -> Vec<RefCall> {
         std::mem::take(&mut *self.refs.lock().unwrap())
     }

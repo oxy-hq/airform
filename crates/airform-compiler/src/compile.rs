@@ -135,14 +135,9 @@ impl Compiler {
         }
 
         // Set `this` relation to the model's resolved relation name (quoted for safety)
-        let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
         let this_name = model.config.alias.as_deref().unwrap_or(&model.name);
-        ctx.this_relation = Some(if is_local {
-            this_name.to_string()
-        } else {
-            let schema = model.config.schema.as_deref().unwrap_or(&ctx_template.target_schema);
-            format!("\"{schema}\".\"{this_name}\"")
-        });
+        let this_schema = generate_schema_name(model.config.schema.as_deref(), &ctx_template.target_schema);
+        ctx.this_relation = Some(format!("\"{this_schema}\".\"{this_name}\""));
 
         // Resolve all ref() calls to relation names
         for ref_call in &model.depends_on.refs {
@@ -157,19 +152,12 @@ impl Compiler {
         }
 
         // Resolve all source() calls
-        let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
         for source_call in &model.depends_on.sources {
             if let Some(source) = manifest.resolve_source(
                 &source_call.source_name,
                 &source_call.table_name,
             ) {
-                let relation = if is_local {
-                    // For local execution (DataFusion/DuckDB), use just the table name
-                    // since seeds/tables are registered in a flat namespace
-                    source.table_identifier().to_string()
-                } else {
-                    source.relation_name()
-                };
+                let relation = source.relation_name();
                 ctx.source_resolutions.insert(
                     (source_call.source_name.clone(), source_call.table_name.clone()),
                     relation,
@@ -180,8 +168,14 @@ impl Compiler {
         // Render Jinja
         let rendered = self.engine.render(&model.raw_sql, &ctx)?;
 
-        // Inject ephemeral CTEs
-        let compiled = self.inject_ephemeral_ctes(&rendered, model, manifest, ctx_template)?;
+        // Inject ephemeral CTEs only for non-ephemeral models.
+        // Ephemeral models get their raw rendered SQL stored; CTE injection
+        // happens when a non-ephemeral consumer wraps them.
+        let compiled = if model.config.materialized == Materialization::Ephemeral {
+            rendered
+        } else {
+            self.inject_ephemeral_ctes(&rendered, model, manifest, ctx_template)?
+        };
 
         Ok(compiled)
     }
@@ -209,17 +203,12 @@ impl Compiler {
         }
 
         // Resolve all source() calls
-        let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
         for source_call in &snapshot.depends_on.sources {
             if let Some(source) = manifest.resolve_source(
                 &source_call.source_name,
                 &source_call.table_name,
             ) {
-                let relation = if is_local {
-                    source.table_identifier().to_string()
-                } else {
-                    source.relation_name()
-                };
+                let relation = source.relation_name();
                 ctx.source_resolutions.insert(
                     (source_call.source_name.clone(), source_call.table_name.clone()),
                     relation,
@@ -256,17 +245,12 @@ impl Compiler {
         }
 
         // Resolve all source() calls
-        let is_local = ctx_template.target_type == "datafusion" || ctx_template.target_type == "duckdb";
         for source_call in &test.depends_on.sources {
             if let Some(source) = manifest.resolve_source(
                 &source_call.source_name,
                 &source_call.table_name,
             ) {
-                let relation = if is_local {
-                    source.table_identifier().to_string()
-                } else {
-                    source.relation_name()
-                };
+                let relation = source.relation_name();
                 ctx.source_resolutions.insert(
                     (source_call.source_name.clone(), source_call.table_name.clone()),
                     relation,
@@ -327,8 +311,10 @@ impl Compiler {
         Ok(compiled)
     }
 
-    /// Recursively collect ephemeral CTEs, extracting internal CTEs and
-    /// the final SELECT to produce a flat CTE chain.
+    /// Recursively collect ephemeral CTEs. Each ephemeral model's full compiled
+    /// SQL (including its own WITH clause) is wrapped inside a `__dbt__cte__`
+    /// wrapper, matching dbt's behavior. Internal CTEs are NOT flattened to
+    /// avoid name conflicts with the consuming model's own CTEs.
     fn collect_ephemeral_ctes(
         &self,
         model: &airform_core::ModelNode,
@@ -357,38 +343,22 @@ impl Compiler {
                     .as_deref()
                     .unwrap_or(&target_model.raw_sql);
 
-                // Extract internal CTEs and the final SELECT body
-                let (internal_ctes, select_body) = extract_ctes_and_body(full_sql);
-
-                // Add any internal CTEs (e.g., from the ephemeral model's own WITH clause)
-                for (cte_name, cte_body) in internal_ctes {
-                    let cte_id = format!("inline.{}", cte_name);
-                    if seen.insert(cte_id.clone()) {
-                        ctes.push(InjectedCte {
-                            id: cte_id,
-                            sql: format!("{cte_name} as (\n{cte_body}\n)"),
-                        });
-                    }
-                }
-
-                // Add the ephemeral model itself as a CTE using just the SELECT body
+                // Wrap the full SQL (including any internal WITH clause) as-is
                 ctes.push(InjectedCte {
                     id: target_model.unique_id.clone(),
                     sql: format!(
                         "__dbt__cte__{} as (\n{}\n)",
-                        target_model.name, select_body
+                        target_model.name,
+                        full_sql.trim()
                     ),
                 });
             }
         }
     }
 
-    /// Get the relation name for a node.
-    /// For local execution (DataFusion/DuckDB), uses just the table name.
-    /// For remote execution, uses schema.table.
+    /// Get the relation name for a node, using schema-qualified names.
+    /// Applies dbt's `generate_schema_name` logic for the schema.
     fn node_relation_name(&self, node: &ManifestNode, ctx: &DbtContext) -> String {
-        let is_local = ctx.target_type == "datafusion" || ctx.target_type == "duckdb";
-
         match node {
             ManifestNode::Model(m) => {
                 let table_name = m.config.alias.as_deref().unwrap_or(&m.name);
@@ -398,31 +368,29 @@ impl Compiler {
                     return format!("__dbt__cte__{}", m.name);
                 }
 
-                if is_local {
-                    table_name.to_string()
-                } else {
-                    let schema = m.config.schema.as_deref().unwrap_or(&ctx.target_schema);
-                    format!("{schema}.{table_name}")
-                }
+                let schema = generate_schema_name(m.config.schema.as_deref(), &ctx.target_schema);
+                format!("{schema}.{table_name}")
             }
             ManifestNode::Seed(s) => {
-                if is_local {
-                    s.name.clone()
-                } else {
-                    let schema = s.config.schema.as_deref().unwrap_or(&ctx.target_schema);
-                    format!("{schema}.{}", s.name)
-                }
+                let schema = generate_schema_name(s.config.schema.as_deref(), &ctx.target_schema);
+                format!("{schema}.{}", s.name)
             }
             ManifestNode::Snapshot(s) => {
-                if is_local {
-                    s.name.clone()
-                } else {
-                    let schema = s.config.schema.as_deref().unwrap_or(&ctx.target_schema);
-                    format!("{schema}.{}", s.name)
-                }
+                let schema = generate_schema_name(s.config.schema.as_deref(), &ctx.target_schema);
+                format!("{schema}.{}", s.name)
             }
             _ => "unknown".to_string(),
         }
+    }
+}
+
+/// Implements dbt's default `generate_schema_name` macro:
+/// - If `custom_schema` is set, returns `{default_schema}_{custom_schema}`
+/// - Otherwise, returns `default_schema`
+fn generate_schema_name(custom_schema: Option<&str>, default_schema: &str) -> String {
+    match custom_schema {
+        Some(custom) if !custom.is_empty() => format!("{}_{}", default_schema, custom),
+        _ => default_schema.to_string(),
     }
 }
 
@@ -464,114 +432,6 @@ fn strip_leading_comments(sql: &str) -> &str {
 
 /// Extract internal CTEs and the final SELECT body from a SQL string.
 /// Returns (Vec<(cte_name, cte_body)>, select_body).
-/// Given `WITH a AS (SELECT 1), b AS (SELECT 2) SELECT * FROM a, b`,
-/// returns `([("a", "SELECT 1"), ("b", "SELECT 2")], "SELECT * FROM a, b")`.
-fn extract_ctes_and_body(sql: &str) -> (Vec<(String, String)>, String) {
-    // Strip leading comments (-- and /* */) to find the actual WITH
-    let trimmed = strip_leading_comments(sql.trim());
-    if !trimmed.to_uppercase().starts_with("WITH") {
-        return (Vec::new(), sql.trim().to_string());
-    }
-
-    // Find the final SELECT at depth 0
-    let mut depth: i32 = 0;
-    let upper = trimmed.to_uppercase();
-    let bytes = upper.as_bytes();
-    let mut final_select_pos = None;
-
-    for i in 0..bytes.len() {
-        match bytes[i] {
-            b'(' => depth += 1,
-            b')' => depth -= 1,
-            b'S' if depth == 0 && i > 4 => {
-                if upper[i..].starts_with("SELECT") {
-                    let prev = bytes[i - 1];
-                    if prev == b' ' || prev == b'\n' || prev == b'\r' || prev == b'\t' {
-                        final_select_pos = Some(i);
-                    }
-                }
-            }
-            _ => {}
-        }
-    }
-
-    let Some(select_pos) = final_select_pos else {
-        return (Vec::new(), trimmed.to_string());
-    };
-
-    let select_body = trimmed[select_pos..].to_string();
-    let with_block = trimmed[4..select_pos].trim(); // skip "WITH"
-
-    // Parse individual CTEs from the with block
-    let mut ctes = Vec::new();
-    let mut pos = 0;
-    let with_bytes = with_block.as_bytes();
-
-    while pos < with_bytes.len() {
-        // Skip whitespace and commas
-        while pos < with_bytes.len()
-            && (with_bytes[pos] == b' '
-                || with_bytes[pos] == b'\n'
-                || with_bytes[pos] == b'\r'
-                || with_bytes[pos] == b'\t'
-                || with_bytes[pos] == b',')
-        {
-            pos += 1;
-        }
-        if pos >= with_bytes.len() {
-            break;
-        }
-
-        // Read CTE name
-        let name_start = pos;
-        while pos < with_bytes.len()
-            && with_bytes[pos] != b' '
-            && with_bytes[pos] != b'\n'
-            && with_bytes[pos] != b'\t'
-        {
-            pos += 1;
-        }
-        let cte_name = &with_block[name_start..pos];
-
-        // Skip whitespace + "AS" + whitespace
-        while pos < with_bytes.len() && (with_bytes[pos] == b' ' || with_bytes[pos] == b'\n' || with_bytes[pos] == b'\t' || with_bytes[pos] == b'\r') {
-            pos += 1;
-        }
-        let upper_rest = with_block[pos..].to_uppercase();
-        if upper_rest.starts_with("AS") {
-            pos += 2;
-        }
-        while pos < with_bytes.len() && (with_bytes[pos] == b' ' || with_bytes[pos] == b'\n' || with_bytes[pos] == b'\t' || with_bytes[pos] == b'\r') {
-            pos += 1;
-        }
-
-        // Find matching parens for the CTE body
-        if pos < with_bytes.len() && with_bytes[pos] == b'(' {
-            pos += 1;
-            let body_start = pos;
-            let mut paren_depth = 1;
-            while pos < with_bytes.len() && paren_depth > 0 {
-                match with_bytes[pos] {
-                    b'(' => paren_depth += 1,
-                    b')' => paren_depth -= 1,
-                    _ => {}
-                }
-                if paren_depth > 0 {
-                    pos += 1;
-                }
-            }
-            let body = with_block[body_start..pos].trim();
-            ctes.push((cte_name.to_string(), body.to_string()));
-            pos += 1; // skip closing paren
-        } else {
-            // Malformed, skip
-            break;
-        }
-    }
-
-    (ctes, select_body)
-}
-
 impl std::fmt::Display for CompileResult {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(

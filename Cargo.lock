@@ -88,6 +88,7 @@ dependencies = [
  "airform-parser",
  "anyhow",
  "criterion",
+ "datafusion",
  "dotenvy",
  "serde_json",
  "tokio",
@@ -155,6 +156,7 @@ dependencies = [
  "anyhow",
  "minijinja",
  "serde",
+ "serde_yaml",
  "thiserror",
  "tracing",
 ]

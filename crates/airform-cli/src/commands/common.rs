@@ -12,6 +12,7 @@ pub struct CompileOutput {
     pub load_state: airform_loader::LoadState,
     pub manifest: Manifest,
     pub graph: DbtGraph,
+    pub target_schema: String,
 }
 
 /// Load, parse, build graph, and compile a dbt project.
@@ -24,11 +25,16 @@ pub fn load_and_compile(
     let load_state = airform_loader::load_with_target(project_dir, target_override)?;
 
     let mut ctx = airform_jinja::DbtContext::new(&load_state.project.name);
-    if let Some(target) = &load_state.target {
-        ctx.target_schema = target.schema.clone().unwrap_or_else(|| "public".to_string());
+    ctx.populate_vars(&load_state.project.vars);
+    let target_schema = if let Some(target) = &load_state.target {
+        let schema = target.schema.clone().unwrap_or_else(|| "public".to_string());
+        ctx.target_schema = schema.clone();
         ctx.target_database = target.database.clone().unwrap_or_else(|| "main".to_string());
         ctx.target_type = target.adapter_type.clone();
-    }
+        schema
+    } else {
+        "public".to_string()
+    };
     ctx.full_refresh = full_refresh;
 
     let mut engine = airform_jinja::JinjaEngine::new();
@@ -60,6 +66,7 @@ pub fn load_and_compile(
         load_state,
         manifest,
         graph,
+        target_schema,
     })
 }
 

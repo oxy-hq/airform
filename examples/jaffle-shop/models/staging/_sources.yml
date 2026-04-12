@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: jaffle_shop
-    schema: raw
+    schema: main_raw
     description: Raw data from the Jaffle Shop application database.
     tables:
       - name: raw_customers

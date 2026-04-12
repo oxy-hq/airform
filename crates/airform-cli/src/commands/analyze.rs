@@ -17,6 +17,7 @@ pub async fn run(
 
     // Build Jinja context
     let mut ctx = airform_jinja::DbtContext::new(&load_state.project.name);
+    ctx.populate_vars(&load_state.project.vars);
     if let Some(target) = &load_state.target {
         ctx.target_schema = target.schema.clone().unwrap_or_else(|| "public".to_string());
         ctx.target_database = target.database.clone().unwrap_or_else(|| "main".to_string());

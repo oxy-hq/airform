@@ -10,3 +10,4 @@
 .env
 .test-ports.env
 .claude/
+tests/compat-projects/

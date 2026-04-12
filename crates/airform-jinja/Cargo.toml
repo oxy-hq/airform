@@ -8,5 +8,6 @@ airform-core.workspace = true
 anyhow.workspace = true
 thiserror.workspace = true
 serde.workspace = true
+serde_yaml.workspace = true
 minijinja.workspace = true
 tracing.workspace = true

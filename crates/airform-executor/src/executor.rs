@@ -1,8 +1,64 @@
 use airform_core::{Manifest, ManifestNode, Materialization, TestDef, UniqueId};
 use airform_graph::DbtGraph;
 use datafusion::prelude::*;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
+
+/// Normalize timestamps in a CSV file to handle non-standard formats.
+/// Returns the original path if no changes needed, or a temp file path.
+/// Fixes: single-digit hours like "2016-06-25 0:54:37" → "2016-06-25 00:54:37"
+fn normalize_csv_timestamps(csv_path: &Path) -> anyhow::Result<PathBuf> {
+    let content = std::fs::read_to_string(csv_path)?;
+
+    // Quick check: does the content contain a timestamp with single-digit hour?
+    // Pattern: date separator, space, single digit, colon
+    // e.g. "2016-06-25 0:54:37" or "2019-08-14 4:26:19"
+    let needs_fix = content.contains(" 0:") || content.contains(" 1:")
+        || content.contains(" 2:") || content.contains(" 3:")
+        || content.contains(" 4:") || content.contains(" 5:")
+        || content.contains(" 6:") || content.contains(" 7:")
+        || content.contains(" 8:") || content.contains(" 9:");
+
+    if !needs_fix {
+        return Ok(csv_path.to_path_buf());
+    }
+
+    // More precise check: only fix timestamp-like patterns
+    let mut fixed = String::with_capacity(content.len() + 256);
+    let chars: Vec<char> = content.chars().collect();
+    let mut i = 0;
+    while i < chars.len() {
+        // Look for pattern: YYYY-MM-DD H:MM:SS (where H is a single digit)
+        // Preceded by comma, quote, or start-of-field context
+        if i + 18 < chars.len()
+            && chars[i].is_ascii_digit() && chars[i + 1].is_ascii_digit()
+            && chars[i + 2].is_ascii_digit() && chars[i + 3].is_ascii_digit()
+            && chars[i + 4] == '-'
+            && chars[i + 5].is_ascii_digit() && chars[i + 6].is_ascii_digit()
+            && chars[i + 7] == '-'
+            && chars[i + 8].is_ascii_digit() && chars[i + 9].is_ascii_digit()
+            && chars[i + 10] == ' '
+            && chars[i + 11].is_ascii_digit()
+            && chars[i + 12] == ':'
+        {
+            // This is a timestamp with single-digit hour — pad it
+            for j in 0..11 {
+                fixed.push(chars[i + j]);
+            }
+            fixed.push('0');
+            fixed.push(chars[i + 11]);
+            i += 12;
+            continue;
+        }
+        fixed.push(chars[i]);
+        i += 1;
+    }
+
+    // Write to temp file next to the original
+    let temp_path = csv_path.with_extension("_normalized.csv");
+    std::fs::write(&temp_path, &fixed)?;
+    Ok(temp_path)
+}
 
 /// Quote a SQL identifier to prevent injection via model/column names.
 /// Doubles any internal double-quotes, then wraps in double-quotes.
@@ -10,15 +66,342 @@ fn quote_ident(ident: &str) -> String {
     format!("\"{}\"", ident.replace('"', "\"\""))
 }
 
+/// Fix DataFusion compatibility issue: when a table is aliased, the original
+/// qualified name cannot be used as a column qualifier. Rewrites
+/// `schema.table.* from schema.table as alias` to `alias.* from schema.table as alias`.
+fn fix_qualified_aliases(sql: &str) -> String {
+    use std::collections::HashMap;
+
+    // Find all `FROM <qualified> AS <alias>` patterns (case-insensitive)
+    let sql_lower = sql.to_lowercase();
+    let mut replacements: HashMap<String, String> = HashMap::new();
+
+    // Match patterns like `from schema.table as alias` or `from schema.table alias`
+    let from_re_patterns = [" from ", "\nfrom ", "\rfrom ", "\tfrom "];
+    for from_pat in from_re_patterns {
+        let mut search_pos = 0;
+        while let Some(from_pos) = sql_lower[search_pos..].find(from_pat) {
+            let abs_from = search_pos + from_pos + from_pat.len();
+            // Extract the qualified table name (schema.table or catalog.schema.table)
+            let rest = &sql[abs_from..];
+            let rest_trimmed = rest.trim_start();
+            // Find end of qualified name (word.word pattern)
+            let mut end = 0;
+            let chars: Vec<char> = rest_trimmed.chars().collect();
+            while end < chars.len()
+                && (chars[end].is_alphanumeric() || chars[end] == '_' || chars[end] == '.')
+            {
+                end += 1;
+            }
+            let qualified = &rest_trimmed[..end];
+            if !qualified.contains('.') {
+                search_pos = abs_from;
+                continue;
+            }
+
+            // Find "as alias" or just "alias" after the qualified name
+            let after_qual = rest_trimmed[end..].trim_start();
+            let alias = if after_qual.to_lowercase().starts_with("as ") {
+                let after_as = after_qual[3..].trim_start();
+                let alias_end = after_as
+                    .find(|c: char| !c.is_alphanumeric() && c != '_')
+                    .unwrap_or(after_as.len());
+                &after_as[..alias_end]
+            } else {
+                // Check if the next word looks like an alias (not a keyword)
+                let alias_end = after_qual
+                    .find(|c: char| !c.is_alphanumeric() && c != '_')
+                    .unwrap_or(after_qual.len());
+                let potential = &after_qual[..alias_end];
+                let keywords = [
+                    "where", "join", "left", "right", "inner", "outer", "cross", "on",
+                    "group", "order", "having", "limit", "union", "except", "intersect",
+                    "", "select", "from",
+                ];
+                if keywords.contains(&potential.to_lowercase().as_str()) {
+                    search_pos = abs_from;
+                    continue;
+                }
+                potential
+            };
+
+            if !alias.is_empty() && alias.len() < 100 {
+                // Replace qualified.* with alias.* and qualified.col with alias.col
+                replacements.insert(qualified.to_string(), alias.to_string());
+            }
+            search_pos = abs_from;
+        }
+    }
+
+    if replacements.is_empty() {
+        return sql.to_string();
+    }
+
+    let mut result = sql.to_string();
+    // Sort by longest key first to avoid partial replacements
+    let mut sorted: Vec<_> = replacements.iter().collect();
+    sorted.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
+
+    for (qualified, alias) in sorted {
+        // Replace `qualified.*` with `alias.*` and `qualified.col` with `alias.col`
+        // But NOT in FROM/JOIN clauses (only in SELECT, WHERE, etc.)
+        // Simple approach: replace `qualified.` prefix when followed by column patterns
+        let from_pattern = format!("{qualified}.");
+        let alias_pattern = format!("{alias}.");
+
+        // Only replace occurrences that are NOT part of a FROM/JOIN table reference
+        // i.e., don't replace `from schema.table` but do replace `schema.table.column`
+        // This works because FROM references are `schema.table` (no trailing dot)
+        result = result.replace(&from_pattern, &alias_pattern);
+    }
+
+    result
+}
+
+/// Fix various DataFusion SQL compatibility issues:
+/// - DATE_DIFF('part', start, end) → date_diff is not built-in; rewrite to
+///   EXTRACT(EPOCH FROM ...) for second granularity or date_part subtraction for others
+/// - ::TYPE postgres-style casts → CAST(expr AS TYPE)
+fn fix_sql_compat(sql: &str) -> String {
+    let mut result = sql.to_string();
+
+    // Replace DATE_DIFF('part', start, end) with DataFusion-compatible expression.
+    // We do a simple regex-free approach: find DATE_DIFF( and rewrite.
+    loop {
+        let lower = result.to_lowercase();
+        let Some(pos) = lower.find("date_diff(") else {
+            break;
+        };
+        let start = pos + "date_diff(".len();
+        // Find the matching closing paren, accounting for nesting
+        let bytes = result.as_bytes();
+        let mut depth = 1;
+        let mut i = start;
+        while i < bytes.len() && depth > 0 {
+            if bytes[i] == b'(' {
+                depth += 1;
+            } else if bytes[i] == b')' {
+                depth -= 1;
+            }
+            if depth > 0 {
+                i += 1;
+            }
+        }
+        if depth != 0 {
+            break;
+        }
+        let args_str = &result[start..i];
+        // Split on top-level commas (not inside parens)
+        let args = split_top_level(args_str);
+        if args.len() == 3 {
+            let part = args[0].trim().trim_matches('\'').trim_matches('"');
+            let start_expr = args[1].trim();
+            let end_expr = args[2].trim();
+            // Use EXTRACT(EPOCH FROM ...) / divisor approach
+            let divisor = match part.to_lowercase().as_str() {
+                "second" => 1,
+                "minute" => 60,
+                "hour" => 3600,
+                "day" => 86400,
+                "week" => 604800,
+                _ => 1,
+            };
+            let replacement = if divisor == 1 {
+                format!(
+                    "CAST(EXTRACT(EPOCH FROM (CAST({end_expr} AS TIMESTAMP) - CAST({start_expr} AS TIMESTAMP))) AS BIGINT)"
+                )
+            } else {
+                format!(
+                    "CAST(EXTRACT(EPOCH FROM (CAST({end_expr} AS TIMESTAMP) - CAST({start_expr} AS TIMESTAMP))) / {divisor} AS BIGINT)"
+                )
+            };
+            result = format!("{}{}{}", &result[..pos], replacement, &result[i + 1..]);
+        } else {
+            break;
+        }
+    }
+
+    // Fix DATE_TRUNC with Null-typed second argument: wrap with TRY_CAST to TIMESTAMP.
+    // This happens when seed CSV columns have all-null values (inferred as Null type).
+    // DATE_TRUNC('part', col) → DATE_TRUNC('part', TRY_CAST(col AS TIMESTAMP))
+    // Process from right to left to preserve string offsets.
+    {
+        let lower = result.to_lowercase();
+        let mut positions: Vec<usize> = Vec::new();
+        let mut offset = 0;
+        while let Some(pos) = lower[offset..].find("date_trunc(") {
+            positions.push(offset + pos);
+            offset += pos + 1;
+        }
+        // Process in reverse order so earlier positions stay valid
+        for &abs_pos in positions.iter().rev() {
+            let start_args = abs_pos + "date_trunc(".len();
+            let mut depth = 1;
+            let mut comma_pos = None;
+            let mut j = start_args;
+            let bytes = result.as_bytes();
+            while j < bytes.len() && depth > 0 {
+                match bytes[j] {
+                    b'(' => depth += 1,
+                    b')' => {
+                        depth -= 1;
+                        if depth == 0 { break; }
+                    }
+                    b',' if depth == 1 && comma_pos.is_none() => comma_pos = Some(j),
+                    _ => {}
+                }
+                j += 1;
+            }
+            if depth == 0 {
+                if let Some(cp) = comma_pos {
+                    let date_expr = result[cp + 1..j].trim();
+                    if !date_expr.to_lowercase().contains("try_cast") && !date_expr.to_lowercase().contains("cast(") {
+                        let new_expr = format!(" TRY_CAST({} AS TIMESTAMP)", date_expr);
+                        result = format!("{}{}{}", &result[..cp + 1], new_expr, &result[j..]);
+                    }
+                }
+            }
+        }
+    }
+
+    // Fix CAST('' AS DATE) and similar empty/invalid string-to-date casts
+    // that cause DataFusion optimizer simplify_expressions to fail.
+    // Replace with CAST(NULL AS DATE).
+    for pattern in &[
+        "cast('' as date)",
+        "cast(\"\" as date)",
+        "cast('none' as date)",
+    ] {
+        while let Some(pos) = result.to_lowercase().find(pattern) {
+            let end = pos + pattern.len();
+            result = format!("{}CAST(NULL AS DATE){}", &result[..pos], &result[end..]);
+        }
+    }
+
+    // Fix aggregate functions (SUM, AVG) on Null-typed columns.
+    // When seed CSV columns have all-null values, DataFusion infers them as Null type,
+    // and SUM/AVG don't support Null. Wrap arguments with TRY_CAST(... AS DOUBLE).
+    for agg_fn in &["sum", "avg"] {
+        let needle = format!("{agg_fn}(");
+        let needle_len = needle.len();
+        let lower = result.to_lowercase();
+        let mut positions: Vec<usize> = Vec::new();
+        let mut offset = 0;
+        while let Some(pos) = lower[offset..].find(&needle) {
+            let abs = offset + pos;
+            // Ensure it's at a word boundary (not part of a longer identifier)
+            if abs > 0 {
+                let prev = result.as_bytes()[abs - 1];
+                if prev.is_ascii_alphanumeric() || prev == b'_' {
+                    offset = abs + 1;
+                    continue;
+                }
+            }
+            positions.push(abs);
+            offset = abs + 1;
+        }
+        for &abs_pos in positions.iter().rev() {
+            let start_args = abs_pos + needle_len;
+            let mut depth = 1;
+            let mut j = start_args;
+            let bytes = result.as_bytes();
+            while j < bytes.len() && depth > 0 {
+                match bytes[j] {
+                    b'(' => depth += 1,
+                    b')' => {
+                        depth -= 1;
+                        if depth == 0 { break; }
+                    }
+                    _ => {}
+                }
+                j += 1;
+            }
+            if depth == 0 {
+                let arg = result[start_args..j].trim();
+                let arg_lower = arg.to_lowercase();
+                if !arg_lower.contains("try_cast") && !arg_lower.contains("cast(") && arg != "*" {
+                    let new_arg = format!("TRY_CAST({} AS DOUBLE)", arg);
+                    result = format!("{}{}{}", &result[..start_args], new_arg, &result[j..]);
+                }
+            }
+        }
+    }
+
+    // Fix Jinja list rendering: [a, b, c] → (a, b, c) in SQL IN clauses.
+    // MiniJinja renders lists with [...] but SQL needs (...) for IN expressions.
+    {
+        let bytes = result.as_bytes();
+        let mut new_result = String::with_capacity(result.len());
+        let mut i = 0;
+        while i < bytes.len() {
+            if bytes[i] == b'[' {
+                // Check if preceded by "in " or "in\n" (case insensitive)
+                let prefix = &result[..i].trim_end();
+                let lower_prefix = prefix.to_lowercase();
+                if lower_prefix.ends_with(" in") || lower_prefix.ends_with("\nin") || lower_prefix.ends_with("\tin") {
+                    // Find matching ]
+                    if let Some(close) = result[i..].find(']') {
+                        new_result.push('(');
+                        new_result.push_str(&result[i + 1..i + close]);
+                        new_result.push(')');
+                        i += close + 1;
+                        continue;
+                    }
+                }
+            }
+            new_result.push(bytes[i] as char);
+            i += 1;
+        }
+        result = new_result;
+    }
+
+    result
+}
+
+/// Split a string on top-level commas (not inside parentheses).
+fn split_top_level(s: &str) -> Vec<&str> {
+    let mut parts = Vec::new();
+    let mut depth = 0;
+    let mut start = 0;
+    for (i, c) in s.char_indices() {
+        match c {
+            '(' => depth += 1,
+            ')' => depth -= 1,
+            ',' if depth == 0 => {
+                parts.push(&s[start..i]);
+                start = i + 1;
+            }
+            _ => {}
+        }
+    }
+    parts.push(&s[start..]);
+    parts
+}
+
+/// Implements dbt's default `generate_schema_name` macro.
+fn generate_schema_name(custom_schema: Option<&str>, default_schema: &str) -> String {
+    match custom_schema {
+        Some(custom) if !custom.is_empty() => format!("{}_{}", default_schema, custom),
+        _ => default_schema.to_string(),
+    }
+}
+
+/// Build a schema-qualified, properly quoted SQL reference: "schema"."table"
+fn qualified_quoted(schema: &str, table: &str) -> String {
+    format!("{}.{}", quote_ident(schema), quote_ident(table))
+}
+
 /// Executes compiled SQL against a DataFusion context (local execution).
 pub struct Executor {
     ctx: SessionContext,
+    target_schema: String,
 }
 
 impl Executor {
-    pub fn new() -> Self {
+    pub fn new(target_schema: &str) -> Self {
         Self {
             ctx: SessionContext::new(),
+            target_schema: target_schema.to_string(),
         }
     }
 
@@ -29,13 +412,40 @@ impl Executor {
 
     /// Register all seed CSV files as tables in the DataFusion context.
     /// This must be called BEFORE execute() so that models can reference seeds.
+    ///
+    /// Seeds are registered in their configured schema (via `+schema` config and
+    /// `generate_schema_name`). Additionally, seeds that correspond to source tables
+    /// are also registered in the source's schema so that `{{ source() }}` references
+    /// resolve correctly (matching dbt's behavior where seeds back source tables in
+    /// integration tests).
     pub async fn load_seeds(&self, manifest: &Manifest) -> anyhow::Result<Vec<NodeResult>> {
         let mut results = Vec::new();
+
+        // Build a map of source table identifiers to their schemas, so we can
+        // register seeds in source schemas when they match by name.
+        // Also build a map of (schema, source_name) -> seed_name for aliasing.
+        let mut source_schema_map: std::collections::HashMap<String, Vec<String>> =
+            std::collections::HashMap::new();
+        // Map from (source_schema, source_table_name) to actual identifier for cross-registration
+        let mut source_name_to_id: std::collections::HashMap<(String, String), String> =
+            std::collections::HashMap::new();
+        for source in manifest.sources.values() {
+            let table_id = source.table_identifier().to_string();
+            let schema = source.schema.as_deref().unwrap_or("public").to_string();
+            source_schema_map
+                .entry(table_id.clone())
+                .or_default()
+                .push(schema.clone());
+            // If identifier differs from name, record the mapping so we can also
+            // register the seed under the source table name
+            if source.name != table_id {
+                source_name_to_id.insert((schema, source.name.clone()), table_id);
+            }
+        }
 
         for (_id, node) in &manifest.nodes {
             if let ManifestNode::Seed(seed) = node {
                 let start = Instant::now();
-                let table_name = &seed.name;
                 let csv_path = &seed.path;
 
                 if !csv_path.exists() {
@@ -50,9 +460,10 @@ impl Executor {
                     continue;
                 }
 
-                match self.register_csv(table_name, csv_path).await {
+                let schema = generate_schema_name(seed.config.schema.as_deref(), &self.target_schema);
+                match self.register_csv(&seed.name, &schema, csv_path).await {
                     Ok(row_count) => {
-                        tracing::info!("Loaded seed: {table_name} ({row_count} rows)");
+                        tracing::info!("Loaded seed: {} ({row_count} rows)", seed.name);
                         results.push(NodeResult {
                             unique_id: seed.unique_id.clone(),
                             name: seed.name.clone(),
@@ -61,6 +472,39 @@ impl Executor {
                             rows_affected: Some(row_count),
                             message: None,
                         });
+
+                        // Also register in source schemas if this seed backs a source table.
+                        // This matches dbt integration test behavior where seeds populate
+                        // the same tables that sources reference.
+                        if let Some(source_schemas) = source_schema_map.get(&seed.name) {
+                            for src_schema in source_schemas {
+                                if *src_schema != schema {
+                                    match self.register_csv(&seed.name, src_schema, csv_path).await {
+                                        Ok(_) => {
+                                            tracing::info!("Aliased seed {} into source schema {}", seed.name, src_schema);
+                                        }
+                                        Err(e) => {
+                                            tracing::warn!(
+                                                "Failed to alias seed {} into source schema {}: {}",
+                                                seed.name, src_schema, e
+                                            );
+                                        }
+                                    }
+                                    // Also register under the source table name if it differs
+                                    // from the identifier (seed name). This supports models that
+                                    // reference by source name rather than identifier.
+                                    for ((s, src_name), id) in &source_name_to_id {
+                                        if s == src_schema && id == &seed.name {
+                                            if let Err(e) = self.register_csv(src_name, src_schema, csv_path).await {
+                                                tracing::debug!("Failed to alias seed {} as {} in {}: {}", seed.name, src_name, src_schema, e);
+                                            } else {
+                                                tracing::info!("Aliased seed {} as {} in {}", seed.name, src_name, src_schema);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     Err(e) => {
                         results.push(NodeResult {
@@ -79,17 +523,57 @@ impl Executor {
         Ok(results)
     }
 
-    /// Register a CSV file as a table in DataFusion.
-    async fn register_csv(&self, table_name: &str, csv_path: &Path) -> anyhow::Result<usize> {
-        let options = CsvReadOptions::new()
-            .has_header(true);
+    /// Create a schema in DataFusion if it doesn't already exist.
+    async fn ensure_schema(&self, schema: &str) -> anyhow::Result<()> {
+        let sql = format!("CREATE SCHEMA IF NOT EXISTS {}", quote_ident(schema));
+        self.ctx.sql(&sql).await?.collect().await?;
+        Ok(())
+    }
 
+    /// Register a CSV file as a table in a specific schema in DataFusion.
+    async fn register_csv(&self, table_name: &str, schema: &str, csv_path: &Path) -> anyhow::Result<usize> {
+        self.ensure_schema(schema).await?;
+
+        // Normalize timestamps in the CSV to fix non-standard formats
+        // (e.g. single-digit hours "2016-06-25 0:54:37" → "2016-06-25 00:54:37").
+        let effective_path = normalize_csv_timestamps(csv_path)?;
+        let csv_str = effective_path.to_str().unwrap_or_default();
+
+        let options = CsvReadOptions::new()
+            .has_header(true)
+            .schema_infer_max_records(10000);
+        let qualified = format!("{}.{}", schema, table_name);
         self.ctx
-            .register_csv(table_name, csv_path.to_str().unwrap_or_default(), options)
+            .register_csv(&qualified, csv_str, options)
             .await?;
 
+        // Lowercase all column names for dbt compatibility (dbt lowercases by default)
+        let qualified_q = qualified_quoted(schema, table_name);
+        let df = self.ctx.sql(&format!("SELECT * FROM {} LIMIT 0", qualified_q)).await?;
+        let schema_ref = df.schema();
+        let has_upper = schema_ref.fields().iter().any(|f| f.name() != &f.name().to_lowercase());
+        if has_upper {
+            let renames: Vec<String> = schema_ref.fields().iter().map(|f| {
+                let name = f.name();
+                let lower = name.to_lowercase();
+                if name == &lower {
+                    format!("{}", quote_ident(name))
+                } else {
+                    format!("{} AS {}", quote_ident(name), quote_ident(&lower))
+                }
+            }).collect();
+            let select_sql = format!("SELECT {} FROM {}", renames.join(", "), qualified_q);
+            let lowered_df = self.ctx.sql(&select_sql).await?;
+            self.ctx.deregister_table(datafusion::common::TableReference::full("datafusion", schema, table_name))?;
+            self.ctx.register_table(
+                datafusion::common::TableReference::full("datafusion", schema, table_name),
+                lowered_df.into_view(),
+            )?;
+        }
+
         // Count rows
-        let df = self.ctx.sql(&format!("SELECT count(*) as cnt FROM {}", quote_ident(table_name))).await?;
+        let qualified_q = qualified_quoted(schema, table_name);
+        let df = self.ctx.sql(&format!("SELECT count(*) as cnt FROM {}", qualified_q)).await?;
         let batches = df.collect().await?;
         let row_count = if let Some(batch) = batches.first() {
             if batch.num_rows() > 0 {
@@ -152,6 +636,19 @@ impl Executor {
 
             match node {
                 ManifestNode::Model(model) => {
+                    // Skip disabled models
+                    if model.config.enabled == Some(false) {
+                        results.push(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Skipped,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("disabled".to_string()),
+                        });
+                        continue;
+                    }
+
                     // Skip ephemeral models (they're CTEs, not executed directly)
                     if model.config.materialized == Materialization::Ephemeral {
                         results.push(NodeResult {
@@ -177,12 +674,35 @@ impl Executor {
                         continue;
                     };
 
+                    // Skip models with empty SQL (comment-only or whitespace-only)
+                    let sql_trimmed = compiled_sql
+                        .lines()
+                        .filter(|l| {
+                            let t = l.trim();
+                            !t.is_empty() && !t.starts_with("--")
+                        })
+                        .collect::<Vec<_>>()
+                        .join("\n");
+                    if sql_trimmed.trim().is_empty() {
+                        results.push(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Skipped,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("empty SQL (disabled model)".to_string()),
+                        });
+                        continue;
+                    }
+
                     // For incremental models, check if the target table exists.
                     // If not, use the full-refresh SQL variant (compiled with is_incremental()=false)
                     // to avoid referencing {{ this }} which doesn't exist yet.
                     let effective_sql = if model.config.materialized == Materialization::Incremental {
                         let table_name = model.config.alias.as_deref().unwrap_or(&model.name);
-                        let table_exists = self.ctx.table(table_name).await.is_ok();
+                        let inc_schema = generate_schema_name(model.config.schema.as_deref(), &self.target_schema);
+                        let inc_qualified = format!("{}.{}", inc_schema, table_name);
+                        let table_exists = self.ctx.table(&inc_qualified).await.is_ok();
                         if !table_exists {
                             if let Some(fr_sql) = &model.compiled_sql_full_refresh {
                                 fr_sql.clone()
@@ -259,6 +779,7 @@ impl Executor {
                         &snapshot.name,
                         compiled_sql,
                         snapshot.config.alias.as_deref(),
+                        snapshot.config.schema.as_deref(),
                         snapshot.config.unique_key.as_deref(),
                         snapshot.config.strategy.as_deref(),
                         snapshot.config.updated_at.as_deref(),
@@ -302,18 +823,28 @@ impl Executor {
         sql: &str,
         materialization: &Materialization,
         alias: Option<&str>,
-        _schema: Option<&str>,
+        custom_schema: Option<&str>,
         unique_key: Option<&str>,
         incremental_strategy: Option<&str>,
     ) -> anyhow::Result<usize> {
         let table_name = alias.unwrap_or(name);
+        let schema = generate_schema_name(custom_schema, &self.target_schema);
+        let qualified = format!("{}.{}", schema, table_name);
+        let qualified_q = qualified_quoted(&schema, table_name);
+
+        // Fix DataFusion compatibility: rewrite schema.table.col to alias.col
+        let sql = &fix_qualified_aliases(sql);
+        // Fix various SQL compatibility issues (DATE_DIFF, etc.)
+        let sql = &fix_sql_compat(sql);
+
+        self.ensure_schema(&schema).await?;
 
         match materialization {
             Materialization::View => {
                 // Register as a view
                 let df = self.ctx.sql(sql).await?;
                 self.ctx
-                    .register_table(table_name, df.into_view())?;
+                    .register_table(&qualified, df.into_view())?;
                 tracing::info!("Created view: {table_name}");
                 Ok(0)
             }
@@ -325,12 +856,12 @@ impl Executor {
 
                 // Create a memory table from the results
                 if !batches.is_empty() {
-                    let schema = batches[0].schema();
+                    let arrow_schema = batches[0].schema();
                     let table =
-                        datafusion::datasource::MemTable::try_new(schema, vec![batches])?;
+                        datafusion::datasource::MemTable::try_new(arrow_schema, vec![batches])?;
                     // Deregister if exists, then register
-                    let _ = self.ctx.deregister_table(table_name);
-                    self.ctx.register_table(table_name, std::sync::Arc::new(table))?;
+                    let _ = self.ctx.deregister_table(&qualified);
+                    self.ctx.register_table(&qualified, std::sync::Arc::new(table))?;
                 }
                 tracing::info!("Created table: {table_name} ({row_count} rows)");
                 Ok(row_count)
@@ -353,13 +884,13 @@ impl Executor {
                 );
 
                 // Check if the old table exists
-                let old_table_exists = self.ctx.table(table_name).await.is_ok();
+                let old_table_exists = self.ctx.table(&qualified).await.is_ok();
 
                 let final_batches = if old_table_exists {
                     match strategy {
                         "append" => {
                             // Read old rows, concatenate with new
-                            let old_df = self.ctx.table(table_name).await?;
+                            let old_df = self.ctx.table(&qualified).await?;
                             let old_batches = old_df.collect().await?;
                             let mut combined = old_batches;
                             combined.extend(new_batches);
@@ -381,10 +912,9 @@ impl Executor {
 
                                 // Filter old rows: keep only those whose key is NOT in new data
                                 let qk = quote_ident(key);
-                                let qt = quote_ident(table_name);
                                 let qtemp = quote_ident(&temp_name);
                                 let filter_sql = format!(
-                                    "SELECT * FROM {qt} WHERE {qk} NOT IN (SELECT {qk} FROM {qtemp})"
+                                    "SELECT * FROM {qualified_q} WHERE {qk} NOT IN (SELECT {qk} FROM {qtemp})"
                                 );
                                 let filtered_df = self.ctx.sql(&filter_sql).await?;
                                 let filtered_old = filtered_df.collect().await?;
@@ -398,7 +928,7 @@ impl Executor {
                                 combined
                             } else {
                                 // No unique_key with delete+insert/merge: fall back to append
-                                let old_df = self.ctx.table(table_name).await?;
+                                let old_df = self.ctx.table(&qualified).await?;
                                 let old_batches = old_df.collect().await?;
                                 let mut combined = old_batches;
                                 combined.extend(new_batches);
@@ -409,7 +939,7 @@ impl Executor {
                             tracing::warn!(
                                 "Unknown incremental strategy '{strategy}', falling back to append"
                             );
-                            let old_df = self.ctx.table(table_name).await?;
+                            let old_df = self.ctx.table(&qualified).await?;
                             let old_batches = old_df.collect().await?;
                             let mut combined = old_batches;
                             combined.extend(new_batches);
@@ -424,14 +954,14 @@ impl Executor {
                 let row_count: usize = final_batches.iter().map(|b| b.num_rows()).sum();
 
                 if !final_batches.is_empty() {
-                    let schema = final_batches[0].schema();
+                    let arrow_schema = final_batches[0].schema();
                     let table = datafusion::datasource::MemTable::try_new(
-                        schema,
+                        arrow_schema,
                         vec![final_batches],
                     )?;
-                    let _ = self.ctx.deregister_table(table_name);
+                    let _ = self.ctx.deregister_table(&qualified);
                     self.ctx
-                        .register_table(table_name, std::sync::Arc::new(table))?;
+                        .register_table(&qualified, std::sync::Arc::new(table))?;
                 }
                 tracing::info!(
                     "Created incremental table: {table_name} ({row_count} rows, strategy={strategy})"
@@ -451,19 +981,24 @@ impl Executor {
         name: &str,
         sql: &str,
         alias: Option<&str>,
+        custom_schema: Option<&str>,
         unique_key: Option<&str>,
         strategy: Option<&str>,
         updated_at: Option<&str>,
         check_cols: Option<&[String]>,
     ) -> anyhow::Result<usize> {
         let table_name = alias.unwrap_or(name);
+        let schema = generate_schema_name(custom_schema, &self.target_schema);
+        let qualified = format!("{}.{}", schema, table_name);
+        let qtable = qualified_quoted(&schema, table_name);
         let strategy = strategy.unwrap_or("timestamp");
+
+        self.ensure_schema(&schema).await?;
 
         let unique_key = unique_key.ok_or_else(|| {
             anyhow::anyhow!("Snapshot '{name}' requires a unique_key config")
         })?;
         let quk = quote_ident(unique_key);
-        let qtable = quote_ident(table_name);
 
         // Step 1: Execute the snapshot query and register as temp table
         let temp_name = format!("__snap_new_{table_name}");
@@ -487,7 +1022,7 @@ impl Executor {
         )?;
 
         // Step 2: Check if target snapshot table already exists
-        let table_exists = self.ctx.table(table_name).await.is_ok();
+        let table_exists = self.ctx.table(&qualified).await.is_ok();
 
         let final_batches = if !table_exists {
             // First run: add SCD columns to new data and register
@@ -545,7 +1080,7 @@ impl Executor {
             };
 
             // Get column names from existing snapshot (excluding SCD columns)
-            let existing_df = self.ctx.table(table_name).await?;
+            let existing_df = self.ctx.table(&qualified).await?;
             let existing_schema = existing_df.schema();
             let scd_columns = ["dbt_valid_from", "dbt_valid_to", "dbt_updated_at", "dbt_scd_id"];
             let source_cols: Vec<String> = existing_schema
@@ -615,13 +1150,13 @@ impl Executor {
         let row_count: usize = final_batches.iter().map(|b| b.num_rows()).sum();
 
         if !final_batches.is_empty() {
-            let schema = final_batches[0].schema();
+            let arrow_schema = final_batches[0].schema();
             let table = datafusion::datasource::MemTable::try_new(
-                schema,
+                arrow_schema,
                 vec![final_batches],
             )?;
-            let _ = self.ctx.deregister_table(table_name);
-            self.ctx.register_table(table_name, std::sync::Arc::new(table))?;
+            let _ = self.ctx.deregister_table(&qualified);
+            self.ctx.register_table(&qualified, std::sync::Arc::new(table))?;
         }
 
         tracing::info!("Snapshot table: {table_name} ({row_count} rows)");
@@ -640,16 +1175,18 @@ impl Executor {
         let mut results = Vec::new();
 
         for (_id, node) in &manifest.nodes {
-            let (model_name, columns) = match node {
-                ManifestNode::Model(m) => (&m.name, &m.columns),
+            let (model_name, model_schema, columns) = match node {
+                ManifestNode::Model(m) => (&m.name, &m.config.schema, &m.columns),
                 _ => continue,
             };
+
+            let resolved_schema = generate_schema_name(model_schema.as_deref(), &self.target_schema);
+            let qm = qualified_quoted(&resolved_schema, model_name);
 
             for col in columns {
                 for test_def in &col.tests {
                     let (test_name, test_sql) = match test_def {
                         TestDef::Simple(name) => {
-                            let qm = quote_ident(model_name);
                             let qc = quote_ident(&col.name);
                             match name.as_str() {
                                 "not_null" => (
@@ -668,7 +1205,6 @@ impl Executor {
                             }
                         }
                         TestDef::Complex(map) => {
-                            let qm = quote_ident(model_name);
                             let qc = quote_ident(&col.name);
                             if let Some(values_val) = map.get("accepted_values") {
                                 let values = extract_accepted_values(values_val);
@@ -691,7 +1227,15 @@ impl Executor {
                                 if to_model.is_empty() || field.is_empty() {
                                     continue;
                                 }
-                                let qt = quote_ident(&to_model);
+                                // Look up the target model's schema for proper qualification
+                                let to_schema = manifest.nodes.values()
+                                    .find_map(|n| match n {
+                                        ManifestNode::Model(m) if m.name == to_model => Some(m.config.schema.clone()),
+                                        _ => None,
+                                    })
+                                    .flatten();
+                                let to_resolved = generate_schema_name(to_schema.as_deref(), &self.target_schema);
+                                let qt = qualified_quoted(&to_resolved, &to_model);
                                 let qf = quote_ident(&field);
                                 (
                                     format!("relationships_{model_name}_{}", col.name),
@@ -873,7 +1417,7 @@ fn extract_relationship(val: &serde_yaml::Value) -> (String, String) {
 
 impl Default for Executor {
     fn default() -> Self {
-        Self::new()
+        Self::new("public")
     }
 }
 
