@@ -1,8 +1,10 @@
+use std::collections::HashMap;
+
 use airform_core::{
     InjectedCte, Manifest, ManifestNode, Materialization, UniqueId,
 };
 use airform_graph::DbtGraph;
-use airform_jinja::{DbtContext, JinjaEngine};
+use airform_jinja::{DbtContext, JinjaEngine, SourceRelationInfo};
 
 /// The compiler resolves refs/sources and produces compiled SQL for each node.
 pub struct Compiler {
@@ -25,6 +27,19 @@ impl Compiler {
         let mut compiled_count = 0;
         let mut errors = Vec::new();
 
+        // Build column propagation map: start with seed columns, then propagate
+        // through models as they're compiled in topological order.
+        // Seeds get their columns registered under their name.
+        let mut relation_columns = ctx_template.relation_columns.clone();
+        for node in manifest.nodes.values() {
+            if let ManifestNode::Seed(seed) = node {
+                // Register seed columns under the seed name (lowercase for case-insensitive lookup)
+                if let Some(cols) = ctx_template.relation_columns.get(&seed.name) {
+                    relation_columns.insert(seed.name.to_uppercase(), cols.clone());
+                }
+            }
+        }
+
         for unique_id in &order {
             // Skip sources (they don't need compilation)
             if manifest.sources.contains_key(unique_id) {
@@ -38,7 +53,10 @@ impl Compiler {
             match node {
                 ManifestNode::Model(model) => {
                     let model = model.clone();
-                    match self.compile_model(&model, manifest, ctx_template) {
+                    // Pass current relation_columns to context for this model's compilation
+                    let mut ctx_with_cols = ctx_template.clone();
+                    ctx_with_cols.relation_columns = relation_columns.clone();
+                    match self.compile_model(&model, manifest, &ctx_with_cols) {
                         Ok(compiled_sql) => {
                             // For incremental models, also compile a full-refresh variant
                             // (with is_incremental()=false) for first-run when table doesn't exist
@@ -47,10 +65,15 @@ impl Compiler {
                             {
                                 let mut fr_ctx = ctx_template.clone();
                                 fr_ctx.full_refresh = true;
+                                fr_ctx.relation_columns = relation_columns.clone();
                                 self.compile_model(&model, manifest, &fr_ctx).ok()
                             } else {
                                 None
                             };
+
+                            // Propagate columns: if this model depends on exactly one
+                            // source or ref with known columns, inherit those columns.
+                            propagate_columns(&model, manifest, &mut relation_columns, Some(&compiled_sql));
 
                             if let Some(ManifestNode::Model(m)) =
                                 manifest.nodes.get_mut(unique_id)
@@ -58,6 +81,7 @@ impl Compiler {
                                 m.compiled_sql = Some(compiled_sql);
                                 m.compiled_sql_full_refresh = full_refresh_sql;
                             }
+
                             compiled_count += 1;
                         }
                         Err(e) => {
@@ -137,7 +161,7 @@ impl Compiler {
         // Set `this` relation to the model's resolved relation name (quoted for safety)
         let this_name = model.config.alias.as_deref().unwrap_or(&model.name);
         let this_schema = generate_schema_name(model.config.schema.as_deref(), &ctx_template.target_schema);
-        ctx.this_relation = Some(format!("\"{this_schema}\".\"{this_name}\""));
+        ctx.this_relation = Some(format!("{this_schema}.{this_name}"));
 
         // Resolve all ref() calls to relation names
         for ref_call in &model.depends_on.refs {
@@ -157,10 +181,18 @@ impl Compiler {
                 &source_call.source_name,
                 &source_call.table_name,
             ) {
-                let relation = source.relation_name();
+                let schema = source.schema.as_deref().unwrap_or("public");
+                let identifier = source.table_identifier();
+                let database = source.database.as_deref().unwrap_or(&ctx.target_database);
+                let rendered = source.relation_name();
                 ctx.source_resolutions.insert(
                     (source_call.source_name.clone(), source_call.table_name.clone()),
-                    relation,
+                    SourceRelationInfo {
+                        database: database.to_string(),
+                        schema: schema.to_string(),
+                        identifier: identifier.to_string(),
+                        rendered,
+                    },
                 );
             }
         }
@@ -207,10 +239,18 @@ impl Compiler {
                 &source_call.source_name,
                 &source_call.table_name,
             ) {
-                let relation = source.relation_name();
+                let schema = source.schema.as_deref().unwrap_or("public");
+                let identifier = source.table_identifier();
+                let database = source.database.as_deref().unwrap_or(&ctx.target_database);
+                let rendered = source.relation_name();
                 ctx.source_resolutions.insert(
                     (source_call.source_name.clone(), source_call.table_name.clone()),
-                    relation,
+                    SourceRelationInfo {
+                        database: database.to_string(),
+                        schema: schema.to_string(),
+                        identifier: identifier.to_string(),
+                        rendered,
+                    },
                 );
             }
         }
@@ -249,10 +289,18 @@ impl Compiler {
                 &source_call.source_name,
                 &source_call.table_name,
             ) {
-                let relation = source.relation_name();
+                let schema = source.schema.as_deref().unwrap_or("public");
+                let identifier = source.table_identifier();
+                let database = source.database.as_deref().unwrap_or(&ctx.target_database);
+                let rendered = source.relation_name();
                 ctx.source_resolutions.insert(
                     (source_call.source_name.clone(), source_call.table_name.clone()),
-                    relation,
+                    SourceRelationInfo {
+                        database: database.to_string(),
+                        schema: schema.to_string(),
+                        identifier: identifier.to_string(),
+                        rendered,
+                    },
                 );
             }
         }
@@ -429,8 +477,79 @@ fn strip_leading_comments(sql: &str) -> &str {
     }
 }
 
-/// Extract internal CTEs and the final SELECT body from a SQL string.
-/// Returns (Vec<(cte_name, cte_body)>, select_body).
+/// Propagate known columns from a model's dependencies to the model itself.
+/// If a model depends on exactly one source/ref with known columns, the model
+/// inherits those columns (assumes SELECT *).
+fn propagate_columns(
+    model: &airform_core::ModelNode,
+    manifest: &Manifest,
+    relation_columns: &mut HashMap<String, Vec<String>>,
+    compiled_sql: Option<&str>,
+) {
+    // Try source dependencies first
+    if model.depends_on.sources.len() == 1 && model.depends_on.refs.is_empty() {
+        let source_call = &model.depends_on.sources[0];
+        if let Some(source) = manifest.resolve_source(&source_call.source_name, &source_call.table_name) {
+            let table_id = source.table_identifier();
+            // Look up seed columns by table identifier (case-insensitive)
+            let key_upper = table_id.to_uppercase();
+            let cols = relation_columns.get(table_id)
+                .or_else(|| relation_columns.get(&key_upper))
+                .cloned();
+            if let Some(cols) = cols {
+                relation_columns.insert(model.name.clone(), cols.clone());
+                relation_columns.insert(model.name.to_uppercase(), cols);
+                return;
+            }
+        }
+    }
+    // Try ref dependencies
+    if model.depends_on.refs.len() == 1 && model.depends_on.sources.is_empty() {
+        let ref_name = &model.depends_on.refs[0].model_name;
+        let key_upper = ref_name.to_uppercase();
+        let cols = relation_columns.get(ref_name)
+            .or_else(|| relation_columns.get(&key_upper))
+            .cloned();
+        if let Some(cols) = cols {
+            relation_columns.insert(model.name.clone(), cols.clone());
+            relation_columns.insert(model.name.to_uppercase(), cols);
+            return;
+        }
+    }
+
+    // Fallback: check compiled SQL for `SELECT * FROM <table>` pattern.
+    // This handles Fivetran _tmp models that use var() instead of ref() to
+    // reference seed tables (e.g., `select * from {{ var('connection') }}`).
+    if let Some(sql) = compiled_sql {
+        let trimmed = sql.trim();
+        // Match patterns like "select * from <name>" (case-insensitive)
+        let lower = trimmed.to_lowercase();
+        if lower.starts_with("select *") || lower.starts_with("select\n*") || lower.starts_with("select\r\n*") {
+            if let Some(from_pos) = lower.rfind(" from ") {
+                let table_part = trimmed[from_pos + 6..].trim();
+                // Extract table name: take first word, strip quotes
+                let table_name = table_part
+                    .split_whitespace()
+                    .next()
+                    .unwrap_or("")
+                    .trim_matches('"')
+                    .trim_matches('`');
+                if !table_name.is_empty() {
+                    let key_upper = table_name.to_uppercase();
+                    let cols = relation_columns.get(table_name)
+                        .or_else(|| relation_columns.get(&key_upper))
+                        .or_else(|| relation_columns.get(&table_name.to_lowercase()))
+                        .cloned();
+                    if let Some(cols) = cols {
+                        relation_columns.insert(model.name.clone(), cols.clone());
+                        relation_columns.insert(model.name.to_uppercase(), cols);
+                    }
+                }
+            }
+        }
+    }
+}
+
 impl std::fmt::Display for CompileResult {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(

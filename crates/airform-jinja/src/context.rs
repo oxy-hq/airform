@@ -2,6 +2,17 @@ use airform_core::{RefCall, SourceCall};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
+/// Structured source relation info for Jinja rendering.
+/// Used to make `source()` return a Relation object with `.database`, `.schema`, `.identifier`.
+#[derive(Debug, Clone)]
+pub struct SourceRelationInfo {
+    pub database: String,
+    pub schema: String,
+    pub identifier: String,
+    /// The rendered string form: "schema.identifier" or "database.schema.identifier"
+    pub rendered: String,
+}
+
 /// Captures ref() and source() calls during Jinja rendering.
 /// In parse mode (execute=false), these just record dependencies.
 /// In execute mode, they resolve to actual relation names.
@@ -14,7 +25,7 @@ pub struct DbtContext {
     pub execute: bool,
 
     /// Variables from dbt_project.yml vars and --vars CLI flag
-    pub vars: HashMap<String, String>,
+    pub vars: HashMap<String, serde_yaml::Value>,
 
     /// Target info for {{ target.name }}, {{ target.schema }}, etc.
     pub target_name: String,
@@ -34,8 +45,8 @@ pub struct DbtContext {
     /// Resolved ref relations (model_name -> "schema.table")
     pub ref_resolutions: HashMap<String, String>,
 
-    /// Resolved source relations ((source_name, table_name) -> "schema.table")
-    pub source_resolutions: HashMap<(String, String), String>,
+    /// Resolved source relations ((source_name, table_name) -> structured relation info)
+    pub source_resolutions: HashMap<(String, String), SourceRelationInfo>,
 
     /// Whether --full-refresh was passed
     pub full_refresh: bool,
@@ -45,6 +56,10 @@ pub struct DbtContext {
 
     /// The `{{ this }}` relation name for incremental models
     pub this_relation: Option<String>,
+
+    /// Known columns for relations, keyed by model/seed name.
+    /// Used by `adapter.get_columns_in_relation()` to return actual column info.
+    pub relation_columns: HashMap<String, Vec<String>>,
 }
 
 impl DbtContext {
@@ -65,12 +80,13 @@ impl DbtContext {
             full_refresh: false,
             is_incremental: false,
             this_relation: None,
+            relation_columns: HashMap::new(),
         }
     }
 
     /// Populate vars from dbt_project.yml `vars:` section.
     /// Handles both top-level vars and package-scoped vars (nested under package name).
-    /// Converts serde_yaml::Value to String for use in var() calls.
+    /// Stores raw serde_yaml::Value to preserve types (lists, dicts, etc.).
     pub fn populate_vars(&mut self, project_vars: &std::collections::HashMap<String, serde_yaml::Value>) {
         for (key, value) in project_vars {
             match value {
@@ -78,36 +94,16 @@ impl DbtContext {
                 serde_yaml::Value::Mapping(map) => {
                     for (k, v) in map {
                         if let serde_yaml::Value::String(var_name) = k {
-                            let str_val = match v {
-                                serde_yaml::Value::String(s) => s.clone(),
-                                serde_yaml::Value::Bool(b) => b.to_string(),
-                                serde_yaml::Value::Number(n) => n.to_string(),
-                                serde_yaml::Value::Null => continue,
-                                other => match serde_yaml::to_string(other) {
-                                    Ok(s) => s.trim().to_string(),
-                                    Err(_) => continue,
-                                },
-                            };
-                            self.vars.insert(var_name.clone(), str_val);
+                            if v.is_null() {
+                                continue;
+                            }
+                            self.vars.insert(var_name.clone(), v.clone());
                         }
                     }
-                    // Also store the package key itself if it's a known pattern
-                    // (some projects use `var('package_name:key')`)
-                }
-                serde_yaml::Value::String(s) => {
-                    self.vars.insert(key.clone(), s.clone());
-                }
-                serde_yaml::Value::Bool(b) => {
-                    self.vars.insert(key.clone(), b.to_string());
-                }
-                serde_yaml::Value::Number(n) => {
-                    self.vars.insert(key.clone(), n.to_string());
                 }
                 serde_yaml::Value::Null => continue,
-                other => {
-                    if let Ok(s) = serde_yaml::to_string(other) {
-                        self.vars.insert(key.clone(), s.trim().to_string());
-                    }
+                _ => {
+                    self.vars.insert(key.clone(), value.clone());
                 }
             }
         }

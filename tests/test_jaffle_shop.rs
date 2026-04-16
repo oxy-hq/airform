@@ -356,12 +356,9 @@ async fn test_can_query_executed_models() {
     executor.execute(&manifest, &graph, None).await.unwrap();
 
     // Query the customers model using schema-qualified name
-    let batches = executor
+    let result = executor
         .execute_query("SELECT count(*) as cnt FROM main.customers")
         .await
         .unwrap();
-    assert!(!batches.is_empty(), "should get results from customers table");
-
-    let row_count = batches.iter().map(|b| b.num_rows()).sum::<usize>();
-    assert!(row_count > 0, "customers table should have rows");
+    assert!(result.row_count > 0, "customers table should have rows");
 }

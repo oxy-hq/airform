@@ -229,8 +229,16 @@ def render_dbt_jinja(content, extra_vars=None):
     """
     import jinja2
 
-    # Mock dbt context
-    mock_vars = extra_vars or {}
+    # Mock dbt context — start with any extra vars provided
+    mock_vars = dict(extra_vars or {})
+
+    # Pre-scan the raw content for *_identifier vars (e.g., sap_acdoca_identifier: sap_acdoca_data).
+    # These are used by source() to resolve table identifiers, and they're often defined in the
+    # same file as the source() calls that need them.
+    for m in re.finditer(r'(\w+_identifier)\s*:\s*["\']?(\w+)["\']?', content):
+        var_name, var_value = m.group(1), m.group(2)
+        if var_name not in mock_vars:
+            mock_vars[var_name] = var_value
 
     def var_fn(name, default=None):
         return mock_vars.get(name, default if default is not None else name)
@@ -248,6 +256,27 @@ def render_dbt_jinja(content, extra_vars=None):
         database = "main"
         schema = "main"
 
+    def source_fn(*args):
+        """Resolve source() by looking up the identifier var.
+
+        For source('sap', 'acdoca'), checks var('sap_acdoca_identifier', 'acdoca').
+        Falls back to the table name if no identifier var is defined.
+        """
+        if len(args) < 2:
+            return "__source__"
+        source_name, table_name = args[0], args[1]
+        # Try common identifier var patterns:
+        #   {source}_{table}_identifier (e.g., sap_acdoca_identifier)
+        #   {project_prefix}_{table}_identifier
+        for prefix in [source_name, ""]:
+            if prefix:
+                id_var = f"{prefix}_{table_name}_identifier"
+            else:
+                id_var = f"{table_name}_identifier"
+            if id_var in mock_vars:
+                return mock_vars[id_var]
+        return table_name
+
     env = jinja2.Environment(
         undefined=jinja2.Undefined,  # silently ignore undefined vars
     )
@@ -255,8 +284,8 @@ def render_dbt_jinja(content, extra_vars=None):
     env.globals["env_var"] = env_var_fn
     env.globals["doc"] = doc_fn
     env.globals["target"] = MockTarget()
-    env.globals["source"] = lambda *args: "__source__"
-    env.globals["ref"] = lambda *args: "__ref__"
+    env.globals["source"] = source_fn
+    env.globals["ref"] = lambda *args: args[0] if args else "__ref__"
     env.globals["config"] = lambda **kwargs: ""
     env.globals["adapter"] = type("MockAdapter", (), {
         "dispatch": staticmethod(lambda *args, **kwargs: lambda: ""),
@@ -576,7 +605,9 @@ def _sanitize_config(obj, depth=0, force_enable=False):
         return result if result else None
     elif isinstance(obj, list):
         items = [_sanitize_config(item, depth + 1, force_enable=force_enable) for item in obj]
-        return [i for i in items if i is not None] or None
+        filtered = [i for i in items if i is not None]
+        # Preserve empty lists (used as var defaults like stripe_sources: [])
+        return filtered if filtered else []
     elif isinstance(obj, str):
         if "__jinja__" in obj or "{{" in obj or "{%" in obj:
             # Try to resolve simple Jinja booleans
@@ -595,23 +626,35 @@ def _dump_yaml_section(data, indent=0):
     import yaml
     lines = []
     prefix = "  " * indent
+
+    def _quote_key(key):
+        """Quote a YAML key if it contains special characters."""
+        s = str(key)
+        if any(c in s for c in ":{}[],'\"#&*!|>%@`"):
+            return f'"{s}"'
+        return s
+
     if isinstance(data, dict):
         for k, v in data.items():
+            qk = _quote_key(k)
             if isinstance(v, dict):
-                lines.append(f"{prefix}{k}:")
+                lines.append(f"{prefix}{qk}:")
                 lines.extend(_dump_yaml_section(v, indent + 1))
             elif isinstance(v, list):
-                dumped = yaml.dump({k: v}, default_flow_style=True).strip()
-                lines.append(f"{prefix}{dumped}")
+                if not v:
+                    lines.append(f"{prefix}{qk}: []")
+                else:
+                    dumped = yaml.dump(v, default_flow_style=True).strip()
+                    lines.append(f"{prefix}{qk}: {dumped}")
             elif isinstance(v, bool):
-                lines.append(f"{prefix}{k}: {str(v).lower()}")
+                lines.append(f"{prefix}{qk}: {str(v).lower()}")
             elif isinstance(v, str):
                 if " " in v or ":" in v or v.startswith("{"):
-                    lines.append(f'{prefix}{k}: "{v}"')
+                    lines.append(f'{prefix}{qk}: "{v}"')
                 else:
-                    lines.append(f"{prefix}{k}: {v}")
+                    lines.append(f"{prefix}{qk}: {v}")
             elif v is not None:
-                lines.append(f"{prefix}{k}: {v}")
+                lines.append(f"{prefix}{qk}: {v}")
     return lines
 
 
@@ -628,11 +671,14 @@ def generate_dbt_project(
     structure_type,
 ):
     """Generate a merged dbt_project.yml."""
-    # Parse parent dbt_project.yml for configs we want to copy
+    # Parse parent dbt_project.yml for configs we want to copy.
+    # Pass flat_vars (from integration test) so source() can resolve identifiers.
     parent_data = None
     if parent_dbt_project and parent_dbt_project.exists():
         try:
-            parent_data = parse_yaml_with_jinja(parent_dbt_project.read_text())
+            parent_data = parse_yaml_with_jinja(
+                parent_dbt_project.read_text(), extra_vars=flat_vars
+            )
         except Exception:
             pass
 
@@ -805,11 +851,190 @@ def assemble_project(repo_entry, dry_run=False):
         return None
 
 
+HUB_TO_GITHUB = {
+    "fivetran/fivetran_utils": "fivetran/dbt_fivetran_utils",
+    "dbt-labs/dbt_utils": "dbt-labs/dbt-utils",
+    "dbt-labs/spark_utils": "dbt-labs/spark-utils",
+    "calogica/dbt_expectations": "calogica/dbt-expectations",
+    "calogica/dbt_date": "calogica/dbt-date",
+    "dbt-labs/dbt_external_tables": "dbt-labs/dbt-external-tables",
+    "dbt-labs/codegen": "dbt-labs/dbt-codegen",
+    "dbt-labs/audit_helper": "dbt-labs/dbt-audit-helper",
+    "dbt-labs/metrics": "dbt-labs/dbt_metrics",
+    "elementary-data/elementary": "elementary-data/elementary",
+    "snowplow/snowplow_utils": "snowplow/dbt-snowplow-utils",
+    "snowplow/snowplow_web": "snowplow/dbt-snowplow-web",
+    "snowplow/snowplow_mobile": "snowplow/dbt-snowplow-mobile",
+    "snowplow/snowplow_ecommerce": "snowplow/dbt-snowplow-ecommerce",
+}
+
+
+def install_packages_for_project(project_dir, repo_entry):
+    """Install dbt package dependencies for an assembled project.
+
+    Parses packages.yml from the cached source repo, resolves dependencies,
+    clones them, and copies macros into dbt_packages/.
+    """
+    name = repo_entry["name"]
+    org_repo = repo_entry["repo"]
+    repo_name = org_repo.split("/")[-1]
+    cached_repo = CACHE_DIR / repo_name
+
+    # Find packages.yml in the cached repo
+    packages_yml = None
+    for candidate in [
+        cached_repo / "packages.yml",
+        cached_repo / "integration_tests" / "packages.yml",
+    ]:
+        if candidate.exists():
+            packages_yml = candidate
+            break
+
+    if not packages_yml:
+        return
+
+    try:
+        import yaml
+        content = packages_yml.read_text()
+        data = yaml.safe_load(content)
+    except Exception:
+        return
+
+    if not data or "packages" not in data:
+        return
+
+    dbt_packages_dir = project_dir / "dbt_packages"
+    dbt_packages_dir.mkdir(exist_ok=True)
+
+    # Also check the parent repo's packages.yml for transitive deps
+    parent_packages_ymls = [packages_yml]
+    if (cached_repo / "packages.yml").exists() and packages_yml != cached_repo / "packages.yml":
+        parent_packages_ymls.append(cached_repo / "packages.yml")
+
+    all_hub_packages = set()
+    for yml_path in parent_packages_ymls:
+        try:
+            yml_data = yaml.safe_load(yml_path.read_text())
+            if yml_data and "packages" in yml_data:
+                for pkg in yml_data["packages"]:
+                    if "package" in pkg:
+                        all_hub_packages.add(pkg["package"])
+        except Exception:
+            continue
+
+    # Always include dbt_utils — nearly every package depends on it transitively
+    all_hub_packages.add("dbt-labs/dbt_utils")
+
+    # Install each hub package
+    for hub_name in all_hub_packages:
+        github_repo = HUB_TO_GITHUB.get(hub_name)
+        if not github_repo:
+            # Try to guess: fivetran/foo -> fivetran/dbt_foo
+            org, pkg = hub_name.split("/", 1)
+            github_repo = f"{org}/dbt_{pkg}"
+
+        pkg_short = hub_name.split("/")[-1]
+        pkg_dest = dbt_packages_dir / pkg_short
+
+        if pkg_dest.exists():
+            continue
+
+        # Clone or reuse cached repo
+        pkg_cache = CACHE_DIR / f"_pkg_{github_repo.replace('/', '_')}"
+        if not pkg_cache.exists():
+            url = f"https://github.com/{github_repo}.git"
+            try:
+                subprocess.run(
+                    ["git", "clone", "--depth", "1", url, str(pkg_cache)],
+                    check=True, capture_output=True, text=True,
+                )
+                print(f"    Cloned package: {hub_name}")
+            except subprocess.CalledProcessError as e:
+                print(f"    WARN: could not clone package {hub_name} ({github_repo}): {e.stderr.strip()}")
+                continue
+
+        # Copy macros from the package
+        pkg_macros = pkg_cache / "macros"
+        if pkg_macros.exists():
+            pkg_dest.mkdir(parents=True, exist_ok=True)
+            macros_dest = pkg_dest / "macros"
+            if not macros_dest.exists():
+                copytree_ignore_pycache(pkg_macros, macros_dest)
+
+            # Copy dbt_project.yml so the package name is known
+            pkg_dbt_project = pkg_cache / "dbt_project.yml"
+            if pkg_dbt_project.exists():
+                shutil.copy2(pkg_dbt_project, pkg_dest / "dbt_project.yml")
+
+            # Copy packages.yml so transitive deps can be resolved
+            pkg_packages_yml = pkg_cache / "packages.yml"
+            if pkg_packages_yml.exists():
+                shutil.copy2(pkg_packages_yml, pkg_dest / "packages.yml")
+
+            print(f"    Installed: {hub_name} -> dbt_packages/{pkg_short}/")
+        else:
+            print(f"    WARN: no macros/ in {github_repo}")
+
+    # Recursively install deps of installed packages (iterate until stable)
+    changed = True
+    while changed:
+        changed = False
+        for pkg_dir in list(dbt_packages_dir.iterdir()):
+            if not pkg_dir.is_dir():
+                continue
+            sub_packages_yml = pkg_dir / "packages.yml"
+            if not sub_packages_yml.exists():
+                continue
+            try:
+                import yaml
+                sub_data = yaml.safe_load(sub_packages_yml.read_text())
+                if sub_data and "packages" in sub_data:
+                    for pkg in sub_data["packages"]:
+                        if "package" in pkg:
+                            hub_name = pkg["package"]
+                            pkg_short = hub_name.split("/")[-1]
+                            if (dbt_packages_dir / pkg_short).exists():
+                                continue
+                            # Clone and install this transitive dep
+                            github_repo = HUB_TO_GITHUB.get(hub_name)
+                            if not github_repo:
+                                org, pkn = hub_name.split("/", 1)
+                                github_repo = f"{org}/dbt_{pkn}"
+                            pkg_cache = CACHE_DIR / f"_pkg_{github_repo.replace('/', '_')}"
+                            if not pkg_cache.exists():
+                                url = f"https://github.com/{github_repo}.git"
+                                try:
+                                    subprocess.run(
+                                        ["git", "clone", "--depth", "1", url, str(pkg_cache)],
+                                        check=True, capture_output=True, text=True,
+                                    )
+                                except subprocess.CalledProcessError:
+                                    continue
+                            pkg_macros = pkg_cache / "macros"
+                            if pkg_macros.exists():
+                                pkg_dest = dbt_packages_dir / pkg_short
+                                pkg_dest.mkdir(parents=True, exist_ok=True)
+                                macros_dest = pkg_dest / "macros"
+                                if not macros_dest.exists():
+                                    copytree_ignore_pycache(pkg_macros, macros_dest)
+                                pkg_dbt_project = pkg_cache / "dbt_project.yml"
+                                if pkg_dbt_project.exists():
+                                    shutil.copy2(pkg_dbt_project, pkg_dest / "dbt_project.yml")
+                                pkg_packages_yml_src = pkg_cache / "packages.yml"
+                                if pkg_packages_yml_src.exists():
+                                    shutil.copy2(pkg_packages_yml_src, pkg_dest / "packages.yml")
+                                print(f"    Installed (transitive): {hub_name}")
+                                changed = True
+            except Exception:
+                continue
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate compat test projects")
     parser.add_argument("--repos", help="Comma-separated list of repo names to process")
     parser.add_argument("--dry-run", action="store_true", help="Just show what would be done")
     parser.add_argument("--clean", action="store_true", help="Remove output dir before generating")
+    parser.add_argument("--install-packages", action="store_true", help="Install dbt package dependencies")
     args = parser.parse_args()
 
     filter_names = args.repos.split(",") if args.repos else None
@@ -830,6 +1055,8 @@ def main():
         result = assemble_project(repo_entry, dry_run=args.dry_run)
         if result:
             results["success"].append(repo_entry["name"])
+            if args.install_packages:
+                install_packages_for_project(result, repo_entry)
         elif not args.dry_run:
             results["error"].append(repo_entry["name"])
 

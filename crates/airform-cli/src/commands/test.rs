@@ -1,4 +1,4 @@
-use airform_executor::{Executor, NodeStatus, TestStatus};
+use airform_executor::{NodeStatus, TestStatus};
 use airform_graph::selector::parse_selection;
 use airform_graph::NodeSelector;
 use colored::Colorize;
@@ -39,7 +39,7 @@ pub async fn run(project_dir: &Path, select: Option<&str>, target_override: Opti
     });
 
     // Execute - first load seeds, then run models, then run tests
-    let executor = Executor::new(&output.target_schema);
+    let executor = common::create_executor(&output.load_state, &output.target_schema)?;
 
     // Load seeds
     let seed_results = executor.load_seeds(&manifest).await?;

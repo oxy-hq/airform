@@ -204,19 +204,21 @@ async fn airform_pipeline(project_dir: &Path) -> (Executor, airform_core::Manife
 async fn airform_row_count(executor: &Executor, schema: &str, table: &str) -> usize {
     let sql = format!("SELECT count(*) as cnt FROM \"{}\".\"{}\"", schema, table);
     match executor.execute_query(&sql).await {
-        Ok(batches) => batches
-            .iter()
-            .map(|b| {
-                if b.num_rows() > 0 {
-                    use datafusion::arrow::array::Int64Array;
-                    let col = b.column(0);
-                    let arr = col.as_any().downcast_ref::<Int64Array>().unwrap();
-                    arr.value(0) as usize
-                } else {
-                    0
-                }
-            })
-            .sum(),
+        Ok(result) => {
+            if result.rows.is_empty() {
+                return 0;
+            }
+            // The result should have a single row with a count value
+            result.rows[0]
+                .first()
+                .and_then(|v| {
+                    v.as_i64()
+                        .map(|n| n as usize)
+                        .or_else(|| v.as_u64().map(|n| n as usize))
+                        .or_else(|| v.as_str().and_then(|s| s.parse().ok()))
+                })
+                .unwrap_or(0)
+        }
         Err(_) => 0,
     }
 }

@@ -7,12 +7,26 @@ use std::collections::HashSet;
 use std::path::Path;
 use std::time::Duration;
 
-/// Result of the full load → parse → graph → compile pipeline.
+/// Result of the full load -> parse -> graph -> compile pipeline.
 pub struct CompileOutput {
     pub load_state: airform_loader::LoadState,
     pub manifest: Manifest,
     pub graph: DbtGraph,
     pub target_schema: String,
+}
+
+/// Create an Executor, using the target adapter if configured.
+pub fn create_executor(
+    load_state: &airform_loader::LoadState,
+    target_schema: &str,
+) -> anyhow::Result<airform_executor::Executor> {
+    if let Some(target) = &load_state.target {
+        let adapter_type = airform_executor::AdapterType::from_str(&target.adapter_type);
+        if !adapter_type.is_local() {
+            return airform_executor::Executor::from_target(target);
+        }
+    }
+    Ok(airform_executor::Executor::new(target_schema))
 }
 
 /// Load, parse, build graph, and compile a dbt project.
@@ -36,14 +50,15 @@ pub fn load_and_compile(
         "public".to_string()
     };
     ctx.full_refresh = full_refresh;
+    ctx.relation_columns = load_state.seed_columns.clone();
 
     let mut engine = airform_jinja::JinjaEngine::new();
-    let macro_defs: Vec<(String, Vec<String>, String)> = load_state
+    let macro_defs: Vec<(String, Vec<String>, String, Option<String>)> = load_state
         .macro_definitions
         .iter()
-        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone()))
+        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone(), m.package.clone()))
         .collect();
-    engine.load_macros(&macro_defs);
+    engine.load_macros_with_packages(&macro_defs);
 
     let mut manifest = airform_parser::parse(&load_state, &engine)?;
     let graph = airform_graph::build_graph(&manifest)?;

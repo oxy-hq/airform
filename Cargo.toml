@@ -54,6 +54,7 @@ globset = "0.4"
 walkdir = "2"
 dirs = "6"
 tabled = "0.18"
+async-trait = "0.1"
 chrono = "0.4"
 colored = "3"
 criterion = { version = "0.5", features = ["html_reports"] }
@@ -73,6 +74,7 @@ criterion = { workspace = true }
 anyhow = { workspace = true }
 tokio = { workspace = true }
 serde_json = { workspace = true }
+chrono = { workspace = true }
 ureq = { workspace = true }
 dotenvy = { workspace = true }
 datafusion = { workspace = true }

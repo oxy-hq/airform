@@ -1,4 +1,4 @@
-use airform_executor::{Executor, NodeStatus, TestStatus};
+use airform_executor::{NodeStatus, TestStatus};
 use colored::Colorize;
 use std::path::Path;
 use std::time::Instant;
@@ -16,7 +16,7 @@ pub async fn run(
     let start = Instant::now();
     println!(
         "{}",
-        "Building project (seeds → models → snapshots → tests)...".cyan()
+        "Building project (seeds -> models -> snapshots -> tests)...".cyan()
     );
 
     let output = common::load_and_compile(project_dir, target_override, full_refresh)?;
@@ -27,12 +27,10 @@ pub async fn run(
     let selected = common::apply_selection(&manifest, &graph, select, exclude);
 
     // Execute
-    let executor = Executor::new(&output.target_schema);
+    let executor = common::create_executor(&load_state, &output.target_schema)?;
 
     // Register information schema tables
-    if let Err(e) =
-        airform_executor::register_info_schema(executor.session_context(), &manifest, &graph)
-    {
+    if let Err(e) = executor.register_info_schema(&manifest, &graph).await {
         tracing::debug!("Could not register info schema: {e}");
     }
 

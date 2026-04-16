@@ -127,11 +127,6 @@ pub fn discover_seeds(project: &DbtProject) -> anyhow::Result<Vec<SeedFile>> {
         {
             let path = entry.path();
             if path.extension().is_some_and(|ext| ext == "csv") {
-                // Skip normalized CSV artifacts from timestamp fixing
-                let filename = path.file_name().unwrap_or_default().to_string_lossy();
-                if filename.contains("._normalized") {
-                    continue;
-                }
                 let relative_path = path.strip_prefix(&dir).unwrap_or(path).to_path_buf();
                 let name = path
                     .file_stem()

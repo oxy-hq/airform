@@ -1,5 +1,5 @@
 use airform_core::ManifestNode;
-use airform_executor::{Executor, NodeStatus};
+use airform_executor::NodeStatus;
 use airform_graph::selector::parse_selection;
 use airform_graph::NodeSelector;
 use colored::Colorize;
@@ -71,12 +71,10 @@ pub async fn run(
     );
 
     // Execute
-    let executor = Executor::new(&output.target_schema);
+    let executor = common::create_executor(&output.load_state, &output.target_schema)?;
 
     // Register information schema tables
-    if let Err(e) =
-        airform_executor::register_info_schema(executor.session_context(), &manifest, &graph)
-    {
+    if let Err(e) = executor.register_info_schema(&manifest, &graph).await {
         tracing::debug!("Could not register info schema: {e}");
     }
 

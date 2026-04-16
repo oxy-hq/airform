@@ -14,41 +14,108 @@ pub struct MacroDefinition {
     pub body: String,
     /// Path to the file containing this macro
     pub file_path: PathBuf,
+    /// Package name (None for project macros, Some("fivetran_utils") for package macros)
+    pub package: Option<String>,
 }
 
-/// Discover and extract macro definitions from macro_paths.
+/// Discover and extract macro definitions from macro_paths and dbt_packages.
 pub fn discover_macros(project: &DbtProject) -> anyhow::Result<Vec<MacroDefinition>> {
     let mut macros = Vec::new();
+    let mut seen_names = std::collections::HashSet::new();
 
+    // Scan project macro_paths first (project macros take priority)
     for macro_dir in &project.macro_paths {
         let dir = project.project_root.join(macro_dir);
         if !dir.exists() {
             tracing::debug!("Macro path does not exist: {}", dir.display());
             continue;
         }
+        scan_macros_dir(&dir, &mut macros);
+    }
 
-        for entry in WalkDir::new(&dir)
-            .follow_links(true)
-            .into_iter()
-            .filter_map(|e| e.ok())
-        {
-            let path = entry.path();
-            if path.extension().is_some_and(|ext| ext == "sql") {
-                match std::fs::read_to_string(path) {
-                    Ok(contents) => {
-                        let extracted = extract_macros(&contents, path);
-                        macros.extend(extracted);
-                    }
-                    Err(e) => {
-                        tracing::warn!("Could not read macro file {}: {}", path.display(), e);
+    // Record project macro names for priority
+    for m in &macros {
+        seen_names.insert(m.name.clone());
+    }
+
+    // Scan dbt_packages/ for package macros
+    let packages_dir = project.project_root.join(&project.packages_install_path);
+    if packages_dir.exists() {
+        // Each subdirectory is a package
+        if let Ok(entries) = std::fs::read_dir(&packages_dir) {
+            for entry in entries.filter_map(|e| e.ok()) {
+                let pkg_path = entry.path();
+                if !pkg_path.is_dir() {
+                    continue;
+                }
+                let pkg_dir_name = entry.file_name().to_string_lossy().to_string();
+                // Try to read the package's project name from dbt_project.yml
+                let pkg_name = read_package_name(&pkg_path).unwrap_or_else(|| pkg_dir_name.clone());
+
+                // Look for macros/ within each package
+                let pkg_macros_dir = pkg_path.join("macros");
+                if pkg_macros_dir.exists() {
+                    let mut pkg_macros = Vec::new();
+                    scan_macros_dir(&pkg_macros_dir, &mut pkg_macros);
+                    // Tag and add package macros (project macros take priority)
+                    for mut m in pkg_macros {
+                        m.package = Some(pkg_name.clone());
+                        if !seen_names.contains(&m.name) {
+                            seen_names.insert(m.name.clone());
+                            macros.push(m);
+                        }
                     }
                 }
             }
         }
+        tracing::info!(
+            "Discovered {} total macro definitions (including packages from {})",
+            macros.len(),
+            packages_dir.display()
+        );
+    } else {
+        tracing::info!("Discovered {} macro definitions", macros.len());
     }
 
-    tracing::info!("Discovered {} macro definitions", macros.len());
     Ok(macros)
+}
+
+/// Read the project name from a package's dbt_project.yml.
+fn read_package_name(pkg_path: &std::path::Path) -> Option<String> {
+    let yml = pkg_path.join("dbt_project.yml");
+    let content = std::fs::read_to_string(&yml).ok()?;
+    for line in content.lines() {
+        let trimmed = line.trim();
+        if trimmed.starts_with("name:") {
+            let name = trimmed.strip_prefix("name:")?.trim().trim_matches('\'').trim_matches('"');
+            if !name.is_empty() {
+                return Some(name.to_string());
+            }
+        }
+    }
+    None
+}
+
+/// Scan a directory recursively for SQL macro files.
+fn scan_macros_dir(dir: &std::path::Path, macros: &mut Vec<MacroDefinition>) {
+    for entry in WalkDir::new(dir)
+        .follow_links(true)
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
+        let path = entry.path();
+        if path.extension().is_some_and(|ext| ext == "sql") {
+            match std::fs::read_to_string(path) {
+                Ok(contents) => {
+                    let extracted = extract_macros(&contents, path);
+                    macros.extend(extracted);
+                }
+                Err(e) => {
+                    tracing::warn!("Could not read macro file {}: {}", path.display(), e);
+                }
+            }
+        }
+    }
 }
 
 /// Extract macro definitions from a SQL file.
@@ -125,6 +192,7 @@ fn extract_macros(contents: &str, file_path: &std::path::Path) -> Vec<MacroDefin
                     args,
                     body,
                     file_path: file_path.to_path_buf(),
+                    package: None,
                 });
             } else {
                 tracing::warn!(

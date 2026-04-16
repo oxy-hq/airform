@@ -1,0 +1,830 @@
+{
+  "projects": {
+    "ad-reporting": {
+      "compiled_count": 20,
+      "errors": [
+        "exec metricflow_time_spine: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 422 at position 8 unexpected ')'.\\nsyntax error line 427 at position 0 unexpected ')'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AD_REPORTING_AD_REPORTING\\\".\\\"METRICFLOW_TIME_SPINE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec ad_reporting__account_report: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 35 at position 0 unexpected 'union'.\\nsyntax error line 40 at position 0 unexpected 'union'.\\nsyntax error line 45 at position 0 unexpected 'union'.\\nsyntax error line 50 at position 0 unexpected 'union'.\\nsyntax error line 55 at position 0 unexpected 'union'.\\nsyntax error line 59 at position 0 unexpected 'union'.\\nsyntax error line 63 at position 0 unexpected 'union'.\\nsyntax error line 67 at position 0 unexpected 'union'.\\nsyntax error line 71 at position 0 unexpected 'union'.\\nsyntax error line 76 at position 0 unexpected 'union'.\\nsyntax error line 80 at position 0 unexpected 'union'.\\nsyntax error line 84 at position 0 unexpected 'union'.\\nsyntax error line 88 at position 0 unexpected 'union'.\\nsyntax error line 92 at position 0 unexpected 'union'.\\nsyntax error line 96 at position 0 unexpected 'union'.\\nsyntax error line 100 at position 0 unexpected 'union'.\\nsyntax error line 104 at position 0 unexpected 'union'.\\nsyntax error line 108 at position 0 unexpected 'union'.\\nsyntax error line 113 at position 0 unexpected 'union'.\\nsyntax error line 117 at position 0 unexpected 'union'.\\nsyntax error line 121 at position 0 unexpected 'union'.\\nsyntax error line 125 at position 0 unexpected 'union'.\\nsyntax error line 129 at position 0 unexpected 'union'.\\nsyntax error line 133 at position 0 unexpected 'union'.\\nsyntax error line 137 at position 0 unexpected 'union'.\\nsyntax error line 141 at position 0 unexpected 'union'.\\nsyntax error line 145 at position 0 unexpected 'union'.\\nsyntax error line 149 at position 0 unexpected 'union'.\\nsyntax error line 153 at position 0 unexpected 'union'.\\nsyntax error line 157 at position 0 unexpected 'union'.\\nsyntax error line 161 at position 0 unexpected 'union'.\\nsyntax error line 166 at position 0 unexpected 'union'.\\nsyntax error line 170 at position 0 unexpected 'union'.\\nsyntax error line 174 at position 0 unexpected 'union'.\\nsyntax error line 178 at position 0 unexpected 'union'.\\nsyntax error line 182 at position 0 unexpected 'union'.\\nsyntax error line 186 at position 0 unexpected 'union'.\\nsyntax error line 190 at position 0 unexpected 'union'.\\nsyntax error line 194 at position 0 unexpected 'union'.\\nsyntax error line 198 at position 0 unexpected 'union'.\\nsyntax error line 203 at position 0 unexpected 'union'.\\nsyntax error line 207 at position 0 unexpected 'union'.\\nsyntax error line 211 at position 0 unexpected 'union'.\\nsyntax error line 215 at position 0 unexpected 'union'.\\nsyntax error line 219 at position 0 unexpected 'union'.\\nsyntax error line 224 at position 0 unexpected 'union'.\\nsyntax error line 228 at position 0 unexpected 'union'.\\nsyntax error line 232 at position 0 unexpected 'union'.\\nsyntax error line 236 at position 0 unexpected 'union'.\\nsyntax error line 240 at position 0 unexpected 'union'.\\nThis input had 411 total errors.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AD_REPORTING_AD_REPORTING\\\".\\\"AD_REPORTING__ACCOUNT_REPORT\\\" AS with __dbt__cte__int_ad_reporting__account_report as (\\nwith\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nunioned\")",
+        "exec ad_reporting__url_report: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 31 at position 0 unexpected 'union'.\\nsyntax error line 36 at position 0 unexpected 'union'.\\nsyntax error line 41 at position 0 unexpected 'union'.\\nsyntax error line 46 at position 0 unexpected 'union'.\\nsyntax error line 51 at position 0 unexpected 'union'.\\nsyntax error line 55 at position 0 unexpected 'union'.\\nsyntax error line 59 at position 0 unexpected 'union'.\\nsyntax error line 63 at position 0 unexpected 'union'.\\nsyntax error line 67 at position 0 unexpected 'union'.\\nsyntax error line 72 at position 0 unexpected 'union'.\\nsyntax error line 76 at position 0 unexpected 'union'.\\nsyntax error line 80 at position 0 unexpected 'union'.\\nsyntax error line 84 at position 0 unexpected 'union'.\\nsyntax error line 88 at position 0 unexpected 'union'.\\nsyntax error line 92 at position 0 unexpected 'union'.\\nsyntax error line 96 at position 0 unexpected 'union'.\\nsyntax error line 100 at position 0 unexpected 'union'.\\nsyntax error line 104 at position 0 unexpected 'union'.\\nsyntax error line 109 at position 0 unexpected 'union'.\\nsyntax error line 113 at position 0 unexpected 'union'.\\nsyntax error line 117 at position 0 unexpected 'union'.\\nsyntax error line 121 at position 0 unexpected 'union'.\\nsyntax error line 125 at position 0 unexpected 'union'.\\nsyntax error line 129 at position 0 unexpected 'union'.\\nsyntax error line 133 at position 0 unexpected 'union'.\\nsyntax error line 137 at position 0 unexpected 'union'.\\nsyntax error line 141 at position 0 unexpected 'union'.\\nsyntax error line 145 at position 0 unexpected 'union'.\\nsyntax error line 149 at position 0 unexpected 'union'.\\nsyntax error line 153 at position 0 unexpected 'union'.\\nsyntax error line 157 at position 0 unexpected 'union'.\\nsyntax error line 162 at position 0 unexpected 'union'.\\nsyntax error line 166 at position 0 unexpected 'union'.\\nsyntax error line 170 at position 0 unexpected 'union'.\\nsyntax error line 174 at position 0 unexpected 'union'.\\nsyntax error line 178 at position 0 unexpected 'union'.\\nsyntax error line 182 at position 0 unexpected 'union'.\\nsyntax error line 186 at position 0 unexpected 'union'.\\nsyntax error line 190 at position 0 unexpected 'union'.\\nsyntax error line 194 at position 0 unexpected 'union'.\\nsyntax error line 199 at position 0 unexpected 'union'.\\nsyntax error line 203 at position 0 unexpected 'union'.\\nsyntax error line 207 at position 0 unexpected 'union'.\\nsyntax error line 211 at position 0 unexpected 'union'.\\nsyntax error line 215 at position 0 unexpected 'union'.\\nsyntax error line 220 at position 0 unexpected 'union'.\\nsyntax error line 224 at position 0 unexpected 'union'.\\nsyntax error line 228 at position 0 unexpected 'union'.\\nsyntax error line 232 at position 0 unexpected 'union'.\\nsyntax error line 236 at position 0 unexpected 'union'.\\nThis input had 411 total errors.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AD_REPORTING_AD_REPORTING\\\".\\\"AD_REPORTING__URL_REPORT\\\" AS with __dbt__cte__int_ad_reporting__url_report as (\\nwith\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nunioned as (\\n\\n    \\n\")",
+        "exec ad_reporting__keyword_report: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 23 at position 0 unexpected 'union'.\\nsyntax error line 28 at position 0 unexpected 'union'.\\nsyntax error line 33 at position 0 unexpected 'union'.\\nsyntax error line 38 at position 0 unexpected 'union'.\\nsyntax error line 43 at position 0 unexpected 'union'.\\nsyntax error line 47 at position 0 unexpected 'union'.\\nsyntax error line 51 at position 0 unexpected 'union'.\\nsyntax error line 55 at position 0 unexpected 'union'.\\nsyntax error line 59 at position 0 unexpected 'union'.\\nsyntax error line 64 at position 0 unexpected 'union'.\\nsyntax error line 68 at position 0 unexpected 'union'.\\nsyntax error line 72 at position 0 unexpected 'union'.\\nsyntax error line 76 at position 0 unexpected 'union'.\\nsyntax error line 80 at position 0 unexpected 'union'.\\nsyntax error line 84 at position 0 unexpected 'union'.\\nsyntax error line 88 at position 0 unexpected 'union'.\\nsyntax error line 92 at position 0 unexpected 'union'.\\nsyntax error line 96 at position 0 unexpected 'union'.\\nsyntax error line 101 at position 0 unexpected 'union'.\\nsyntax error line 105 at position 0 unexpected 'union'.\\nsyntax error line 109 at position 0 unexpected 'union'.\\nsyntax error line 113 at position 0 unexpected 'union'.\\nsyntax error line 117 at position 0 unexpected 'union'.\\nsyntax error line 121 at position 0 unexpected 'union'.\\nsyntax error line 125 at position 0 unexpected 'union'.\\nsyntax error line 129 at position 0 unexpected 'union'.\\nsyntax error line 133 at position 0 unexpected 'union'.\\nsyntax error line 137 at position 0 unexpected 'union'.\\nsyntax error line 141 at position 0 unexpected 'union'.\\nsyntax error line 145 at position 0 unexpected 'union'.\\nsyntax error line 149 at position 0 unexpected 'union'.\\nsyntax error line 154 at position 0 unexpected 'union'.\\nsyntax error line 158 at position 0 unexpected 'union'.\\nsyntax error line 162 at position 0 unexpected 'union'.\\nsyntax error line 166 at position 0 unexpected 'union'.\\nsyntax error line 170 at position 0 unexpected 'union'.\\nsyntax error line 174 at position 0 unexpected 'union'.\\nsyntax error line 178 at position 0 unexpected 'union'.\\nsyntax error line 182 at position 0 unexpected 'union'.\\nsyntax error line 186 at position 0 unexpected 'union'.\\nsyntax error line 191 at position 0 unexpected 'union'.\\nsyntax error line 195 at position 0 unexpected 'union'.\\nsyntax error line 199 at position 0 unexpected 'union'.\\nsyntax error line 203 at position 0 unexpected 'union'.\\nsyntax error line 207 at position 0 unexpected 'union'.\\nsyntax error line 212 at position 0 unexpected 'union'.\\nsyntax error line 216 at position 0 unexpected 'union'.\\nsyntax error line 220 at position 0 unexpected 'union'.\\nsyntax error line 224 at position 0 unexpected 'union'.\\nsyntax error line 228 at position 0 unexpected 'union'.\\nThis input had 411 total errors.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AD_REPORTING_AD_REPORTING\\\".\\\"AD_REPORTING__KEYWORD_REPORT\\\" AS with __dbt__cte__int_ad_reporting__keyword_report as (\\nwith\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nunioned as (\\n\\n    \\n\")",
+        "exec ad_reporting__ad_report: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 35 at position 0 unexpected 'union'.\\nsyntax error line 40 at position 0 unexpected 'union'.\\nsyntax error line 45 at position 0 unexpected 'union'.\\nsyntax error line 50 at position 0 unexpected 'union'.\\nsyntax error line 55 at position 0 unexpected 'union'.\\nsyntax error line 59 at position 0 unexpected 'union'.\\nsyntax error line 63 at position 0 unexpected 'union'.\\nsyntax error line 67 at position 0 unexpected 'union'.\\nsyntax error line 71 at position 0 unexpected 'union'.\\nsyntax error line 76 at position 0 unexpected 'union'.\\nsyntax error line 80 at position 0 unexpected 'union'.\\nsyntax error line 84 at position 0 unexpected 'union'.\\nsyntax error line 88 at position 0 unexpected 'union'.\\nsyntax error line 92 at position 0 unexpected 'union'.\\nsyntax error line 96 at position 0 unexpected 'union'.\\nsyntax error line 100 at position 0 unexpected 'union'.\\nsyntax error line 104 at position 0 unexpected 'union'.\\nsyntax error line 108 at position 0 unexpected 'union'.\\nsyntax error line 113 at position 0 unexpected 'union'.\\nsyntax error line 117 at position 0 unexpected 'union'.\\nsyntax error line 121 at position 0 unexpected 'union'.\\nsyntax error line 125 at position 0 unexpected 'union'.\\nsyntax error line 129 at position 0 unexpected 'union'.\\nsyntax error line 133 at position 0 unexpected 'union'.\\nsyntax error line 137 at position 0 unexpected 'union'.\\nsyntax error line 141 at position 0 unexpected 'union'.\\nsyntax error line 145 at position 0 unexpected 'union'.\\nsyntax error line 149 at position 0 unexpected 'union'.\\nsyntax error line 153 at position 0 unexpected 'union'.\\nsyntax error line 157 at position 0 unexpected 'union'.\\nsyntax error line 161 at position 0 unexpected 'union'.\\nsyntax error line 166 at position 0 unexpected 'union'.\\nsyntax error line 170 at position 0 unexpected 'union'.\\nsyntax error line 174 at position 0 unexpected 'union'.\\nsyntax error line 178 at position 0 unexpected 'union'.\\nsyntax error line 182 at position 0 unexpected 'union'.\\nsyntax error line 186 at position 0 unexpected 'union'.\\nsyntax error line 190 at position 0 unexpected 'union'.\\nsyntax error line 194 at position 0 unexpected 'union'.\\nsyntax error line 198 at position 0 unexpected 'union'.\\nsyntax error line 203 at position 0 unexpected 'union'.\\nsyntax error line 207 at position 0 unexpected 'union'.\\nsyntax error line 211 at position 0 unexpected 'union'.\\nsyntax error line 215 at position 0 unexpected 'union'.\\nsyntax error line 219 at position 0 unexpected 'union'.\\nsyntax error line 224 at position 0 unexpected 'union'.\\nsyntax error line 228 at position 0 unexpected 'union'.\\nsyntax error line 232 at position 0 unexpected 'union'.\\nsyntax error line 236 at position 0 unexpected 'union'.\\nsyntax error line 240 at position 0 unexpected 'union'.\\nThis input had 411 total errors.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AD_REPORTING_AD_REPORTING\\\".\\\"AD_REPORTING__AD_REPORT\\\" AS with __dbt__cte__int_ad_reporting__ad_report as (\\nwith\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\nunioned as (\\n\\n   \")"
+      ],
+      "exec_error": 10,
+      "exec_skip": 10,
+      "exec_success": 0,
+      "models_found": 20,
+      "seed_count": 125,
+      "skipped_reason": null
+    },
+    "amazon-ads": {
+      "compiled_count": 30,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 30,
+      "models_found": 30,
+      "seed_count": 11,
+      "skipped_reason": null
+    },
+    "amazon-selling-partner": {
+      "compiled_count": 32,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 1,
+      "exec_success": 31,
+      "models_found": 32,
+      "seed_count": 14,
+      "skipped_reason": null
+    },
+    "amplitude": {
+      "compiled_count": 9,
+      "errors": [
+        "exec stg_amplitude__event: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 299 at position 8\\ninvalid identifier 'GROUP_TYPES'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AMPLITUDE__SOURCE_AMPLITUDE\\\".\\\"STG_AMPLITUDE__EVENT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec amplitude__sessions: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_AMPLITUDE__SOURCE_AMPLITUDE.STG_AMPLITUDE__EVENT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AMPLITUDE_AMPLITUDE\\\".\\\"AMPLITUDE__SESSIONS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec amplitude__event_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_AMPLITUDE__SOURCE_AMPLITUDE.STG_AMPLITUDE__EVENT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AMPLITUDE_AMPLITUDE\\\".\\\"AMPLITUDE__EVENT_ENHANCED\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec amplitude__daily_performance: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_AMPLITUDE_AMPLITUDE.AMPLITUDE__EVENT_ENHANCED' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AMPLITUDE_AMPLITUDE\\\".\\\"AMPLITUDE__DAILY_PERFORMANCE\\\" AS with __dbt__cte__int_amplitude__date_spine as (\\nwith spine as (\\n\\n\\n    select\\n        cast(spine.da\")",
+        "exec amplitude__user_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_AMPLITUDE_AMPLITUDE.AMPLITUDE__EVENT_ENHANCED' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_AMPLITUDE_AMPLITUDE\\\".\\\"AMPLITUDE__USER_ENHANCED\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 5,
+      "exec_skip": 1,
+      "exec_success": 3,
+      "models_found": 9,
+      "seed_count": 2,
+      "skipped_reason": null
+    },
+    "app-reporting": {
+      "compiled_count": 18,
+      "errors": [
+        "exec int_apple_store__app_version: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_APP_REPORTING_INT_APP_REPORTING.APPLE_STORE__APP_VERSION_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_APP_REPORTING_INT_APP_REPORTING\\\".\\\"INT_APPLE_STORE__APP_VERSION\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_google_play__overview: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_APP_REPORTING_INT_APP_REPORTING.GOOGLE_PLAY__OVERVIEW_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_APP_REPORTING_INT_APP_REPORTING\\\".\\\"INT_GOOGLE_PLAY__OVERVIEW\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_google_play__device: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_APP_REPORTING_INT_APP_REPORTING.GOOGLE_PLAY__DEVICE_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_APP_REPORTING_INT_APP_REPORTING\\\".\\\"INT_GOOGLE_PLAY__DEVICE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_apple_store__device: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_APP_REPORTING_INT_APP_REPORTING.APPLE_STORE__DEVICE_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_APP_REPORTING_INT_APP_REPORTING\\\".\\\"INT_APPLE_STORE__DEVICE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_apple_store__country: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_APP_REPORTING_INT_APP_REPORTING.APPLE_STORE__TERRITORY_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_APP_REPORTING_INT_APP_REPORTING\\\".\\\"INT_APPLE_STORE__COUNTRY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 18,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 18,
+      "seed_count": 25,
+      "skipped_reason": null
+    },
+    "apple-search-ads": {
+      "compiled_count": 26,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 26,
+      "models_found": 26,
+      "seed_count": 10,
+      "skipped_reason": null
+    },
+    "apple-store": {
+      "compiled_count": 59,
+      "errors": [
+        "exec int_apple_store__territory_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'APPLE_STORE_COUNTRY_CODES' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_APPLE_STORE_APPLE_STORE\\\".\\\"INT_APPLE_STORE__TERRITORY_REPORT\\\" AS with __dbt__cte__int_apple_store__date_spine as (\\n-- depends_on: AIRFORM_APPLE_STORE_app\")",
+        "exec apple_store__territory_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'APPLE_STORE_COUNTRY_CODES' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_APPLE_STORE_APPLE_STORE\\\".\\\"APPLE_STORE__TERRITORY_REPORT\\\" AS with __dbt__cte__int_apple_store__discovery_and_engagement_daily as (\\nwith base as (\\n\\n    se\")"
+      ],
+      "exec_error": 2,
+      "exec_skip": 36,
+      "exec_success": 21,
+      "models_found": 59,
+      "seed_count": 8,
+      "skipped_reason": null
+    },
+    "asana": {
+      "compiled_count": 40,
+      "errors": [
+        "exec asana__daily_metrics: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 230 at position 4 unexpected 'cross'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ASANA_ASANA\\\".\\\"ASANA__DAILY_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 1,
+      "exec_skip": 12,
+      "exec_success": 27,
+      "models_found": 40,
+      "seed_count": 11,
+      "skipped_reason": null
+    },
+    "attribution-playbook": {
+      "compiled_count": 1,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 1,
+      "models_found": 1,
+      "seed_count": 3,
+      "skipped_reason": null
+    },
+    "dbt-artifacts": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 7,
+      "seed_count": 0,
+      "skipped_reason": "2/3 sources not backed by seeds"
+    },
+    "dbt-project-evaluator": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 14,
+      "seed_count": 0,
+      "skipped_reason": "5/5 sources not backed by seeds"
+    },
+    "dynamics-365": {
+      "compiled_count": 12,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 12,
+      "models_found": 12,
+      "seed_count": 14,
+      "skipped_reason": null
+    },
+    "facebook-ads": {
+      "compiled_count": 34,
+      "errors": [
+        "exec facebook_ads__url_tags: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'UNNESTED' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_FACEBOOK_ADS_FACEBOOK_ADS\\\".\\\"FACEBOOK_ADS__URL_TAGS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_facebook_ads__creative_history: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_FACEBOOK_ADS_FACEBOOK_ADS.FACEBOOK_ADS__URL_TAGS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_FACEBOOK_ADS_FACEBOOK_ADS\\\".\\\"INT_FACEBOOK_ADS__CREATIVE_HISTORY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec facebook_ads__url_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_FACEBOOK_ADS_FACEBOOK_ADS.INT_FACEBOOK_ADS__CREATIVE_HISTORY' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_FACEBOOK_ADS_FACEBOOK_ADS\\\".\\\"FACEBOOK_ADS__URL_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 3,
+      "exec_skip": 10,
+      "exec_success": 21,
+      "models_found": 34,
+      "seed_count": 13,
+      "skipped_reason": null
+    },
+    "facebook-pages": {
+      "compiled_count": 11,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 11,
+      "models_found": 11,
+      "seed_count": 4,
+      "skipped_reason": null
+    },
+    "fivetran-log": {
+      "compiled_count": 20,
+      "errors": [
+        "exec fivetran_platform__audit_user_activity: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 304 at position 13 unexpected 'as'.\\nsyntax error line 305 at position 17 unexpected '.'.\\nsyntax error line 306 at position 19 unexpected '.'.\\nsyntax error line 307 at position 19 unexpected '.'.\\nsyntax error line 308 at position 18 unexpected '.'.\\nsyntax error line 309 at position 18 unexpected '.'.\\nsyntax error line 310 at position 17 unexpected '.'.\\nsyntax error line 311 at position 13 unexpected '.'.\\nsyntax error line 312 at position 13 unexpected '.'.\\nsyntax error line 313 at position 13 unexpected '.'.\\nsyntax error line 314 at position 30 unexpected '.'.\\nsyntax error line 315 at position 13 unexpected '.'.\\nsyntax error line 316 at position 17 unexpected '.'.\\nsyntax error line 317 at position 17 unexpected '.'.\\nsyntax error line 318 at position 17 unexpected '.'.\\nsyntax error line 322 at position 11 unexpected 'user_logs'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_FIVETRAN_LOG_FIVETRAN_PLATFORM\\\".\\\"FIVETRAN_PLATFORM__AUDIT_USER_ACTIVITY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 1,
+      "exec_skip": 0,
+      "exec_success": 19,
+      "models_found": 20,
+      "seed_count": 12,
+      "skipped_reason": null
+    },
+    "ga4-export": {
+      "compiled_count": 9,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 2,
+      "exec_success": 7,
+      "models_found": 9,
+      "seed_count": 1,
+      "skipped_reason": null
+    },
+    "github": {
+      "compiled_count": 43,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 9,
+      "exec_success": 34,
+      "models_found": 43,
+      "seed_count": 14,
+      "skipped_reason": null
+    },
+    "google-ads": {
+      "compiled_count": 40,
+      "errors": [
+        "exec google_ads__campaign_bid_modifiers_report: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 197 at position 16 unexpected 'and'.\\nsyntax error line 201 at position 16 unexpected 'and'.\\nsyntax error line 205 at position 16 unexpected 'and'.\\nsyntax error line 216 at position 16 unexpected 'then'.\\nsyntax error line 217 at position 33 unexpected 'and'.\\nsyntax error line 220 at position 16 unexpected 'and'.\\nsyntax error line 221 at position 16 unexpected 'then'.\\nsyntax error line 223 at position 16 unexpected 'and'.\\nsyntax error line 224 at position 16 unexpected 'then'.\\nsyntax error line 226 at position 16 unexpected 'and'.\\nsyntax error line 227 at position 16 unexpected 'and'.\\nsyntax error line 228 at position 16 unexpected 'then'.\\nsyntax error line 230 at position 16 unexpected 'and'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GOOGLE_ADS_GOOGLE_ADS\\\".\\\"GOOGLE_ADS__CAMPAIGN_BID_MODIFIERS_REPORT\\\" AS with __dbt__cte__int_google_ads__campaigns_accounts as (\\nwith campaigns as (\\n    s\")",
+        "exec google_ads__campaign_budget_diagnostics_report: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 293 at position 43 unexpected 'then'.\\nsyntax error line 294 at position 43 unexpected 'then'.\\nsyntax error line 397 at position 16 unexpected 'and'.\\nsyntax error line 402 at position 16 unexpected 'and'.\\nsyntax error line 414 at position 16 unexpected 'and'.\\nsyntax error line 421 at position 16 unexpected 'and'.\\nsyntax error line 424 at position 16 unexpected 'and'.\\nsyntax error line 426 at position 16 unexpected 'and'.\\nsyntax error line 429 at position 16 unexpected 'and'.\\nsyntax error line 431 at position 16 unexpected 'and'.\\nsyntax error line 434 at position 16 unexpected 'and'.\\nsyntax error line 435 at position 16 unexpected 'and'.\\nsyntax error line 436 at position 16 unexpected 'and'.\\nsyntax error line 437 at position 16 unexpected 'and'.\\nsyntax error line 440 at position 16 unexpected 'and'.\\nsyntax error line 442 at position 16 unexpected 'and'.\\nsyntax error line 445 at position 16 unexpected 'and'.\\nsyntax error line 447 at position 16 unexpected 'and'.\\nsyntax error line 450 at position 16 unexpected 'and'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GOOGLE_ADS_GOOGLE_ADS\\\".\\\"GOOGLE_ADS__CAMPAIGN_BUDGET_DIAGNOSTICS_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 2,
+      "exec_skip": 1,
+      "exec_success": 37,
+      "models_found": 40,
+      "seed_count": 15,
+      "skipped_reason": null
+    },
+    "google-play": {
+      "compiled_count": 43,
+      "errors": [
+        "exec google_play__country_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'GOOGLE_PLAY__COUNTRY_CODES' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GOOGLE_PLAY_GOOGLE_PLAY\\\".\\\"GOOGLE_PLAY__COUNTRY_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 1,
+      "exec_skip": 8,
+      "exec_success": 34,
+      "models_found": 43,
+      "seed_count": 17,
+      "skipped_reason": null
+    },
+    "greenhouse": {
+      "compiled_count": 79,
+      "errors": [
+        "exec stg_greenhouse__scheduled_interview: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 264 at position 8\\ninvalid identifier 'END'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GREENHOUSE_STG_GREENHOUSE\\\".\\\"STG_GREENHOUSE__SCHEDULED_INTERVIEW\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec greenhouse__interview_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_GREENHOUSE_STG_GREENHOUSE.STG_GREENHOUSE__SCHEDULED_INTERVIEW' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GREENHOUSE_GREENHOUSE\\\".\\\"GREENHOUSE__INTERVIEW_ENHANCED\\\" AS with __dbt__cte__int_greenhouse__interview_scorecard as (\\nwith scorecard as (\\n\\n    select *\\n \")",
+        "exec greenhouse__application_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_GREENHOUSE_GREENHOUSE.GREENHOUSE__INTERVIEW_ENHANCED' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GREENHOUSE_GREENHOUSE\\\".\\\"GREENHOUSE__APPLICATION_ENHANCED\\\" AS with __dbt__cte__int_greenhouse__user_emails as (\\nwith user_email as (\\n\\n    select *\\n    fr\")",
+        "exec greenhouse__job_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_GREENHOUSE_GREENHOUSE.GREENHOUSE__APPLICATION_ENHANCED' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GREENHOUSE_GREENHOUSE\\\".\\\"GREENHOUSE__JOB_ENHANCED\\\" AS with __dbt__cte__int_greenhouse__user_emails as (\\nwith user_email as (\\n\\n    select *\\n    from AIRFO\")",
+        "exec greenhouse__application_history: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_GREENHOUSE_GREENHOUSE.GREENHOUSE__APPLICATION_ENHANCED' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_GREENHOUSE_GREENHOUSE\\\".\\\"GREENHOUSE__APPLICATION_HISTORY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 12,
+      "exec_success": 61,
+      "models_found": 79,
+      "seed_count": 35,
+      "skipped_reason": null
+    },
+    "hubspot": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 154,
+      "seed_count": 0,
+      "skipped_reason": "5/61 sources not backed by seeds"
+    },
+    "instagram-business": {
+      "compiled_count": 7,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 7,
+      "models_found": 7,
+      "seed_count": 3,
+      "skipped_reason": null
+    },
+    "intercom": {
+      "compiled_count": 42,
+      "errors": [
+        "exec stg_intercom__collection_history: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 243 at position 10 unexpected 'as'.\\nsyntax error line 244 at position 13 unexpected ','.\\nsyntax error line 245 at position 8 unexpected ','.\\nsyntax error line 246 at position 14 unexpected ','.\\nsyntax error line 247 at position 7 unexpected ','.\\nsyntax error line 249 at position 8 unexpected ','.\\nsyntax error line 249 at position 10 unexpected ''main''.\\nsyntax error line 249 at position 58 unexpected 'source_relation'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_INTERCOM_STG_INTERCOM\\\".\\\"STG_INTERCOM__COLLECTION_HISTORY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec intercom__company_metrics: Some(\"Snowflake query error: 000979 (42601): SQL compilation error:\\n[SYS_VW.SOURCE_RELATION_1] is not a valid group by expression\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_INTERCOM_INTERCOM\\\".\\\"INTERCOM__COMPANY_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec intercom__article_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_INTERCOM_STG_INTERCOM.STG_INTERCOM__COLLECTION_HISTORY' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_INTERCOM_INTERCOM\\\".\\\"INTERCOM__ARTICLE_ENHANCED\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec intercom__admin_metrics: Some(\"Snowflake query error: 000979 (42601): SQL compilation error:\\n[CONVERSATION_METRICS.SOURCE_RELATION] is not a valid group by expression\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_INTERCOM_INTERCOM\\\".\\\"INTERCOM__ADMIN_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 4,
+      "exec_skip": 0,
+      "exec_success": 38,
+      "models_found": 42,
+      "seed_count": 17,
+      "skipped_reason": null
+    },
+    "iterable": {
+      "compiled_count": 46,
+      "errors": [
+        "exec iterable__events: Some(\"Snowflake query error: 002025 (42S21): SQL compilation error:\\nduplicate column name 'SOURCE_RELATION'\\nSQL:\\nCREATE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ITERABLE_ITERABLE\\\".\\\"ITERABLE__EVENTS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec iterable__user_campaign: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ITERABLE_ITERABLE.ITERABLE__EVENTS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ITERABLE_ITERABLE\\\".\\\"ITERABLE__USER_CAMPAIGN\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_iterable__user_event_metrics: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ITERABLE_ITERABLE.ITERABLE__USER_CAMPAIGN' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ITERABLE_INT_ITERABLE\\\".\\\"INT_ITERABLE__USER_EVENT_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec iterable__users: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ITERABLE_INT_ITERABLE.INT_ITERABLE__USER_EVENT_METRICS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ITERABLE_ITERABLE\\\".\\\"ITERABLE__USERS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_iterable__campaign_event_metrics: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ITERABLE_ITERABLE.ITERABLE__USER_CAMPAIGN' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ITERABLE_INT_ITERABLE\\\".\\\"INT_ITERABLE__CAMPAIGN_EVENT_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 0,
+      "exec_success": 40,
+      "models_found": 46,
+      "seed_count": 18,
+      "skipped_reason": null
+    },
+    "jaffle-shop": {
+      "compiled_count": 13,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 13,
+      "models_found": 13,
+      "seed_count": 6,
+      "skipped_reason": null
+    },
+    "jira": {
+      "compiled_count": 61,
+      "errors": [
+        "exec stg_jira__issue_multiselect_history: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 285 at position 13\\ninvalid identifier 'TIME'\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_JIRA_JIRA_SOURCE\\\".\\\"STG_JIRA__ISSUE_MULTISELECT_HISTORY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_jira__issue_field_history: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 282 at position 13\\ninvalid identifier 'TIME'\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_JIRA_JIRA_SOURCE\\\".\\\"STG_JIRA__ISSUE_FIELD_HISTORY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_jira__field_history_scd: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 320 at position 21\\ninvalid identifier 'STATUS'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_JIRA_INT_JIRA\\\".\\\"INT_JIRA__FIELD_HISTORY_SCD\\\" AS with __dbt__cte__int_jira__issue_field_history as (\\nwith field_history as (\\n\\n    select *\\n    from AIRFO\")",
+        "exec jira__daily_issue_field_history: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_JIRA_INT_JIRA.INT_JIRA__FIELD_HISTORY_SCD' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_JIRA_JIRA\\\".\\\"JIRA__DAILY_ISSUE_FIELD_HISTORY\\\" AS -- grab column names that were pivoted out\\n\\n-- in intermediate/field_history/\\nwith __dbt__cte__int_jira_\")",
+        "exec jira__issue_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_JIRA_JIRA.JIRA__DAILY_ISSUE_FIELD_HISTORY' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_JIRA_JIRA\\\".\\\"JIRA__ISSUE_ENHANCED\\\" AS with __dbt__cte__int_jira__issue_users as (\\n-- just grabs user attributes for issue assignees and reporters \\n\\nwith \")"
+      ],
+      "exec_error": 9,
+      "exec_skip": 15,
+      "exec_success": 37,
+      "models_found": 61,
+      "seed_count": 22,
+      "skipped_reason": null
+    },
+    "klaviyo": {
+      "compiled_count": 17,
+      "errors": [
+        "exec klaviyo__events: Some(\"Snowflake query error: 002025 (42S21): SQL compilation error:\\nduplicate column name 'TYPE'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_KLAVIYO_KLAVIYO\\\".\\\"KLAVIYO__EVENTS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec klaviyo__person_campaign_flow: Some(\"No compiled SQL\")",
+        "exec int_klaviyo__campaign_flow_metrics: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_KLAVIYO_KLAVIYO.KLAVIYO__PERSON_CAMPAIGN_FLOW' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_KLAVIYO_INT_KLAVIYO\\\".\\\"INT_KLAVIYO__CAMPAIGN_FLOW_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec klaviyo__campaigns: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_KLAVIYO_INT_KLAVIYO.INT_KLAVIYO__CAMPAIGN_FLOW_METRICS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_KLAVIYO_KLAVIYO\\\".\\\"KLAVIYO__CAMPAIGNS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_klaviyo__person_metrics: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_KLAVIYO_KLAVIYO.KLAVIYO__PERSON_CAMPAIGN_FLOW' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_KLAVIYO_INT_KLAVIYO\\\".\\\"INT_KLAVIYO__PERSON_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 7,
+      "exec_skip": 0,
+      "exec_success": 11,
+      "models_found": 18,
+      "seed_count": 6,
+      "skipped_reason": null
+    },
+    "lever": {
+      "compiled_count": 64,
+      "errors": [
+        "exec stg_lever__opportunity_tag: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 240 at position 9\\ninvalid identifier 'TAG'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LEVER\\\".\\\"STG_LEVER__OPPORTUNITY_TAG\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_lever__posting_tag: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 242 at position 9\\ninvalid identifier 'TAG'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LEVER\\\".\\\"STG_LEVER__POSTING_TAG\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec lever__posting_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_LEVER.STG_LEVER__POSTING_TAG' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LEVER\\\".\\\"LEVER__POSTING_ENHANCED\\\" AS with __dbt__cte__int_lever__posting_tags as (\\nwith posting_tag as (\\n\\n    select *\\n    from AIRFORM_LEVER.stg_lever__\")",
+        "exec lever__opportunity_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_LEVER.STG_LEVER__OPPORTUNITY_TAG' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LEVER\\\".\\\"LEVER__OPPORTUNITY_ENHANCED\\\" AS with __dbt__cte__int_lever__opportunity_application as (\\nwith opportunity as (\\n\\n    select *\\n    from AIRFORM_LE\")",
+        "exec lever__opportunity_stage_history: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_LEVER.LEVER__OPPORTUNITY_ENHANCED' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LEVER\\\".\\\"LEVER__OPPORTUNITY_STAGE_HISTORY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 5,
+      "exec_skip": 11,
+      "exec_success": 48,
+      "models_found": 64,
+      "seed_count": 26,
+      "skipped_reason": null
+    },
+    "linkedin": {
+      "compiled_count": 25,
+      "errors": [
+        "exec stg_linkedin_ads__monthly_ad_analytics_by_country: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 276 at position 28\\ninvalid identifier 'EXTERNAL_WEBSITE_CONVERSIONS'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LINKEDIN_LINKEDIN_ADS_SOURCE\\\".\\\"STG_LINKEDIN_ADS__MONTHLY_AD_ANALYTICS_BY_COUNTRY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_linkedin_ads__ad_analytics_by_campaign: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 270 at position 28\\ninvalid identifier 'EXTERNAL_WEBSITE_CONVERSIONS'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LINKEDIN_LINKEDIN_ADS_SOURCE\\\".\\\"STG_LINKEDIN_ADS__AD_ANALYTICS_BY_CAMPAIGN\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_linkedin_ads__monthly_ad_analytics_by_region: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 275 at position 28\\ninvalid identifier 'EXTERNAL_WEBSITE_CONVERSIONS'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LINKEDIN_LINKEDIN_ADS_SOURCE\\\".\\\"STG_LINKEDIN_ADS__MONTHLY_AD_ANALYTICS_BY_REGION\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec linkedin_ads__monthly_campaign_country_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_LINKEDIN_LINKEDIN_ADS_SOURCE.STG_LINKEDIN_ADS__MONTHLY_AD_ANALYTICS_BY_COUNTRY' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LINKEDIN_LINKEDIN_ADS\\\".\\\"LINKEDIN_ADS__MONTHLY_CAMPAIGN_COUNTRY_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec linkedin_ads__monthly_campaign_region_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_LINKEDIN_LINKEDIN_ADS_SOURCE.STG_LINKEDIN_ADS__MONTHLY_AD_ANALYTICS_BY_REGION' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_LINKEDIN_LINKEDIN_ADS\\\".\\\"LINKEDIN_ADS__MONTHLY_CAMPAIGN_REGION_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 0,
+      "exec_success": 19,
+      "models_found": 25,
+      "seed_count": 9,
+      "skipped_reason": null
+    },
+    "linkedin-pages": {
+      "compiled_count": 23,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 23,
+      "models_found": 23,
+      "seed_count": 10,
+      "skipped_reason": null
+    },
+    "mailchimp": {
+      "compiled_count": 46,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 13,
+      "exec_success": 33,
+      "models_found": 46,
+      "seed_count": 12,
+      "skipped_reason": null
+    },
+    "marketo": {
+      "compiled_count": 50,
+      "errors": [
+        "exec stg_marketo__lead: Some(\"Snowflake query error: 002025 (42S21): SQL compilation error:\\nduplicate column name 'EMAIL'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_MARKETO_MARKETO_SOURCE\\\".\\\"STG_MARKETO__LEAD\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec marketo__calendar_spine: Some(\"Snowflake query error: 100040 (22007): Date '' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_MARKETO_MARKETO\\\".\\\"MARKETO__CALENDAR_SPINE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_marketo__lead: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_MARKETO_MARKETO_SOURCE.STG_MARKETO__LEAD' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_MARKETO_MARKETO\\\".\\\"INT_MARKETO__LEAD\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec marketo__lead_history: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 147 at position 65 unexpected 'ALL'.\\nsyntax error line 191 at position 0 unexpected ')'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_MARKETO_MARKETO\\\".\\\"MARKETO__LEAD_HISTORY\\\" AS with __dbt__cte__marketo__change_data_pivot as (\\nwith change_data as (\\n\\n    select *\\n    from AIRFORM_MARKET\")",
+        "exec marketo__leads: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_MARKETO_MARKETO.INT_MARKETO__LEAD' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_MARKETO_MARKETO\\\".\\\"MARKETO__LEADS\\\" AS with __dbt__cte__marketo__email_stats__by_lead as (\\nwith email_sends as (\\n\\n    select *\\n    from AIRFORM_MARKETO_ma\")"
+      ],
+      "exec_error": 5,
+      "exec_skip": 14,
+      "exec_success": 31,
+      "models_found": 50,
+      "seed_count": 14,
+      "skipped_reason": null
+    },
+    "microsoft-ads": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 33,
+      "seed_count": 0,
+      "skipped_reason": "1/12 sources not backed by seeds"
+    },
+    "mixpanel": {
+      "compiled_count": 8,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 1,
+      "exec_success": 7,
+      "models_found": 8,
+      "seed_count": 1,
+      "skipped_reason": null
+    },
+    "mrr-playbook": {
+      "compiled_count": 4,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 4,
+      "models_found": 4,
+      "seed_count": 1,
+      "skipped_reason": null
+    },
+    "netsuite": {
+      "compiled_count": 110,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 13,
+      "exec_success": 97,
+      "models_found": 110,
+      "seed_count": 45,
+      "skipped_reason": null
+    },
+    "pardot": {
+      "compiled_count": 23,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 2,
+      "exec_success": 21,
+      "models_found": 23,
+      "seed_count": 8,
+      "skipped_reason": null
+    },
+    "pendo": {
+      "compiled_count": 68,
+      "errors": [
+        "exec pendo__account_daily_metrics: Some(\"Snowflake query error: 100040 (22007): Date '' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_PENDO_PENDO\\\".\\\"PENDO__ACCOUNT_DAILY_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec pendo__visitor_daily_metrics: Some(\"Snowflake query error: 100040 (22007): Date '' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_PENDO_PENDO\\\".\\\"PENDO__VISITOR_DAILY_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec pendo__page_daily_metrics: Some(\"Snowflake query error: 100040 (22007): Date '' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_PENDO_PENDO\\\".\\\"PENDO__PAGE_DAILY_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec pendo__feature_daily_metrics: Some(\"Snowflake query error: 100040 (22007): Date '' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_PENDO_PENDO\\\".\\\"PENDO__FEATURE_DAILY_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec pendo__guide: Some(\"Snowflake query error: 002025 (42S21): SQL compilation error:\\nduplicate column name 'SOURCE_RELATION'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_PENDO_PENDO\\\".\\\"PENDO__GUIDE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 0,
+      "exec_success": 62,
+      "models_found": 68,
+      "seed_count": 17,
+      "skipped_reason": null
+    },
+    "pinterest": {
+      "compiled_count": 34,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 34,
+      "models_found": 34,
+      "seed_count": 13,
+      "skipped_reason": null
+    },
+    "qualtrics": {
+      "compiled_count": 49,
+      "errors": [
+        "exec qualtrics__contact: Some(\"Snowflake query error: 000979 (42601): SQL compilation error:\\n[DISTRIBUTION_RESPONSE.CONTACT_ID] is not a valid group by expression\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUALTRICS_QUALTRICS\\\".\\\"QUALTRICS__CONTACT\\\" AS with __dbt__cte__int_qualtrics__contacts as (\\nwith directory_contact as (\\n\\n    select *\\n    from AIRFORM_QU\")",
+        "exec qualtrics__distribution: Some(\"Snowflake query error: 000979 (42601): SQL compilation error:\\n[DISTRIBUTION_CONTACT.DISTRIBUTION_ID] is not a valid group by expression\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUALTRICS_QUALTRICS\\\".\\\"QUALTRICS__DISTRIBUTION\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec qualtrics__survey: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 182 at position 49 unexpected '['.\\nsyntax error line 182 at position 107 unexpected 'then'.\\nsyntax error line 185 at position 65 unexpected '['.\\nsyntax error line 185 at position 123 unexpected 'then'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUALTRICS_QUALTRICS\\\".\\\"QUALTRICS__SURVEY\\\" AS with __dbt__cte__int_qualtrics__survey as (\\nwith survey as (\\n\\n    select *\\n    from AIRFORM_QUALTRICS_qualtr\")",
+        "exec qualtrics__daily_breakdown: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 351 at position 49 unexpected '['.\\nsyntax error line 351 at position 107 unexpected 'then'.\\nsyntax error line 354 at position 77 unexpected '['.\\nsyntax error line 354 at position 135 unexpected 'then'.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUALTRICS_QUALTRICS\\\".\\\"QUALTRICS__DAILY_BREAKDOWN\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 4,
+      "exec_skip": 9,
+      "exec_success": 36,
+      "models_found": 49,
+      "seed_count": 19,
+      "skipped_reason": null
+    },
+    "quickbooks": {
+      "compiled_count": 132,
+      "errors": [
+        "exec stg_quickbooks__refund_receipt: Some(\"Snowflake query error: 002016 (22000): SQL compilation error:\\nFunction DATE_TRUNC does not support VARCHAR(16777216) argument type\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUICKBOOKS_QUICKBOOKS_STAGING\\\".\\\"STG_QUICKBOOKS__REFUND_RECEIPT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_quickbooks__estimate: Some(\"Snowflake query error: 002016 (22000): SQL compilation error:\\nFunction DATE_TRUNC does not support VARCHAR(16777216) argument type\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUICKBOOKS_QUICKBOOKS_STAGING\\\".\\\"STG_QUICKBOOKS__ESTIMATE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec quickbooks__ap_ar_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_QUICKBOOKS_QUICKBOOKS_STAGING.STG_QUICKBOOKS__ESTIMATE' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUICKBOOKS_QUICKBOOKS\\\".\\\"QUICKBOOKS__AP_AR_ENHANCED\\\" AS --To disable this model, set the using_bill and using_invoice variable within your dbt_project.ym\")",
+        "exec int_quickbooks__refund_receipt_double_entry: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_QUICKBOOKS_QUICKBOOKS_STAGING.STG_QUICKBOOKS__REFUND_RECEIPT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUICKBOOKS_QUICKBOOKS_INTERMEDIATE\\\".\\\"INT_QUICKBOOKS__REFUND_RECEIPT_DOUBLE_ENTRY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec quickbooks__general_ledger: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 96 at position 19 unexpected 'UNION'.\\nsyntax error line 97 at position 0 unexpected 'UNION'.\\nsyntax error line 98 at position 0 unexpected 'UNION'.\\nsyntax error line 99 at position 0 unexpected 'UNION'.\\nsyntax error line 100 at position 0 unexpected 'UNION'.\\nsyntax error line 101 at position 0 unexpected 'UNION'.\\nsyntax error line 102 at position 0 unexpected 'UNION'.\\nsyntax error line 102 at position 25 unexpected 'UNION'.\\nsyntax error line 102 at position 50 unexpected 'UNION'.\\nsyntax error line 103 at position 0 unexpected 'UNION'.\\nsyntax error line 103 at position 25 unexpected 'UNION'.\\nsyntax error line 103 at position 50 unexpected 'UNION'.\\nsyntax error line 103 at position 75 unexpected 'UNION'.\\nsyntax error line 103 at position 100 unexpected 'UNION'.\\nsyntax error line 104 at position 0 unexpected 'UNION'.\\nsyntax error line 104 at position 25 unexpected 'UNION'.\\nsyntax error line 104 at position 50 unexpected 'UNION'.\\nsyntax error line 104 at position 75 unexpected 'UNION'.\\nsyntax error line 104 at position 100 unexpected 'UNION'.\\nsyntax error line 104 at position 125 unexpected 'UNION'.\\nsyntax error line 104 at position 150 unexpected 'UNION'.\\nsyntax error line 104 at position 175 unexpected 'UNION'.\\nsyntax error line 104 at position 200 unexpected 'UNION'.\\nsyntax error line 105 at position 0 unexpected 'UNION'.\\nsyntax error line 105 at position 25 unexpected 'UNION'.\\nsyntax error line 105 at position 50 unexpected 'UNION'.\\nsyntax error line 105 at position 75 unexpected 'UNION'.\\nsyntax error line 105 at position 100 unexpected 'UNION'.\\nsyntax error line 106 at position 0 unexpected 'UNION'.\\nsyntax error line 106 at position 25 unexpected 'UNION'.\\nsyntax error line 106 at position 50 unexpected 'UNION'.\\nsyntax error line 106 at position 75 unexpected 'UNION'.\\nsyntax error line 107 at position 0 unexpected 'UNION'.\\nsyntax error line 107 at position 25 unexpected 'UNION'.\\nsyntax error line 107 at position 50 unexpected 'UNION'.\\nsyntax error line 107 at position 75 unexpected 'UNION'.\\nsyntax error line 107 at position 100 unexpected 'UNION'.\\nsyntax error line 108 at position 0 unexpected 'UNION'.\\nsyntax error line 108 at position 25 unexpected 'UNION'.\\nsyntax error line 108 at position 50 unexpected 'UNION'.\\nsyntax error line 108 at position 75 unexpected 'UNION'.\\nsyntax error line 108 at position 100 unexpected 'UNION'.\\nsyntax error line 108 at position 125 unexpected 'UNION'.\\nsyntax error line 108 at position 150 unexpected 'UNION'.\\nsyntax error line 108 at position 175 unexpected 'UNION'.\\nsyntax error line 108 at position 200 unexpected 'UNION'.\\nsyntax error line 109 at position 0 unexpected 'UNION'.\\nsyntax error line 109 at position 25 unexpected 'UNION'.\\nsyntax error line 109 at position 50 unexpected 'UNION'.\\nsyntax error line 109 at position 75 unexpected 'UNION'.\\nThis input had 258 total errors.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_QUICKBOOKS_QUICKBOOKS\\\".\\\"QUICKBOOKS__GENERAL_LEDGER\\\" AS with __dbt__cte__int_quickbooks__account_classifications as (\\nwith accounts as (\\n\\n    select *\\n  \")"
+      ],
+      "exec_error": 10,
+      "exec_skip": 41,
+      "exec_success": 81,
+      "models_found": 132,
+      "seed_count": 47,
+      "skipped_reason": null
+    },
+    "recharge": {
+      "compiled_count": 44,
+      "errors": [
+        "exec stg_recharge__customer: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 277 at position 8\\ninvalid identifier 'CUSTOMER_HASH'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECHARGE_RECHARGE_SOURCE\\\".\\\"STG_RECHARGE__CUSTOMER\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec recharge__customer_details: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECHARGE_RECHARGE_SOURCE.STG_RECHARGE__CUSTOMER' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECHARGE_RECHARGE\\\".\\\"RECHARGE__CUSTOMER_DETAILS\\\" AS with __dbt__cte__int_recharge__customer_details as (\\nwith customers as (\\n    select *\\n    from AIRFOR\")",
+        "exec recharge__line_item_enhanced: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECHARGE_RECHARGE_SOURCE.STG_RECHARGE__CUSTOMER' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECHARGE_RECHARGE\\\".\\\"RECHARGE__LINE_ITEM_ENHANCED\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec recharge__customer_daily_rollup: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECHARGE_RECHARGE.RECHARGE__CUSTOMER_DETAILS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECHARGE_RECHARGE\\\".\\\"RECHARGE__CUSTOMER_DAILY_ROLLUP\\\" AS with __dbt__cte__int_recharge__calendar_spine as (\\n-- depends_on: AIRFORM_RECHARGE_recharge_sour\")",
+        "exec recharge__monthly_recurring_revenue: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECHARGE_RECHARGE.RECHARGE__CUSTOMER_DAILY_ROLLUP' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECHARGE_RECHARGE\\\".\\\"RECHARGE__MONTHLY_RECURRING_REVENUE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 5,
+      "exec_skip": 5,
+      "exec_success": 34,
+      "models_found": 44,
+      "seed_count": 18,
+      "skipped_reason": null
+    },
+    "recurly": {
+      "compiled_count": 49,
+      "errors": [
+        "exec int_recurly__transactions_date_spine: Some(\"Snowflake query error: 100040 (22007): Date '' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECURLY_RECURLY_INT\\\".\\\"INT_RECURLY__TRANSACTIONS_DATE_SPINE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_recurly__account_rolling_totals: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECURLY_RECURLY_INT.INT_RECURLY__TRANSACTIONS_DATE_SPINE' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECURLY_RECURLY_INT\\\".\\\"INT_RECURLY__ACCOUNT_ROLLING_TOTALS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_recurly__account_partitions: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECURLY_RECURLY_INT.INT_RECURLY__ACCOUNT_ROLLING_TOTALS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECURLY_RECURLY_INT\\\".\\\"INT_RECURLY__ACCOUNT_PARTITIONS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_recurly__account_running_totals: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECURLY_RECURLY_INT.INT_RECURLY__ACCOUNT_PARTITIONS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECURLY_RECURLY_INT\\\".\\\"INT_RECURLY__ACCOUNT_RUNNING_TOTALS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec recurly__account_daily_overview: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_RECURLY_RECURLY_INT.INT_RECURLY__ACCOUNT_RUNNING_TOTALS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_RECURLY_RECURLY\\\".\\\"RECURLY__ACCOUNT_DAILY_OVERVIEW\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 5,
+      "exec_skip": 0,
+      "exec_success": 44,
+      "models_found": 49,
+      "seed_count": 18,
+      "skipped_reason": null
+    },
+    "reddit-ads": {
+      "compiled_count": 34,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 34,
+      "models_found": 34,
+      "seed_count": 15,
+      "skipped_reason": null
+    },
+    "sage-intacct": {
+      "compiled_count": 24,
+      "errors": [
+        "exec sage_intacct__general_ledger_by_period: Some(\"Snowflake query error: 100040 (22007): Date 'none' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAGE_INTACCT_SAGE_INTACCT\\\".\\\"SAGE_INTACCT__GENERAL_LEDGER_BY_PERIOD\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec sage_intacct__profit_and_loss: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SAGE_INTACCT_SAGE_INTACCT.SAGE_INTACCT__GENERAL_LEDGER_BY_PERIOD' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAGE_INTACCT_SAGE_INTACCT\\\".\\\"SAGE_INTACCT__PROFIT_AND_LOSS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_sage_intacct__retained_earnings: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SAGE_INTACCT_SAGE_INTACCT.SAGE_INTACCT__GENERAL_LEDGER_BY_PERIOD' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAGE_INTACCT_SAGE_INTACCT\\\".\\\"INT_SAGE_INTACCT__RETAINED_EARNINGS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec sage_intacct__balance_sheet: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SAGE_INTACCT_SAGE_INTACCT.SAGE_INTACCT__GENERAL_LEDGER_BY_PERIOD' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAGE_INTACCT_SAGE_INTACCT\\\".\\\"SAGE_INTACCT__BALANCE_SHEET\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 4,
+      "exec_skip": 1,
+      "exec_success": 19,
+      "models_found": 24,
+      "seed_count": 7,
+      "skipped_reason": null
+    },
+    "salesforce": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 26,
+      "seed_count": 0,
+      "skipped_reason": "2/16 sources not backed by seeds"
+    },
+    "sap": {
+      "compiled_count": 182,
+      "errors": [
+        "exec stg_sap__vbap: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 296 at position 11\\ninvalid identifier '\\\"mandt\\\"'\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAP_SAP\\\".\\\"STG_SAP__VBAP\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_sap__bkpf: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 297 at position 11\\ninvalid identifier '\\\"belnr\\\"'\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAP_SAP\\\".\\\"STG_SAP__BKPF\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_sap__kna1: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 297 at position 11\\ninvalid identifier '\\\"kunnr\\\"'\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAP_SAP\\\".\\\"STG_SAP__KNA1\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_sap__mara: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 297 at position 11\\ninvalid identifier '\\\"_fivetran_deleted\\\"'\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAP_SAP\\\".\\\"STG_SAP__MARA\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_sap__cosp_bak: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 297 at position 11\\ninvalid identifier '\\\"_fivetran_deleted\\\"'\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SAP_SAP\\\".\\\"STG_SAP__COSP_BAK\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 90,
+      "exec_skip": 32,
+      "exec_success": 60,
+      "models_found": 182,
+      "seed_count": 60,
+      "skipped_reason": null
+    },
+    "servicenow": {
+      "compiled_count": 39,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 39,
+      "models_found": 39,
+      "seed_count": 17,
+      "skipped_reason": null
+    },
+    "shopify": {
+      "compiled_count": 264,
+      "errors": [
+        "exec stg_shopify__discount_code_basic: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 390 at position 1 unexpected 'as'.\\nsyntax error line 392 at position 1 unexpected 'as'.\\nsyntax error line 392 at position 4 unexpected 'updated_at'.\\nsyntax error line 394 at position 1 unexpected 'as'.\\nsyntax error line 394 at position 4 unexpected 'starts_at'.\\nsyntax error line 396 at position 1 unexpected 'as'.\\nsyntax error line 396 at position 4 unexpected 'ends_at'.\\nsyntax error line 399 at position 4 unexpected 'from'.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_STG_SHOPIFY\\\".\\\"STG_SHOPIFY__DISCOUNT_CODE_BASIC\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_shopify__location: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 392 at position 1 unexpected 'as'.\\nsyntax error line 394 at position 1 unexpected 'as'.\\nsyntax error line 394 at position 4 unexpected 'updated_at'.\\nsyntax error line 396 at position 1 unexpected 'as'.\\nsyntax error line 396 at position 4 unexpected '_fivetran_synced'.\\nsyntax error line 399 at position 4 unexpected 'from'.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_STG_SHOPIFY\\\".\\\"STG_SHOPIFY__LOCATION\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_shopify_gql__order_note_attribute_tmp: Some(\"Snowflake query error: 002003 (02000): SQL compilation error:\\nSchema 'AIRFORM_TEST.SHOPIFY' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_STG_SHOPIFY\\\".\\\"STG_SHOPIFY_GQL__ORDER_NOTE_ATTRIBUTE_TMP\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_shopify_gql__order_line_refund_tmp: Some(\"Snowflake query error: 002003 (02000): SQL compilation error:\\nSchema 'AIRFORM_TEST.SHOPIFY' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_STG_SHOPIFY\\\".\\\"STG_SHOPIFY_GQL__ORDER_LINE_REFUND_TMP\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_shopify_gql__order_line_refund: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 392 at position 1 unexpected 'as'.\\nsyntax error line 393 at position 23 unexpected ','.\\nsyntax error line 394 at position 20 unexpected '('.\\nsyntax error line 394 at position 40 unexpected ','.\\nsyntax error line 394 at position 42 unexpected ''_dbt_utils_surrogate_key_null_''.\\nsyntax error line 394 at position 99 unexpected '('.\\nsyntax error line 394 at position 116 unexpected 'AS'.\\nsyntax error line 394 at position 129 unexpected ''_dbt_utils_surrogate_key_null_''.\\nsyntax error line 394 at position 167 unexpected 'unique_key'.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_STG_SHOPIFY\\\".\\\"STG_SHOPIFY_GQL__ORDER_LINE_REFUND\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 128,
+      "exec_skip": 45,
+      "exec_success": 91,
+      "models_found": 264,
+      "seed_count": 95,
+      "skipped_reason": null
+    },
+    "shopify-holistic": {
+      "compiled_count": 5,
+      "errors": [
+        "exec int__daily_klaviyo_user_metrics: Some(\"No compiled SQL\")",
+        "exec shopify_holistic_reporting__orders_attribution: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'SHOPIFY__ORDERS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_HOLISTIC_SHOPIFY_HOLISTIC\\\".\\\"SHOPIFY_HOLISTIC_REPORTING__ORDERS_ATTRIBUTION\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int__daily_shopify_customer_orders: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SHOPIFY_HOLISTIC_SHOPIFY_HOLISTIC.SHOPIFY_HOLISTIC_REPORTING__ORDERS_ATTRIBUTION' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_HOLISTIC_SHOPIFY_HOLISTIC\\\".\\\"INT__DAILY_SHOPIFY_CUSTOMER_ORDERS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec shopify_holistic_reporting__daily_customer_metrics: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SHOPIFY_HOLISTIC_SHOPIFY_HOLISTIC.INT__DAILY_SHOPIFY_CUSTOMER_ORDERS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_HOLISTIC_SHOPIFY_HOLISTIC\\\".\\\"SHOPIFY_HOLISTIC_REPORTING__DAILY_CUSTOMER_METRICS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int__klaviyo_person_rollup: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SHOPIFY_HOLISTIC_SHOPIFY_HOLISTIC.KLAVIYO__PERSONS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE VIEW \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SHOPIFY_HOLISTIC_SHOPIFY_HOLISTIC\\\".\\\"INT__KLAVIYO_PERSON_ROLLUP\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 6,
+      "seed_count": 99,
+      "skipped_reason": null
+    },
+    "snapchat-ads": {
+      "compiled_count": 30,
+      "errors": [
+        "exec stg_snapchat_ads__ad_squad_hourly_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 292 at position 28\\ninvalid identifier 'CONVERSION_PURCHASES'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SNAPCHAT_ADS_SNAPCHAT_ADS_SOURCE\\\".\\\"STG_SNAPCHAT_ADS__AD_SQUAD_HOURLY_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_snapchat_ads__ad_hourly_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 292 at position 28\\ninvalid identifier 'CONVERSION_PURCHASES'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SNAPCHAT_ADS_SNAPCHAT_ADS_SOURCE\\\".\\\"STG_SNAPCHAT_ADS__AD_HOURLY_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_snapchat_ads__campaign_hourly_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 292 at position 28\\ninvalid identifier 'CONVERSION_PURCHASES'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SNAPCHAT_ADS_SNAPCHAT_ADS_SOURCE\\\".\\\"STG_SNAPCHAT_ADS__CAMPAIGN_HOURLY_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec snapchat_ads__account_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SNAPCHAT_ADS_SNAPCHAT_ADS_SOURCE.STG_SNAPCHAT_ADS__AD_HOURLY_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SNAPCHAT_ADS_SNAPCHAT_ADS\\\".\\\"SNAPCHAT_ADS__ACCOUNT_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec snapchat_ads__ad_report: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_SNAPCHAT_ADS_SNAPCHAT_ADS_SOURCE.STG_SNAPCHAT_ADS__AD_HOURLY_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SNAPCHAT_ADS_SNAPCHAT_ADS\\\".\\\"SNAPCHAT_ADS__AD_REPORT\\\" AS with __dbt__cte__snapchat_ads__creative_history_prep as (\\nwith base as (\\n\\n    select *\\n    from \")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 7,
+      "exec_success": 17,
+      "models_found": 30,
+      "seed_count": 11,
+      "skipped_reason": null
+    },
+    "snowplow-ecommerce": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 16,
+      "seed_count": 0,
+      "skipped_reason": "1/1 sources not backed by seeds"
+    },
+    "snowplow-unified": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 36,
+      "seed_count": 0,
+      "skipped_reason": "18/18 sources not backed by seeds"
+    },
+    "snowplow-web": {
+      "compiled_count": 0,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 29,
+      "seed_count": 0,
+      "skipped_reason": "8/8 sources not backed by seeds"
+    },
+    "social-media-reporting": {
+      "compiled_count": 6,
+      "errors": [
+        "exec social_media_reporting__instagram_posts_reporting: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'INSTAGRAM_BUSINESS__POSTS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SOCIAL_MEDIA_REPORTING_SOCIAL_MEDIA_REPORTING\\\".\\\"SOCIAL_MEDIA_REPORTING__INSTAGRAM_POSTS_REPORTING\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec social_media_reporting__youtube_videos_reporting: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'YOUTUBE__VIDEO_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SOCIAL_MEDIA_REPORTING_SOCIAL_MEDIA_REPORTING\\\".\\\"SOCIAL_MEDIA_REPORTING__YOUTUBE_VIDEOS_REPORTING\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec social_media_reporting__rollup_report: Some(\"Snowflake query error: 001003 (42000): SQL compilation error:\\nsyntax error line 249 at position 0 unexpected 'UNION'.\\nsyntax error line 250 at position 0 unexpected 'UNION'.\\nsyntax error line 250 at position 25 unexpected 'UNION'.\\nsyntax error line 250 at position 50 unexpected 'UNION'.\\nsyntax error line 250 at position 75 unexpected 'UNION'.\\nsyntax error line 250 at position 100 unexpected 'UNION'.\\nsyntax error line 251 at position 0 unexpected 'UNION'.\\nsyntax error line 252 at position 0 unexpected 'UNION'.\\nsyntax error line 252 at position 25 unexpected 'UNION'.\\nsyntax error line 252 at position 50 unexpected 'UNION'.\\nsyntax error line 252 at position 75 unexpected 'UNION'.\\nsyntax error line 252 at position 100 unexpected 'UNION'.\\nsyntax error line 252 at position 125 unexpected 'UNION'.\\nsyntax error line 253 at position 0 unexpected 'UNION'.\\nsyntax error line 253 at position 25 unexpected 'UNION'.\\nsyntax error line 253 at position 50 unexpected 'UNION'.\\nsyntax error line 253 at position 75 unexpected 'UNION'.\\nsyntax error line 253 at position 100 unexpected 'UNION'.\\nsyntax error line 253 at position 125 unexpected 'UNION'.\\nsyntax error line 253 at position 150 unexpected 'UNION'.\\nsyntax error line 253 at position 175 unexpected 'UNION'.\\nsyntax error line 253 at position 200 unexpected 'UNION'.\\nsyntax error line 254 at position 0 unexpected 'UNION'.\\nsyntax error line 255 at position 0 unexpected 'UNION'.\\nsyntax error line 255 at position 25 unexpected 'UNION'.\\nsyntax error line 255 at position 50 unexpected 'UNION'.\\nsyntax error line 255 at position 75 unexpected 'UNION'.\\nsyntax error line 255 at position 100 unexpected 'UNION'.\\nsyntax error line 255 at position 125 unexpected 'UNION'.\\nsyntax error line 256 at position 0 unexpected 'UNION'.\\nsyntax error line 256 at position 25 unexpected 'UNION'.\\nsyntax error line 256 at position 50 unexpected 'UNION'.\\nsyntax error line 256 at position 75 unexpected 'UNION'.\\nsyntax error line 256 at position 100 unexpected 'UNION'.\\nsyntax error line 256 at position 125 unexpected 'UNION'.\\nsyntax error line 256 at position 150 unexpected 'UNION'.\\nsyntax error line 256 at position 175 unexpected 'UNION'.\\nsyntax error line 256 at position 200 unexpected 'UNION'.\\nsyntax error line 257 at position 0 unexpected 'UNION'.\\nsyntax error line 258 at position 0 unexpected 'UNION'.\\nsyntax error line 258 at position 25 unexpected 'UNION'.\\nsyntax error line 258 at position 50 unexpected 'UNION'.\\nsyntax error line 258 at position 75 unexpected 'UNION'.\\nsyntax error line 258 at position 100 unexpected 'UNION'.\\nsyntax error line 258 at position 125 unexpected 'UNION'.\\nsyntax error line 259 at position 0 unexpected 'UNION'.\\nsyntax error line 259 at position 25 unexpected 'UNION'.\\nsyntax error line 259 at position 50 unexpected 'UNION'.\\nsyntax error line 259 at position 75 unexpected 'UNION'.\\nsyntax error line 259 at position 100 unexpected 'UNION'.\\nThis input had 94 total errors.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SOCIAL_MEDIA_REPORTING_SOCIAL_MEDIA_REPORTING\\\".\\\"SOCIAL_MEDIA_REPORTING__ROLLUP_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec social_media_reporting__twitter_posts_reporting: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'TWITTER_ORGANIC__TWEETS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SOCIAL_MEDIA_REPORTING_SOCIAL_MEDIA_REPORTING\\\".\\\"SOCIAL_MEDIA_REPORTING__TWITTER_POSTS_REPORTING\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec social_media_reporting__facebook_posts_reporting: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'FACEBOOK_PAGES__POSTS_REPORT' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_SOCIAL_MEDIA_REPORTING_SOCIAL_MEDIA_REPORTING\\\".\\\"SOCIAL_MEDIA_REPORTING__FACEBOOK_POSTS_REPORTING\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 0,
+      "exec_success": 0,
+      "models_found": 6,
+      "seed_count": 24,
+      "skipped_reason": null
+    },
+    "stripe": {
+      "compiled_count": 69,
+      "errors": [
+        "exec stg_stripe__subscription_discount: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 290 at position 13\\ninvalid identifier 'END_AT'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_STRIPE_STG_STRIPE\\\".\\\"STG_STRIPE__SUBSCRIPTION_DISCOUNT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_stripe__discount: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 301 at position 13\\ninvalid identifier 'END_AT'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_STRIPE_STG_STRIPE\\\".\\\"STG_STRIPE__DISCOUNT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_stripe__price_plan: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 298 at position 13\\ninvalid identifier 'RECURRING_INTERVAL'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_STRIPE_STG_STRIPE\\\".\\\"STG_STRIPE__PRICE_PLAN\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stripe__invoice_details: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_STRIPE_STG_STRIPE.STG_STRIPE__PRICE_PLAN' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_STRIPE_STRIPE\\\".\\\"STRIPE__INVOICE_DETAILS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stripe__invoice_line_item_details: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_STRIPE_STRIPE.STRIPE__INVOICE_DETAILS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_STRIPE_STRIPE\\\".\\\"STRIPE__INVOICE_LINE_ITEM_DETAILS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 18,
+      "exec_skip": 4,
+      "exec_success": 47,
+      "models_found": 69,
+      "seed_count": 31,
+      "skipped_reason": null
+    },
+    "tiktok-ads": {
+      "compiled_count": 22,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 22,
+      "models_found": 22,
+      "seed_count": 8,
+      "skipped_reason": null
+    },
+    "twilio": {
+      "compiled_count": 20,
+      "errors": [
+        "seed twilio_call_data: Some(\"Snowflake query error: 100035 (22007): DML operation to table AIRFORM_TEST.AIRFORM_TWILIO.TWILIO_CALL_DATA failed on column CREATED_AT with error: Timestamp '2022-02-30 17:23:13.000000 +00:00' is not recognized\\nSQL:\\nINSERT INTO \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWILIO\\\".\\\"TWILIO_CALL_DATA\\\" (\\\"ID\\\", \\\"_FIVETRAN_SYNCED\\\", \\\"ACCOUNT_ID\\\", \\\"ANNOTATION\\\", \\\"ANSWERED_BY\\\", \\\"CALLER_NAME\\\", \\\"CREATED_AT\\\", \\\"DIRECTION\\\", \\\"DURATION\\\", \\\"END_TIME\\\", \\\"\")",
+        "seed twilio_call_data_snowflake: Some(\"Snowflake query error: 100035 (22007): DML operation to table AIRFORM_TEST.AIRFORM_TWILIO.TWILIO_CALL_DATA_SNOWFLAKE failed on column CREATED_AT with error: Timestamp '2022-02-30 17:23:13.000000 +00:00' is not recognized\\nSQL:\\nINSERT INTO \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWILIO\\\".\\\"TWILIO_CALL_DATA_SNOWFLAKE\\\" (\\\"ID\\\", \\\"_FIVETRAN_SYNCED\\\", \\\"ACCOUNT_ID\\\", \\\"ANNOTATION\\\", \\\"ANSWERED_BY\\\", \\\"CALLER_NAME\\\", \\\"CREATED_AT\\\", \\\"DIRECTION\\\", \\\"DURATION\\\", \\\"EN\")",
+        "exec stg_twilio__message: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 275 at position 8\\ninvalid identifier 'MESSAGE_FROM'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWILIO_TWILIO_SOURCE\\\".\\\"STG_TWILIO__MESSAGE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_twilio__messages: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_TWILIO_TWILIO_SOURCE.STG_TWILIO__MESSAGE' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWILIO_TWILIO\\\".\\\"INT_TWILIO__MESSAGES\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec twilio__number_overview: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_TWILIO_TWILIO.INT_TWILIO__MESSAGES' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWILIO_TWILIO\\\".\\\"TWILIO__NUMBER_OVERVIEW\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 6,
+      "exec_skip": 0,
+      "exec_success": 14,
+      "models_found": 20,
+      "seed_count": 10,
+      "skipped_reason": null
+    },
+    "twitter": {
+      "compiled_count": 32,
+      "errors": [
+        "exec stg_twitter_ads__line_item_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 270 at position 28\\ninvalid identifier 'CONVERSION_PURCHASES_METRIC'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWITTER_TWITTER_ADS_SOURCE\\\".\\\"STG_TWITTER_ADS__LINE_ITEM_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_twitter_ads__promoted_tweet_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 271 at position 28\\ninvalid identifier 'CONVERSION_PURCHASES_METRIC'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWITTER_TWITTER_ADS_SOURCE\\\".\\\"STG_TWITTER_ADS__PROMOTED_TWEET_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec twitter_ads__account_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 243 at position 8\\ninvalid identifier 'CONVERSION_PURCHASES_METRIC'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWITTER_TWITTER_ADS\\\".\\\"TWITTER_ADS__ACCOUNT_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_twitter_ads__campaign_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 271 at position 28\\ninvalid identifier 'CONVERSION_PURCHASES_METRIC'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWITTER_TWITTER_ADS_SOURCE\\\".\\\"STG_TWITTER_ADS__CAMPAIGN_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_twitter_ads__line_item_keywords_report: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 273 at position 28\\ninvalid identifier 'CONVERSION_PURCHASES_METRIC'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_TWITTER_TWITTER_ADS_SOURCE\\\".\\\"STG_TWITTER_ADS__LINE_ITEM_KEYWORDS_REPORT\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 7,
+      "exec_skip": 6,
+      "exec_success": 19,
+      "models_found": 32,
+      "seed_count": 13,
+      "skipped_reason": null
+    },
+    "twitter-organic": {
+      "compiled_count": 11,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 0,
+      "exec_success": 11,
+      "models_found": 11,
+      "seed_count": 4,
+      "skipped_reason": null
+    },
+    "workday": {
+      "compiled_count": 62,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 35,
+      "exec_success": 27,
+      "models_found": 62,
+      "seed_count": 27,
+      "skipped_reason": null
+    },
+    "xero": {
+      "compiled_count": 36,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 1,
+      "exec_success": 35,
+      "models_found": 36,
+      "seed_count": 14,
+      "skipped_reason": null
+    },
+    "youtube-analytics": {
+      "compiled_count": 13,
+      "errors": [],
+      "exec_error": 0,
+      "exec_skip": 2,
+      "exec_success": 11,
+      "models_found": 13,
+      "seed_count": 3,
+      "skipped_reason": null
+    },
+    "zendesk": {
+      "compiled_count": 98,
+      "errors": [
+        "exec stg_zendesk__ticket_tag: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 299 at position 8\\ninvalid identifier 'TAG'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZENDESK_ZENDESK_SOURCE\\\".\\\"STG_ZENDESK__TICKET_TAG\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec stg_zendesk__user_tag: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 300 at position 8\\ninvalid identifier 'TAG'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZENDESK_ZENDESK_SOURCE\\\".\\\"STG_ZENDESK__USER_TAG\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_zendesk__schedule_holiday: Some(\"Snowflake query error: 000904 (42000): SQL compilation error: error line 307 at position 13\\ninvalid identifier 'WEEK_NUMBERS.GENERATED_NUMBER'\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZENDESK_ZENDESK_INTERMEDIATE\\\".\\\"INT_ZENDESK__SCHEDULE_HOLIDAY\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_zendesk__schedule_spine: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ZENDESK_ZENDESK_INTERMEDIATE.INT_ZENDESK__SCHEDULE_HOLIDAY' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZENDESK_ZENDESK_INTERMEDIATE\\\".\\\"INT_ZENDESK__SCHEDULE_SPINE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_zendesk__agent_work_time_business_hours: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ZENDESK_ZENDESK_INTERMEDIATE.INT_ZENDESK__SCHEDULE_SPINE' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZENDESK_ZENDESK_INTERMEDIATE\\\".\\\"INT_ZENDESK__AGENT_WORK_TIME_BUSINESS_HOURS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 13,
+      "exec_skip": 26,
+      "exec_success": 59,
+      "models_found": 98,
+      "seed_count": 26,
+      "skipped_reason": null
+    },
+    "zuora": {
+      "compiled_count": 53,
+      "errors": [
+        "exec int_zuora__transaction_date_spine: Some(\"Snowflake query error: 100040 (22007): Date 'none' is not recognized\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZUORA_ZUORA_INT\\\".\\\"INT_ZUORA__TRANSACTION_DATE_SPINE\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_zuora__account_rolling_totals: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ZUORA_ZUORA_INT.INT_ZUORA__TRANSACTION_DATE_SPINE' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZUORA_ZUORA_INT\\\".\\\"INT_ZUORA__ACCOUNT_ROLLING_TOTALS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_zuora__account_partitions: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ZUORA_ZUORA_INT.INT_ZUORA__ACCOUNT_ROLLING_TOTALS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZUORA_ZUORA_INT\\\".\\\"INT_ZUORA__ACCOUNT_PARTITIONS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec int_zuora__account_running_totals: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ZUORA_ZUORA_INT.INT_ZUORA__ACCOUNT_PARTITIONS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZUORA_ZUORA_INT\\\".\\\"INT_ZUORA__ACCOUNT_RUNNING_TOTALS\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")",
+        "exec zuora__account_daily_overview: Some(\"Snowflake query error: 002003 (42S02): SQL compilation error:\\nObject 'AIRFORM_TEST.AIRFORM_ZUORA_ZUORA_INT.INT_ZUORA__ACCOUNT_RUNNING_TOTALS' does not exist or not authorized.\\nSQL:\\nCREATE OR REPLACE TABLE \\\"AIRFORM_TEST\\\".\\\"AIRFORM_ZUORA_ZUORA\\\".\\\"ZUORA__ACCOUNT_DAILY_OVERVIEW\\\" AS \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\")"
+      ],
+      "exec_error": 8,
+      "exec_skip": 0,
+      "exec_success": 45,
+      "models_found": 53,
+      "seed_count": 19,
+      "skipped_reason": null
+    }
+  },
+  "timestamp": "2026-04-16T06:11:06.827728+00:00"
+}
