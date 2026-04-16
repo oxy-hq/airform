@@ -1,4 +1,4 @@
-use airform_executor::{Executor, NodeStatus};
+use airform_executor::{NodeStatus, QueryResult};
 use colored::Colorize;
 use std::path::Path;
 use std::time::Instant;
@@ -25,12 +25,10 @@ pub async fn run(
     let selected = common::apply_selection(&manifest, &graph, select, exclude);
 
     // Execute - load seeds first, then models
-    let executor = Executor::new();
+    let executor = common::create_executor(&load_state, &output.target_schema)?;
 
     // Register information schema tables
-    if let Err(e) =
-        airform_executor::register_info_schema(executor.session_context(), &manifest, &graph)
-    {
+    if let Err(e) = executor.register_info_schema(&manifest, &graph).await {
         tracing::debug!("Could not register info schema: {e}");
     }
 
@@ -53,8 +51,8 @@ pub async fn run(
         println!();
         println!("{}", format!("Running query: {query_sql}").dimmed());
         match executor.execute_query(query_sql).await {
-            Ok(batches) => {
-                print_query_results(&batches, format)?;
+            Ok(result) => {
+                print_query_results(&result, format)?;
             }
             Err(e) => {
                 println!("{} {}", "Query error:".red(), e);
@@ -133,107 +131,49 @@ pub async fn run(
     Ok(())
 }
 
-fn print_query_results(
-    batches: &[datafusion::arrow::record_batch::RecordBatch],
-    format: &str,
-) -> anyhow::Result<()> {
-    if batches.is_empty() {
+fn print_query_results(result: &QueryResult, format: &str) -> anyhow::Result<()> {
+    if result.rows.is_empty() {
         println!("(no results)");
         return Ok(());
     }
 
     match format {
         "json" => {
-            let mut rows = Vec::new();
-            for batch in batches {
-                let schema = batch.schema();
-                for row_idx in 0..batch.num_rows() {
-                    let mut row = serde_json::Map::new();
-                    for col_idx in 0..batch.num_columns() {
-                        let col_name = schema.field(col_idx).name().clone();
-                        let array = batch.column(col_idx);
-                        let value = arrow_value_to_json(array, row_idx);
-                        row.insert(col_name, value);
+            let rows: Vec<serde_json::Value> = result
+                .rows
+                .iter()
+                .map(|row| {
+                    let mut obj = serde_json::Map::new();
+                    for (i, col) in result.columns.iter().enumerate() {
+                        obj.insert(
+                            col.clone(),
+                            row.get(i).cloned().unwrap_or(serde_json::Value::Null),
+                        );
                     }
-                    rows.push(serde_json::Value::Object(row));
-                }
-            }
+                    serde_json::Value::Object(obj)
+                })
+                .collect();
             println!("{}", serde_json::to_string_pretty(&rows)?);
         }
         "csv" => {
-            if let Some(first_batch) = batches.first() {
-                let schema = first_batch.schema();
-                let headers: Vec<&str> =
-                    schema.fields().iter().map(|f| f.name().as_str()).collect();
-                println!("{}", headers.join(","));
-            }
-            for batch in batches {
-                for row_idx in 0..batch.num_rows() {
-                    let mut cols = Vec::new();
-                    for col_idx in 0..batch.num_columns() {
-                        let array = batch.column(col_idx);
-                        let value = arrow_value_to_string(array, row_idx);
-                        cols.push(value);
-                    }
-                    println!("{}", cols.join(","));
-                }
+            println!("{}", result.columns.join(","));
+            for row in &result.rows {
+                let vals: Vec<String> = row
+                    .iter()
+                    .map(|v| match v {
+                        serde_json::Value::Null => String::new(),
+                        serde_json::Value::String(s) => s.clone(),
+                        v => v.to_string(),
+                    })
+                    .collect();
+                println!("{}", vals.join(","));
             }
         }
         _ => {
-            // Table format using DataFusion's built-in pretty printing
-            let formatted = datafusion::arrow::util::pretty::pretty_format_batches(batches)?;
-            println!("{formatted}");
+            // Table format
+            print!("{}", result.format_table());
         }
     }
 
     Ok(())
-}
-
-fn arrow_value_to_json(
-    array: &dyn datafusion::arrow::array::Array,
-    row: usize,
-) -> serde_json::Value {
-    use datafusion::arrow::array::*;
-    use datafusion::arrow::datatypes::DataType;
-
-    if array.is_null(row) {
-        return serde_json::Value::Null;
-    }
-
-    match array.data_type() {
-        DataType::Int8 => serde_json::json!(array.as_any().downcast_ref::<Int8Array>().unwrap().value(row)),
-        DataType::Int16 => serde_json::json!(array.as_any().downcast_ref::<Int16Array>().unwrap().value(row)),
-        DataType::Int32 => serde_json::json!(array.as_any().downcast_ref::<Int32Array>().unwrap().value(row)),
-        DataType::Int64 => serde_json::json!(array.as_any().downcast_ref::<Int64Array>().unwrap().value(row)),
-        DataType::UInt8 => serde_json::json!(array.as_any().downcast_ref::<UInt8Array>().unwrap().value(row)),
-        DataType::UInt16 => serde_json::json!(array.as_any().downcast_ref::<UInt16Array>().unwrap().value(row)),
-        DataType::UInt32 => serde_json::json!(array.as_any().downcast_ref::<UInt32Array>().unwrap().value(row)),
-        DataType::UInt64 => serde_json::json!(array.as_any().downcast_ref::<UInt64Array>().unwrap().value(row)),
-        DataType::Float32 => serde_json::json!(array.as_any().downcast_ref::<Float32Array>().unwrap().value(row)),
-        DataType::Float64 => serde_json::json!(array.as_any().downcast_ref::<Float64Array>().unwrap().value(row)),
-        DataType::Boolean => serde_json::json!(array.as_any().downcast_ref::<BooleanArray>().unwrap().value(row)),
-        DataType::Utf8 => serde_json::json!(array.as_any().downcast_ref::<StringArray>().unwrap().value(row)),
-        _ => serde_json::json!(arrow_value_to_string(array, row)),
-    }
-}
-
-fn arrow_value_to_string(
-    array: &dyn datafusion::arrow::array::Array,
-    row: usize,
-) -> String {
-    use datafusion::arrow::array::*;
-    use datafusion::arrow::datatypes::DataType;
-
-    if array.is_null(row) {
-        return String::new();
-    }
-
-    match array.data_type() {
-        DataType::Utf8 => array.as_any().downcast_ref::<StringArray>().unwrap().value(row).to_string(),
-        DataType::Int64 => array.as_any().downcast_ref::<Int64Array>().unwrap().value(row).to_string(),
-        DataType::Int32 => array.as_any().downcast_ref::<Int32Array>().unwrap().value(row).to_string(),
-        DataType::Float64 => array.as_any().downcast_ref::<Float64Array>().unwrap().value(row).to_string(),
-        DataType::Boolean => array.as_any().downcast_ref::<BooleanArray>().unwrap().value(row).to_string(),
-        _ => format!("{:?}", array.as_any()),
-    }
 }

@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: ecommerce
-    schema: raw
+    schema: main_raw
     description: Raw data from the e-commerce application database.
     tables:
       - name: raw_users
@@ -17,7 +17,7 @@ sources:
         description: Payment transactions, one record per payment attempt.
 
   - name: web_analytics
-    schema: raw
+    schema: main_raw
     description: Clickstream and engagement data from the web analytics platform.
     tables:
       - name: raw_page_views

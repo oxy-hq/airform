@@ -20,7 +20,8 @@ pub fn parse_models(
         let unique_id = format!("model.{}.{}", project.name, model_file.name);
 
         // First pass: render with execute=false to extract refs/sources/config
-        let ctx = DbtContext::new(&project.name);
+        let mut ctx = DbtContext::new(&project.name);
+        ctx.populate_vars(&project.vars);
         let _ = engine.render(&raw_sql, &ctx);
 
         let refs = ctx.take_refs();
@@ -53,6 +54,14 @@ pub fn parse_models(
         }
         if let Some(hook) = config_from_sql.get("post_hook").or_else(|| config_from_sql.get("post-hook")) {
             config.post_hook = vec![hook.clone()];
+        }
+        if let Some(enabled) = config_from_sql.get("enabled") {
+            let resolved = resolve_enabled_value(enabled, &project.vars);
+            match resolved.to_lowercase().as_str() {
+                "false" | "0" | "none" => config.enabled = Some(false),
+                "true" | "1" => config.enabled = Some(true),
+                _ => {} // complex expression we can't evaluate statically
+            }
         }
 
         // Find schema.yml metadata for this model
@@ -240,6 +249,164 @@ fn find_schema_model<'a>(
     None
 }
 
+/// Resolve a config `enabled` value by evaluating simple `var(...)` calls
+/// and boolean `and`/`or` expressions against the project vars.
+fn resolve_enabled_value(
+    val: &str,
+    project_vars: &HashMap<String, serde_yaml::Value>,
+) -> String {
+    let trimmed = val.trim();
+
+    // Handle `var('name', default)` pattern
+    if let Some(resolved) = try_resolve_var(trimmed, project_vars) {
+        return resolved;
+    }
+
+    // Handle `expr and expr` — both must be truthy
+    if let Some(pos) = find_top_level_operator(trimmed, " and ") {
+        let left = resolve_enabled_value(&trimmed[..pos], project_vars);
+        let right = resolve_enabled_value(&trimmed[pos + 5..], project_vars);
+        let l = is_truthy(&left);
+        let r = is_truthy(&right);
+        return if l && r { "true" } else { "false" }.to_string();
+    }
+
+    // Handle `expr or expr` — either must be truthy
+    if let Some(pos) = find_top_level_operator(trimmed, " or ") {
+        let left = resolve_enabled_value(&trimmed[..pos], project_vars);
+        let right = resolve_enabled_value(&trimmed[pos + 4..], project_vars);
+        let l = is_truthy(&left);
+        let r = is_truthy(&right);
+        return if l || r { "true" } else { "false" }.to_string();
+    }
+
+    trimmed.to_string()
+}
+
+/// Try to resolve a `var('name', default)` expression.
+fn try_resolve_var(
+    expr: &str,
+    project_vars: &HashMap<String, serde_yaml::Value>,
+) -> Option<String> {
+    let trimmed = expr.trim();
+    if !trimmed.starts_with("var(") {
+        return None;
+    }
+    // Find the matching closing paren for var( — don't just use the last )
+    let after_var = &trimmed[4..];
+    let mut depth = 1;
+    let mut close_pos = None;
+    let mut in_string: Option<char> = None;
+    for (i, ch) in after_var.char_indices() {
+        if let Some(q) = in_string {
+            if ch == q { in_string = None; }
+        } else {
+            match ch {
+                '\'' | '"' => in_string = Some(ch),
+                '(' => depth += 1,
+                ')' => {
+                    depth -= 1;
+                    if depth == 0 {
+                        close_pos = Some(i);
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    let close = close_pos?;
+    // Only match if the closing paren is the last char (i.e., this is a standalone var() call)
+    if 4 + close != trimmed.len() - 1 {
+        return None;
+    }
+    let inner = &after_var[..close];
+    // Split by first comma (respecting nested parens)
+    let mut depth = 0;
+    let mut split_pos = None;
+    for (i, ch) in inner.char_indices() {
+        match ch {
+            '(' => depth += 1,
+            ')' => depth -= 1,
+            ',' if depth == 0 => {
+                split_pos = Some(i);
+                break;
+            }
+            _ => {}
+        }
+    }
+    let var_name = if let Some(pos) = split_pos {
+        inner[..pos].trim().trim_matches('\'').trim_matches('"')
+    } else {
+        inner.trim().trim_matches('\'').trim_matches('"')
+    };
+
+    // Check project vars (both top-level and package-scoped)
+    for (key, value) in project_vars {
+        // Top-level var
+        if key == var_name {
+            return Some(yaml_value_to_string(value));
+        }
+        // Package-scoped var
+        if let serde_yaml::Value::Mapping(map) = value {
+            for (k, v) in map {
+                if let serde_yaml::Value::String(s) = k {
+                    if s == var_name {
+                        return Some(yaml_value_to_string(v));
+                    }
+                }
+            }
+        }
+    }
+
+    // Var not found — use the default if provided
+    if let Some(pos) = split_pos {
+        let default = inner[pos + 1..].trim();
+        Some(default.trim_matches('\'').trim_matches('"').to_string())
+    } else {
+        None
+    }
+}
+
+fn yaml_value_to_string(v: &serde_yaml::Value) -> String {
+    match v {
+        serde_yaml::Value::Bool(b) => b.to_string(),
+        serde_yaml::Value::String(s) => s.clone(),
+        serde_yaml::Value::Number(n) => n.to_string(),
+        _ => format!("{v:?}"),
+    }
+}
+
+fn is_truthy(val: &str) -> bool {
+    !matches!(val.to_lowercase().as_str(), "false" | "0" | "none" | "")
+}
+
+/// Find a top-level operator (not inside parentheses).
+fn find_top_level_operator(s: &str, op: &str) -> Option<usize> {
+    let mut depth = 0i32;
+    let mut in_string: Option<char> = None;
+    let bytes = s.as_bytes();
+    let op_bytes = op.as_bytes();
+    for i in 0..bytes.len() {
+        if let Some(q) = in_string {
+            if bytes[i] == q as u8 {
+                in_string = None;
+            }
+        } else {
+            match bytes[i] {
+                b'\'' | b'"' => in_string = Some(bytes[i] as char),
+                b'(' => depth += 1,
+                b')' => depth -= 1,
+                _ => {}
+            }
+            if depth == 0 && i + op_bytes.len() <= bytes.len() && &bytes[i..i + op_bytes.len()] == op_bytes {
+                return Some(i);
+            }
+        }
+    }
+    None
+}
+
 /// Parse all singular test SQL files into TestNodes and add them to the manifest.
 pub fn parse_singular_tests(
     project: &DbtProject,
@@ -252,7 +419,8 @@ pub fn parse_singular_tests(
         let unique_id = format!("test.{}.{}", project.name, test_file.name);
 
         // First pass: render with execute=false to extract refs/sources
-        let ctx = DbtContext::new(&project.name);
+        let mut ctx = DbtContext::new(&project.name);
+        ctx.populate_vars(&project.vars);
         let _ = engine.render(&raw_sql, &ctx);
 
         let refs = ctx.take_refs();

@@ -1,4 +1,3 @@
-use airform_executor::Executor;
 use colored::Colorize;
 use std::path::Path;
 
@@ -17,7 +16,7 @@ pub async fn run(
     let graph = output.graph;
 
     // Execute seeds + models
-    let executor = Executor::new();
+    let executor = common::create_executor(&output.load_state, &output.target_schema)?;
     executor.load_seeds(&manifest).await?;
     executor.execute(&manifest, &graph, None).await?;
 
@@ -35,10 +34,8 @@ pub async fn run(
     // Query the selected model
     let query = format!("SELECT * FROM {select} LIMIT {limit}");
     match executor.execute_query(&query).await {
-        Ok(batches) => {
-            let formatted =
-                datafusion::arrow::util::pretty::pretty_format_batches(&batches)?;
-            println!("{formatted}");
+        Ok(result) => {
+            print!("{}", result.format_table());
         }
         Err(e) => {
             println!("{} {}", "Error:".red(), e);

@@ -221,18 +221,19 @@ fn test_topological_sort() {
 // Compilation
 // ---------------------------------------------------------------------------
 
-fn compile_jaffle_shop() -> (airform_core::Manifest, airform_graph::DbtGraph) {
+fn compile_jaffle_shop() -> (airform_core::Manifest, airform_graph::DbtGraph, String) {
     let load_state = airform_loader::load(&jaffle_shop_dir()).unwrap();
     let engine = JinjaEngine::new();
     let mut manifest = airform_parser::parse(&load_state, &engine).unwrap();
     let graph = build_graph(&manifest).unwrap();
 
     let target = load_state.target.as_ref().unwrap();
+    let target_schema = target.schema.clone().unwrap_or_else(|| "main".to_string());
     let ctx = DbtContext {
         project_name: load_state.project.name.clone(),
         execute: false,
         target_name: "dev".to_string(),
-        target_schema: target.schema.clone().unwrap_or_else(|| "main".to_string()),
+        target_schema: target_schema.clone(),
         target_database: target.database.clone().unwrap_or_else(|| "main".to_string()),
         target_type: target.adapter_type.clone(),
         ..DbtContext::new(&load_state.project.name)
@@ -243,12 +244,12 @@ fn compile_jaffle_shop() -> (airform_core::Manifest, airform_graph::DbtGraph) {
     assert_eq!(result.errors.len(), 0, "compilation errors: {:?}", result.errors);
     assert_eq!(result.compiled_count, 5, "expected 5 compiled models");
 
-    (manifest, graph)
+    (manifest, graph, target_schema)
 }
 
 #[test]
 fn test_compilation_produces_sql_for_all_models() {
-    let (manifest, _graph) = compile_jaffle_shop();
+    let (manifest, _graph, _) = compile_jaffle_shop();
 
     for model in manifest.models() {
         assert!(
@@ -261,7 +262,7 @@ fn test_compilation_produces_sql_for_all_models() {
 
 #[test]
 fn test_compiled_sql_resolves_refs() {
-    let (manifest, _graph) = compile_jaffle_shop();
+    let (manifest, _graph, _) = compile_jaffle_shop();
 
     // The customers model references stg_customers; after compilation, the
     // compiled SQL should contain the resolved table name (stg_customers),
@@ -284,7 +285,7 @@ fn test_compiled_sql_resolves_refs() {
 
 #[test]
 fn test_compiled_sql_resolves_sources() {
-    let (manifest, _graph) = compile_jaffle_shop();
+    let (manifest, _graph, _) = compile_jaffle_shop();
 
     // stg_customers references source('jaffle_shop', 'raw_customers')
     // After compilation the raw_customers table name should appear.
@@ -310,9 +311,9 @@ fn test_compiled_sql_resolves_sources() {
 
 #[tokio::test]
 async fn test_full_execution_pipeline() {
-    let (manifest, graph) = compile_jaffle_shop();
+    let (manifest, graph, target_schema) = compile_jaffle_shop();
 
-    let executor = Executor::new();
+    let executor = Executor::new(&target_schema);
 
     // Load seeds first
     let seed_results = executor.load_seeds(&manifest).await.unwrap();
@@ -348,19 +349,16 @@ async fn test_full_execution_pipeline() {
 
 #[tokio::test]
 async fn test_can_query_executed_models() {
-    let (manifest, graph) = compile_jaffle_shop();
+    let (manifest, graph, target_schema) = compile_jaffle_shop();
 
-    let executor = Executor::new();
+    let executor = Executor::new(&target_schema);
     executor.load_seeds(&manifest).await.unwrap();
     executor.execute(&manifest, &graph, None).await.unwrap();
 
-    // Query the customers model
-    let batches = executor
-        .execute_query("SELECT count(*) as cnt FROM customers")
+    // Query the customers model using schema-qualified name
+    let result = executor
+        .execute_query("SELECT count(*) as cnt FROM main.customers")
         .await
         .unwrap();
-    assert!(!batches.is_empty(), "should get results from customers table");
-
-    let row_count = batches.iter().map(|b| b.num_rows()).sum::<usize>();
-    assert!(row_count > 0, "customers table should have rows");
+    assert!(result.row_count > 0, "customers table should have rows");
 }

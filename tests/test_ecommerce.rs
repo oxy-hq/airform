@@ -106,18 +106,19 @@ fn test_ecommerce_graph() {
 // Compilation -- ephemeral CTE injection
 // ---------------------------------------------------------------------------
 
-fn compile_ecommerce() -> (airform_core::Manifest, airform_graph::DbtGraph) {
+fn compile_ecommerce() -> (airform_core::Manifest, airform_graph::DbtGraph, String) {
     let load_state = airform_loader::load(&ecommerce_dir()).unwrap();
     let engine = JinjaEngine::new();
     let mut manifest = airform_parser::parse(&load_state, &engine).unwrap();
     let graph = build_graph(&manifest).unwrap();
 
     let target = load_state.target.as_ref().unwrap();
+    let target_schema = target.schema.clone().unwrap_or_else(|| "main".to_string());
     let ctx = DbtContext {
         project_name: load_state.project.name.clone(),
         execute: false,
         target_name: "dev".to_string(),
-        target_schema: target.schema.clone().unwrap_or_else(|| "main".to_string()),
+        target_schema: target_schema.clone(),
         target_database: target.database.clone().unwrap_or_else(|| "main".to_string()),
         target_type: target.adapter_type.clone(),
         ..DbtContext::new(&load_state.project.name)
@@ -132,12 +133,12 @@ fn compile_ecommerce() -> (airform_core::Manifest, airform_graph::DbtGraph) {
         result.errors
     );
 
-    (manifest, graph)
+    (manifest, graph, target_schema)
 }
 
 #[test]
 fn test_ecommerce_compilation_all_models() {
-    let (manifest, _graph) = compile_ecommerce();
+    let (manifest, _graph, _) = compile_ecommerce();
 
     for model in manifest.models() {
         assert!(
@@ -150,7 +151,7 @@ fn test_ecommerce_compilation_all_models() {
 
 #[test]
 fn test_ephemeral_cte_injection() {
-    let (manifest, _graph) = compile_ecommerce();
+    let (manifest, _graph, _) = compile_ecommerce();
 
     // The orders mart model depends on int_order_items_enriched, int_order_payments,
     // int_user_order_history -- all ephemeral.  Their compiled SQL should contain
@@ -177,7 +178,7 @@ fn test_ephemeral_cte_injection() {
 
 #[test]
 fn test_ephemeral_model_not_directly_referenced() {
-    let (manifest, _graph) = compile_ecommerce();
+    let (manifest, _graph, _) = compile_ecommerce();
 
     // Non-ephemeral models that depend on ephemeral models should NOT contain
     // the raw ephemeral model name as a FROM target without the __dbt__cte__ prefix.
@@ -200,9 +201,9 @@ fn test_ephemeral_model_not_directly_referenced() {
 
 #[tokio::test]
 async fn test_ecommerce_full_execution() {
-    let (manifest, graph) = compile_ecommerce();
+    let (manifest, graph, target_schema) = compile_ecommerce();
 
-    let executor = Executor::new();
+    let executor = Executor::new(&target_schema);
 
     // Load seeds
     let seed_results = executor.load_seeds(&manifest).await.unwrap();

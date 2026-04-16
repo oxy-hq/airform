@@ -11,6 +11,7 @@ pub use discover::{discover_models, discover_seeds, discover_snapshots, discover
 pub use macro_loader::{discover_macros, MacroDefinition};
 
 use airform_core::{DbtProject, DbtProfile, DbtTarget};
+use std::collections::HashMap;
 use std::path::Path;
 
 /// Fully loaded project state -- the output of the "load" phase.
@@ -25,6 +26,8 @@ pub struct LoadState {
     pub test_files: Vec<discover::TestFile>,
     pub schema_files: Vec<schema::SchemaFile>,
     pub macro_definitions: Vec<MacroDefinition>,
+    /// Seed name → CSV column headers (read from first line of each CSV)
+    pub seed_columns: HashMap<String, Vec<String>>,
 }
 
 /// Load everything needed to start parsing.
@@ -81,6 +84,9 @@ pub fn load_with_target(project_dir: &Path, target_override: Option<&str>) -> an
     let schema_files = load_schema_files(&project)?;
     let macro_definitions = discover_macros(&project)?;
 
+    // Read CSV headers for all seeds
+    let seed_columns = read_seed_columns(&seed_files);
+
     Ok(LoadState {
         project,
         profile,
@@ -91,5 +97,32 @@ pub fn load_with_target(project_dir: &Path, target_override: Option<&str>) -> an
         test_files,
         schema_files,
         macro_definitions,
+        seed_columns,
     })
+}
+
+/// Read CSV headers from seed files to build a column map.
+fn read_seed_columns(seed_files: &[discover::SeedFile]) -> HashMap<String, Vec<String>> {
+    let mut map = HashMap::new();
+    for seed in seed_files {
+        match std::fs::read_to_string(&seed.path) {
+            Ok(contents) => {
+                if let Some(first_line) = contents.lines().next() {
+                    let columns: Vec<String> = first_line
+                        .split(',')
+                        .map(|c| c.trim().trim_matches('"').to_string())
+                        .filter(|c| !c.is_empty())
+                        .collect();
+                    if !columns.is_empty() {
+                        map.insert(seed.name.clone(), columns);
+                    }
+                }
+            }
+            Err(e) => {
+                tracing::warn!("Could not read seed CSV {}: {}", seed.path.display(), e);
+            }
+        }
+    }
+    tracing::info!("Read CSV headers for {} seeds", map.len());
+    map
 }

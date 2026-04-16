@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    schema: raw
+    schema: main_raw
     tables:
       - name: raw_users
       - name: raw_accounts

@@ -1,8 +1,23 @@
 use crate::context::DbtContext;
 use airform_core::{RefCall, SourceCall};
+use jinja2::add_jinja2_compat;
 use minijinja::{Environment, Error as JinjaError, ErrorKind, Value};
+use std::cell::RefCell;
 use std::fmt;
 use std::sync::Arc;
+
+thread_local! {
+    /// Captures the most recent value passed to `return()` in a Jinja macro.
+    /// Used by `fill_staging_columns` to receive structured column lists
+    /// (since Jinja macros render to text, losing structured data).
+    ///
+    /// SAFETY INVARIANT: `_fill_staging_columns_impl()` must be called immediately
+    /// after the `return()` that sets this value. Any intervening `return()` call
+    /// will overwrite it. This is safe because Jinja rendering is single-threaded
+    /// and `fill_staging_columns` calls `return()` then `_fill_staging_columns_impl()`
+    /// in the same macro expansion with no other `return()` calls in between.
+    static LAST_RETURN_VALUE: RefCell<Option<Value>> = RefCell::new(None);
+}
 
 /// A custom macro loaded from a macro file.
 #[derive(Debug, Clone)]
@@ -24,137 +39,24 @@ pub struct JinjaEngine {
     env: Environment<'static>,
     custom_macros: Vec<LoadedMacro>,
     builtin_namespaces: Vec<BuiltinNamespace>,
+    /// Package macros keyed by package name (e.g., "fivetran_utils" -> [...])
+    package_macros: std::collections::HashMap<String, Vec<LoadedMacro>>,
 }
 
 impl JinjaEngine {
     pub fn new() -> Self {
         let mut env = Environment::new();
 
+        // Add full Jinja2 compatibility (all filters, methods, tests, globals)
+        add_jinja2_compat(&mut env);
+
         // Lenient undefined handling (dbt is permissive with undefined vars)
         env.set_undefined_behavior(minijinja::UndefinedBehavior::Chainable);
 
-        // Handle unknown method calls — supports list.append(), dict.items(), etc.
-        env.set_unknown_method_callback(|_state, value, method, args| {
-            match method {
-                // list.append(item) — mutates list, returns None (we return "")
-                "append" => {
-                    let _ = (value, args);
-                    Ok(Value::from(""))
-                }
-                // list.extend(items) — mutates list, returns None
-                "extend" => {
-                    Ok(Value::from(""))
-                }
-                // dict.items() — return empty list for undefined dicts
-                "items" => {
-                    if let Some(obj) = value.as_object() {
-                        if let Some(iter) = obj.try_iter() {
-                            let items: Vec<Value> = iter
-                                .map(|k| {
-                                    let v = obj.get_value(&k).unwrap_or(Value::UNDEFINED);
-                                    Value::from(vec![k, v])
-                                })
-                                .collect();
-                            return Ok(Value::from(items));
-                        }
-                    }
-                    Ok(Value::from(Vec::<Value>::new()))
-                }
-                // dict.values()
-                "values" => {
-                    if let Some(obj) = value.as_object() {
-                        if let Some(iter) = obj.try_iter() {
-                            let vals: Vec<Value> = iter
-                                .filter_map(|k| obj.get_value(&k))
-                                .collect();
-                            return Ok(Value::from(vals));
-                        }
-                    }
-                    Ok(Value::from(Vec::<Value>::new()))
-                }
-                // dict.keys()
-                "keys" => {
-                    if let Some(obj) = value.as_object() {
-                        if let Some(iter) = obj.try_iter() {
-                            let keys: Vec<Value> = iter.collect();
-                            return Ok(Value::from(keys));
-                        }
-                    }
-                    Ok(Value::from(Vec::<Value>::new()))
-                }
-                // dict.get(key, default)
-                "get" => {
-                    let key = args.first().cloned().unwrap_or(Value::UNDEFINED);
-                    let default = args.get(1).cloned().unwrap_or(Value::UNDEFINED);
-                    if let Some(obj) = value.as_object() {
-                        if let Some(val) = obj.get_value(&key) {
-                            return Ok(val);
-                        }
-                    }
-                    Ok(default)
-                }
-                // dict.update(other) — no-op
-                "update" => {
-                    Ok(Value::from(""))
-                }
-                // list.pop() / dict.pop() — no-op, return undefined
-                "pop" => {
-                    Ok(args.get(1).cloned().unwrap_or(Value::UNDEFINED))
-                }
-                // str.strip() / str.lstrip() / str.rstrip()
-                "strip" => {
-                    Ok(Value::from(value.to_string().trim().to_string()))
-                }
-                "lstrip" => {
-                    Ok(Value::from(value.to_string().trim_start().to_string()))
-                }
-                "rstrip" => {
-                    Ok(Value::from(value.to_string().trim_end().to_string()))
-                }
-                // str.replace(old, new)
-                "replace" => {
-                    let old = args.first().map(|v| v.to_string()).unwrap_or_default();
-                    let new = args.get(1).map(|v| v.to_string()).unwrap_or_default();
-                    Ok(Value::from(value.to_string().replace(&old, &new)))
-                }
-                // str.startswith / str.endswith
-                "startswith" => {
-                    let prefix = args.first().map(|v| v.to_string()).unwrap_or_default();
-                    Ok(Value::from(value.to_string().starts_with(&prefix)))
-                }
-                "endswith" => {
-                    let suffix = args.first().map(|v| v.to_string()).unwrap_or_default();
-                    Ok(Value::from(value.to_string().ends_with(&suffix)))
-                }
-                // str.split(sep)
-                "split" => {
-                    let sep = args.first().map(|v| v.to_string()).unwrap_or_else(|| " ".to_string());
-                    let parts: Vec<Value> = value.to_string().split(&sep).map(|s| Value::from(s.to_string())).collect();
-                    Ok(Value::from(parts))
-                }
-                // For unknown methods on unknown types, return empty string to avoid breaking
-                _ => {
-                    // If the value is undefined (chainable), just return empty
-                    if value.is_undefined() {
-                        Ok(Value::from(""))
-                    } else {
-                        Err(JinjaError::new(
-                            ErrorKind::UnknownMethod,
-                            format!("{}: no method named {}", value.kind(), method),
-                        ))
-                    }
-                }
-            }
-        });
-
-        // Register custom filters
-        env.add_filter("as_bool", |val: Value| -> bool {
-            if let Some(s) = val.as_str() {
-                matches!(s.to_lowercase().as_str(), "true" | "1" | "yes")
-            } else {
-                !val.is_undefined() && !val.is_none() && val.is_true()
-            }
-        });
+        // jinja2::add_jinja2_compat() already provides:
+        // - Full Python method compatibility (items, keys, values, get, strip, replace, etc.)
+        // - as_bool filter
+        // - All 51 Jinja2 filters, 33 tests, 7 globals
 
         // Override length filter to handle non-iterable types gracefully
         env.add_filter("length", |val: Value| -> Value {
@@ -174,6 +76,7 @@ impl JinjaEngine {
             env,
             custom_macros: Vec::new(),
             builtin_namespaces: Vec::new(),
+            package_macros: std::collections::HashMap::new(),
         };
         engine.register_builtins();
         engine
@@ -185,11 +88,11 @@ impl JinjaEngine {
         // ── Bare macros (available without namespace prefix) ──────────────
         let bare: &[(&str, &[&str], &str)] = &[
             ("date_trunc", &["datepart", "field"],
-             "DATE_TRUNC({{ datepart }}, {{ field }})"),
+             "DATE_TRUNC('{{ datepart }}', {{ field }})"),
             ("dateadd", &["datepart", "interval", "from_date_or_timestamp"],
-             "{{ from_date_or_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}"),
+             "{% if target.type == 'snowflake' %}DATEADD({{ datepart }}, {{ interval }}, {{ from_date_or_timestamp }}){% else %}{{ from_date_or_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}{% endif %}"),
             ("datediff", &["first_date", "second_date", "datepart"],
-             "DATE_DIFF('{{ datepart }}', {{ first_date }}, {{ second_date }})"),
+             "{% if target.type == 'snowflake' %}DATEDIFF({{ datepart }}, {{ first_date }}, {{ second_date }}){% elif target.type == 'bigquery' %}DATE_DIFF({{ second_date }}, {{ first_date }}, {{ datepart }}){% else %}DATE_DIFF('{{ datepart }}', {{ first_date }}, {{ second_date }}){% endif %}"),
             ("safe_cast", &["field", "type"],
              "CAST({{ field }} AS {{ type }})"),
             ("type_string", &[], "VARCHAR"),
@@ -202,7 +105,7 @@ impl JinjaEngine {
             ("bool_or", &["val"], "BOOL_OR({{ val }})"),
             ("any_value", &["val"], "ANY_VALUE({{ val }})"),
             ("listagg", &["measure", "delimiter_text=none", "order_by_clause=none", "limit_num=none"],
-             "STRING_AGG({{ measure }}, {% if delimiter_text is not none %}{{ delimiter_text }}{% else %}', '{% endif %})"),
+             "{% if target.type == 'snowflake' %}LISTAGG({{ measure }}, {% if delimiter_text is not none %}{{ delimiter_text }}{% else %}', '{% endif %}){% if order_by_clause is not none %} WITHIN GROUP ({{ order_by_clause }}){% endif %}{% else %}STRING_AGG({{ measure }}, {% if delimiter_text is not none %}{{ delimiter_text }}{% else %}', '{% endif %}){% endif %}"),
             ("concat", &["fields"], "CONCAT({{ fields | join(', ') }})"),
             ("length", &["expression"], "LENGTH({{ expression }})"),
             ("right", &["string_text", "length_expression"],
@@ -216,30 +119,30 @@ impl JinjaEngine {
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
-             "{{ from }}.*"),
+             "{% if relation_alias is not none %}{{ relation_alias }}.*{% else %}*{% endif %}"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
-             "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
+             "{% if target.type == 'snowflake' %}SELECT date_{{ datepart }} FROM (SELECT DATEADD({{ datepart }}, ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1, CAST({{ start_date }} AS DATE)) AS date_{{ datepart }} FROM TABLE(GENERATOR(ROWCOUNT => 100000))) WHERE date_{{ datepart }} <= CAST({{ end_date }} AS DATE){% else %}SELECT UNNEST(GENERATE_SERIES(CAST({{ start_date }} AS DATE), CAST({{ end_date }} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}{% endif %}"),
             ("pivot", &["column", "values", "alias=true", "agg='sum'", "cmp='='", "prefix=''", "suffix=''", "then_value='1'", "else_value='0'", "quote_identifiers=true", "distinct=false", "field_to_agg=none", "aliases=none"],
              "{% for v in values %}{{ agg }}({% if distinct %}DISTINCT {% endif %}CASE WHEN {{ column }} {{ cmp }} '{{ v }}' THEN {{ then_value }} ELSE {{ else_value }} END) AS {{ prefix }}{{ v }}{{ suffix }}{% if not loop.last %},\n{% endif %}{% endfor %}"),
             ("unpivot", &["relation=none", "cast_to='varchar'", "exclude=[]", "remove=[]", "field_name='field_name'", "value_name='value'"],
              "/* unpivot not supported in airform */ SELECT * FROM {{ relation }}"),
             ("union_data", &["table_identifier=none", "database_variable=none", "schema_variable=none", "default_database=none", "default_schema=none", "default_variable=none", "union_schema_variable=none", "union_database_variable=none"],
-             "SELECT * FROM {{ source(var(schema_variable, default_schema) if schema_variable else 'raw', table_identifier if table_identifier else 'unknown') }}"),
+             "SELECT * FROM {{ var(schema_variable, default_schema) }}.{{ table_identifier }}"),
             ("enabled_vars", &["vars=[]"], "true"),
             ("fill_staging_columns", &["source_columns", "staging_columns"],
-             "{% for col in staging_columns %}{% if not loop.first %}, {% endif %}{{ col.name }}{% endfor %}"),
+             "{{ _fill_staging_columns_impl(source_columns, staging_columns) }}"),
             ("string_agg", &["field=none", "delimiter=','", "field_to_agg=none"],
-             "STRING_AGG({{ field if field else field_to_agg }}, {{ delimiter }})"),
+             "{% if target.type == 'snowflake' %}LISTAGG({{ field if field else field_to_agg }}, {{ delimiter }}){% else %}STRING_AGG({{ field if field else field_to_agg }}, {{ delimiter }}){% endif %}"),
             ("json_parse", &["string", "string_path"],
-             "JSON_EXTRACT({{ string }}, '$.{{ string_path }}')"),
+             "{% if target.type == 'snowflake' %}{% if string_path is iterable and string_path is not string %}PARSE_JSON({{ string }}){% for p in string_path %}['{{ p }}']{% endfor %}{% else %}PARSE_JSON({{ string }}):{{ string_path }}{% endif %}{% elif target.type == 'bigquery' %}{% if string_path is iterable and string_path is not string %}JSON_EXTRACT({{ string }}, '$.{{ string_path | join(\".\") }}'){% else %}JSON_EXTRACT({{ string }}, '$.{{ string_path }}'){% endif %}{% else %}{% if string_path is iterable and string_path is not string %}JSON_EXTRACT({{ string }}, '$.{{ string_path | join(\".\") }}'){% else %}JSON_EXTRACT({{ string }}, '$.{{ string_path }}'){% endif %}{% endif %}"),
             ("array_agg", &["field"], "ARRAY_AGG({{ field }})"),
             ("timestamp_add", &["datepart", "interval", "from_timestamp"],
-             "{{ from_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}"),
+             "{% if target.type == 'snowflake' %}DATEADD({{ datepart }}, {{ interval }}, {{ from_timestamp }}){% else %}{{ from_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}{% endif %}"),
             ("timestamp_diff", &["first_timestamp=none", "second_timestamp=none", "datepart='day'", "first_date=none", "second_date=none"],
-             "DATE_DIFF('{{ datepart }}', {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }})"),
+             "{% if target.type == 'snowflake' %}DATEDIFF({{ datepart }}, {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }}){% elif target.type == 'bigquery' %}TIMESTAMP_DIFF({{ second_timestamp if second_timestamp else second_date }}, {{ first_timestamp if first_timestamp else first_date }}, {{ datepart }}){% else %}DATE_DIFF('{{ datepart }}', {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }}){% endif %}"),
             ("ceiling", &["val"], "CEIL({{ val }})"),
-            ("percentile", &["field=none", "percentile_val=none", "partition_field=none", "percent=none", "percentile_field=none"],
-             "PERCENTILE_CONT({{ percentile_val if percentile_val else percent }}) WITHIN GROUP (ORDER BY {{ field if field else percentile_field }})"),
+            ("percentile", &["field_name=none", "partition_field=none", "percentile_value=none", "field=none", "percentile_val=none", "percent=none", "percentile_field=none"],
+             "PERCENTILE_CONT({{ percentile_value if percentile_value else (percentile_val if percentile_val else percent) }}) WITHIN GROUP (ORDER BY {{ field_name if field_name else (field if field else percentile_field) }})"),
             ("hash", &["field"],
              "MD5(CAST({{ field }} AS VARCHAR))"),
             ("position", &["substring_text", "string_text"],
@@ -253,8 +156,8 @@ impl JinjaEngine {
             ("now", &[], "CURRENT_TIMESTAMP"),
             ("group_by", &["n"],
              "GROUP BY {% for i in range(1, n + 1) %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}"),
-            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'"],
-             "{{ default }}"),
+            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'", "where=none"],
+             ""),
             ("get_single_value", &["table", "column", "default=none"],
              "{{ default }}"),
             ("get_url_host", &["field"],
@@ -280,11 +183,11 @@ impl JinjaEngine {
         // ── dbt namespace ────────────────────────────────────────────────
         let dbt_macros: &[(&str, &[&str], &str)] = &[
             ("date_trunc", &["datepart", "field"],
-             "DATE_TRUNC({{ datepart }}, {{ field }})"),
+             "DATE_TRUNC('{{ datepart }}', {{ field }})"),
             ("dateadd", &["datepart", "interval", "from_date_or_timestamp"],
-             "{{ from_date_or_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}"),
+             "{% if target.type == 'snowflake' %}DATEADD({{ datepart }}, {{ interval }}, {{ from_date_or_timestamp }}){% else %}{{ from_date_or_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}{% endif %}"),
             ("datediff", &["first_date", "second_date", "datepart"],
-             "DATE_DIFF('{{ datepart }}', {{ first_date }}, {{ second_date }})"),
+             "{% if target.type == 'snowflake' %}DATEDIFF({{ datepart }}, {{ first_date }}, {{ second_date }}){% elif target.type == 'bigquery' %}DATE_DIFF({{ second_date }}, {{ first_date }}, {{ datepart }}){% else %}DATE_DIFF('{{ datepart }}', {{ first_date }}, {{ second_date }}){% endif %}"),
             ("safe_cast", &["field", "type"],
              "CAST({{ field }} AS {{ type }})"),
             ("type_string", &[], "VARCHAR"),
@@ -297,7 +200,7 @@ impl JinjaEngine {
             ("bool_or", &["val"], "BOOL_OR({{ val }})"),
             ("any_value", &["val"], "ANY_VALUE({{ val }})"),
             ("listagg", &["measure", "delimiter_text=none", "order_by_clause=none", "limit_num=none"],
-             "STRING_AGG({{ measure }}, {% if delimiter_text is not none %}{{ delimiter_text }}{% else %}', '{% endif %})"),
+             "{% if target.type == 'snowflake' %}LISTAGG({{ measure }}, {% if delimiter_text is not none %}{{ delimiter_text }}{% else %}', '{% endif %}){% if order_by_clause is not none %} WITHIN GROUP ({{ order_by_clause }}){% endif %}{% else %}STRING_AGG({{ measure }}, {% if delimiter_text is not none %}{{ delimiter_text }}{% else %}', '{% endif %}){% endif %}"),
             ("concat", &["fields"], "CONCAT({{ fields | join(', ') }})"),
             ("length", &["expression"], "LENGTH({{ expression }})"),
             ("right", &["string_text", "length_expression"],
@@ -320,7 +223,9 @@ impl JinjaEngine {
              "LAST_DAY({{ date }})"),
             ("now", &[], "CURRENT_TIMESTAMP"),
             ("generate_series", &["start_val=0", "stop_val=none", "step=none", "upper_bound=none"],
-             "GENERATE_SERIES({{ start_val }}, {{ stop_val if stop_val else upper_bound }}{% if step %}, {{ step }}{% endif %})"),
+             "{% if target.type == 'snowflake' %}SELECT ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1 + {{ start_val }} AS generate_series FROM TABLE(GENERATOR(ROWCOUNT => {{ stop_val if stop_val else upper_bound }} - {{ start_val }} + 1)){% else %}GENERATE_SERIES({{ start_val }}, {{ stop_val if stop_val else upper_bound }}{% if step %}, {{ step }}{% endif %}){% endif %}"),
+            ("escape_single_quotes", &["value"],
+             "{{ value | replace(\"'\", \"''\") }}"),
         ];
 
         // ── dbt_utils namespace ──────────────────────────────────────────
@@ -330,9 +235,9 @@ impl JinjaEngine {
             ("surrogate_key", &["field_list", "_b=none", "_c=none", "_d=none", "_e=none", "_f=none", "_g=none", "_h=none"],
              "{% set fields = [field_list, _b, _c, _d, _e, _f, _g, _h] if _b is not none else field_list %}MD5({% for f in fields %}{% if f is not none %}{% if not loop.first %} || '-' || {% endif %}COALESCE(CAST({{ f }} AS VARCHAR), '_dbt_utils_surrogate_key_null_'){% endif %}{% endfor %})"),
             ("star", &["from", "relation_alias=none", "except=[]", "suffix=''", "prefix=''", "quote_identifiers=true"],
-             "{{ from }}.*"),
+             "{% if relation_alias is not none %}{{ relation_alias }}.*{% else %}*{% endif %}"),
             ("date_spine", &["datepart", "start_date", "end_date", "first_date=none", "last_date=none"],
-             "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
+             "{% if target.type == 'snowflake' %}SELECT date_{{ datepart }} FROM (SELECT DATEADD({{ datepart }}, ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1, CAST({{ start_date }} AS DATE)) AS date_{{ datepart }} FROM TABLE(GENERATOR(ROWCOUNT => 100000))) WHERE date_{{ datepart }} <= CAST({{ end_date }} AS DATE){% else %}SELECT UNNEST(GENERATE_SERIES(CAST({{ start_date }} AS DATE), CAST({{ end_date }} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}{% endif %}"),
             ("pivot", &["column", "values", "alias=true", "agg='sum'", "cmp='='", "prefix=''", "suffix=''", "then_value='1'", "else_value='0'", "quote_identifiers=true", "distinct=false", "field_to_agg=none", "aliases=none"],
              "{% for v in values %}{{ agg }}({% if distinct %}DISTINCT {% endif %}CASE WHEN {{ column }} {{ cmp }} '{{ v }}' THEN {{ then_value }} ELSE {{ else_value }} END) AS {{ prefix }}{{ v }}{{ suffix }}{% if not loop.last %},\n{% endif %}{% endfor %}"),
             ("unpivot", &["relation=none", "cast_to='varchar'", "exclude=[]", "remove=[]", "field_name='field_name'", "value_name='value'"],
@@ -343,8 +248,8 @@ impl JinjaEngine {
              "CASE WHEN {{ denominator }} = 0 THEN NULL ELSE {{ numerator }} / {{ denominator }} END"),
             ("group_by", &["n"],
              "GROUP BY {% for i in range(1, n + 1) %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}"),
-            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'"],
-             "{{ default }}"),
+            ("get_column_values", &["table", "column", "default=[]", "max_records=none", "order_by='count(*) desc'", "where=none"],
+             ""),
             ("get_single_value", &["table", "column", "default=none"],
              "{{ default }}"),
             ("get_url_host", &["field"],
@@ -354,7 +259,7 @@ impl JinjaEngine {
             ("get_url_parameter", &["field", "url_parameter"],
              "NULL"),
             ("generate_series", &["start_val=0", "stop_val=none", "step=none", "upper_bound=none"],
-             "GENERATE_SERIES({{ start_val }}, {{ stop_val if stop_val else upper_bound }}{% if step %}, {{ step }}{% endif %})"),
+             "{% if target.type == 'snowflake' %}SELECT ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1 + {{ start_val }} AS generate_series FROM TABLE(GENERATOR(ROWCOUNT => {{ stop_val if stop_val else upper_bound }} - {{ start_val }} + 1)){% else %}GENERATE_SERIES({{ start_val }}, {{ stop_val if stop_val else upper_bound }}{% if step %}, {{ step }}{% endif %}){% endif %}"),
             ("slugify", &["text"], "{{ text }}"),
             ("get_filtered_columns_in_relation", &["from", "except=[]"],
              ""),
@@ -367,25 +272,25 @@ impl JinjaEngine {
         // ── fivetran_utils namespace ─────────────────────────────────────
         let fivetran_utils_macros: &[(&str, &[&str], &str)] = &[
             ("union_data", &["table_identifier=none", "database_variable=none", "schema_variable=none", "default_database=none", "default_schema=none", "default_variable=none", "union_schema_variable=none", "union_database_variable=none"],
-             "SELECT * FROM {{ source(var(schema_variable, default_schema) if schema_variable else 'raw', table_identifier if table_identifier else 'unknown') }}"),
+             "SELECT * FROM {{ var(schema_variable, default_schema) }}.{{ table_identifier }}"),
             ("enabled_vars", &["vars=[]"], "true"),
             ("enabled_vars_one_true", &["vars=[]"], "true"),
             ("fill_staging_columns", &["source_columns", "staging_columns"],
-             "{% for col in staging_columns %}{% if not loop.first %}, {% endif %}{{ col.name }}{% endfor %}"),
+             "{{ _fill_staging_columns_impl(source_columns, staging_columns) }}"),
             ("string_agg", &["field=none", "delimiter=','", "field_to_agg=none"],
-             "STRING_AGG({{ field if field else field_to_agg }}, {{ delimiter }})"),
+             "{% if target.type == 'snowflake' %}LISTAGG({{ field if field else field_to_agg }}, {{ delimiter }}){% else %}STRING_AGG({{ field if field else field_to_agg }}, {{ delimiter }}){% endif %}"),
             ("json_parse", &["string", "string_path"],
-             "JSON_EXTRACT({{ string }}, '$.{{ string_path }}')"),
+             "{% if target.type == 'snowflake' %}{% if string_path is iterable and string_path is not string %}PARSE_JSON({{ string }}){% for p in string_path %}['{{ p }}']{% endfor %}{% else %}PARSE_JSON({{ string }}):{{ string_path }}{% endif %}{% elif target.type == 'bigquery' %}{% if string_path is iterable and string_path is not string %}JSON_EXTRACT({{ string }}, '$.{{ string_path | join(\".\") }}'){% else %}JSON_EXTRACT({{ string }}, '$.{{ string_path }}'){% endif %}{% else %}{% if string_path is iterable and string_path is not string %}JSON_EXTRACT({{ string }}, '$.{{ string_path | join(\".\") }}'){% else %}JSON_EXTRACT({{ string }}, '$.{{ string_path }}'){% endif %}{% endif %}"),
             ("array_agg", &["field"], "ARRAY_AGG({{ field }})"),
             ("timestamp_add", &["datepart", "interval", "from_timestamp"],
-             "{{ from_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}"),
+             "{% if target.type == 'snowflake' %}DATEADD({{ datepart }}, {{ interval }}, {{ from_timestamp }}){% else %}{{ from_timestamp }} + INTERVAL '{{ interval }}' {{ datepart }}{% endif %}"),
             ("timestamp_diff", &["first_timestamp=none", "second_timestamp=none", "datepart='day'", "first_date=none", "second_date=none"],
-             "DATE_DIFF('{{ datepart }}', {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }})"),
+             "{% if target.type == 'snowflake' %}DATEDIFF({{ datepart }}, {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }}){% elif target.type == 'bigquery' %}TIMESTAMP_DIFF({{ second_timestamp if second_timestamp else second_date }}, {{ first_timestamp if first_timestamp else first_date }}, {{ datepart }}){% else %}DATE_DIFF('{{ datepart }}', {{ first_timestamp if first_timestamp else first_date }}, {{ second_timestamp if second_timestamp else second_date }}){% endif %}"),
             ("ceiling", &["val"], "CEIL({{ val }})"),
-            ("percentile", &["field=none", "percentile_val=none", "partition_field=none", "percent=none", "percentile_field=none"],
-             "PERCENTILE_CONT({{ percentile_val if percentile_val else percent }}) WITHIN GROUP (ORDER BY {{ field if field else percentile_field }})"),
+            ("percentile", &["field_name=none", "partition_field=none", "percentile_value=none", "field=none", "percentile_val=none", "percent=none", "percentile_field=none"],
+             "PERCENTILE_CONT({{ percentile_value if percentile_value else (percentile_val if percentile_val else percent) }}) WITHIN GROUP (ORDER BY {{ field_name if field_name else (field if field else percentile_field) }})"),
             ("source_relation", &["union_schema_variable=none", "union_database_variable=none"],
-             ""),
+             ", CAST('' AS VARCHAR) AS source_relation"),
             ("persist_pass_through_columns", &["pass_through_variable=none", "identifier=none", "transform=none"],
              "{% if var(pass_through_variable, []) %}{% for col in var(pass_through_variable, []) %}, {% if col is mapping %}{{ col.alias if col.alias else col.name }}{% else %}{{ col }}{% endif %}{% endfor %}{% endif %}"),
             ("fill_pass_through_columns", &["pass_through_variable=none"],
@@ -403,7 +308,7 @@ impl JinjaEngine {
             ("apply_source_relation", &[],
              ""),
             ("get_base_dates", &["start_date=none", "end_date=none", "n_dateparts=1", "datepart='day'"],
-             ""),
+             "{% if target.type == 'snowflake' %}SELECT date_{{ datepart }} FROM (SELECT DATEADD({{ datepart }}, ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1, CAST({% if start_date %}{{ start_date }}{% else %}CURRENT_DATE - INTERVAL '{{ n_dateparts }} {{ datepart }}'{% endif %} AS DATE)) AS date_{{ datepart }} FROM TABLE(GENERATOR(ROWCOUNT => 100000))) WHERE date_{{ datepart }} <= CAST({% if end_date %}{{ end_date }}{% else %}CURRENT_DATE{% endif %} AS DATE){% else %}SELECT UNNEST(GENERATE_SERIES(CAST({% if start_date %}{{ start_date }}{% else %}CURRENT_DATE - INTERVAL '{{ n_dateparts }}' {{ datepart }}{% endif %} AS DATE), CAST({% if end_date %}{{ end_date }}{% else %}CURRENT_DATE{% endif %} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}{% endif %}"),
             ("get_columns_in_relation", &["relation"],
              ""),
             ("add_renamed_columns", &["source_columns=[]", "renamed_columns=[]"],
@@ -411,23 +316,23 @@ impl JinjaEngine {
             ("max_bool", &["field=none", "boolean_field=none"],
              "MAX({{ field if field else boolean_field }})"),
             ("fivetran_date_spine", &["datepart", "start_date", "end_date"],
-             "SELECT UNNEST(GENERATE_SERIES({{ start_date }}::DATE, {{ end_date }}::DATE, INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}"),
+             "{% if target.type == 'snowflake' %}SELECT date_{{ datepart }} FROM (SELECT DATEADD({{ datepart }}, ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1, CAST({{ start_date }} AS DATE)) AS date_{{ datepart }} FROM TABLE(GENERATOR(ROWCOUNT => 100000))) WHERE date_{{ datepart }} <= CAST({{ end_date }} AS DATE){% else %}SELECT UNNEST(GENERATE_SERIES(CAST({{ start_date }} AS DATE), CAST({{ end_date }} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}{% endif %}"),
         ];
 
         // ── snowplow_utils namespace (stubs) ─────────────────────────────
         let snowplow_utils_macros: &[(&str, &[&str], &str)] = &[
             ("get_value_by_target_type", &["bigquery_val=none", "snowflake_val=none", "databricks_val=none", "default_val=none"],
-             "{{ default_val }}"),
+             "{% if target.type == 'snowflake' and snowflake_val is not none %}{{ snowflake_val }}{% elif target.type == 'bigquery' and bigquery_val is not none %}{{ bigquery_val }}{% elif target.type == 'databricks' and databricks_val is not none %}{{ databricks_val }}{% else %}{{ default_val }}{% endif %}"),
             ("set_query_tag", &["tag=none"], ""),
             ("allow_refresh", &[], ""),
             ("get_split_to_array", &["field", "relation_alias=none", "delimiter=','"],
              "STRING_SPLIT({{ field }}, {{ delimiter }})"),
             ("get_string_agg", &["base_query", "field", "delimiter=','", "sort_numeric=false", "order_by_column=none", "sort_by_suffix=none", "is_distinct=false"],
-             "STRING_AGG({{ field }}, {{ delimiter }})"),
+             "{% if target.type == 'snowflake' %}LISTAGG({{ field }}, {{ delimiter }}){% else %}STRING_AGG({{ field }}, {{ delimiter }}){% endif %}"),
             ("timestamp_add", &["datepart", "interval", "tstamp"],
-             "{{ tstamp }} + INTERVAL '{{ interval }}' {{ datepart }}"),
+             "{% if target.type == 'snowflake' %}DATEADD({{ datepart }}, {{ interval }}, {{ tstamp }}){% else %}{{ tstamp }} + INTERVAL '{{ interval }}' {{ datepart }}{% endif %}"),
             ("timestamp_diff", &["first_tstamp", "second_tstamp", "datepart"],
-             "DATE_DIFF('{{ datepart }}', {{ first_tstamp }}, {{ second_tstamp }})"),
+             "{% if target.type == 'snowflake' %}DATEDIFF({{ datepart }}, {{ first_tstamp }}, {{ second_tstamp }}){% else %}DATE_DIFF('{{ datepart }}', {{ first_tstamp }}, {{ second_tstamp }}){% endif %}"),
             ("return_limits_from_model", &["model_name", "lower_limit_col=none", "upper_limit_col=none"],
              ""),
             ("get_enabled_snowplow_models", &["package_name", "graph_object=none", "models_to_run=none", "base_events_table_name=none"],
@@ -485,10 +390,41 @@ impl JinjaEngine {
             ("core_web_vital_results_query", &[], "''"),
         ];
 
+        // ── dbt_date namespace ───────────────────────────────────────────
+        let dbt_date_macros: &[(&str, &[&str], &str)] = &[
+            ("get_base_dates", &["start_date=none", "end_date=none", "n_dateparts=1", "datepart='day'"],
+             "{% if target.type == 'snowflake' %}SELECT date_{{ datepart }} FROM (SELECT DATEADD({{ datepart }}, ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1, CAST({% if start_date %}{{ start_date }}{% else %}CURRENT_DATE - INTERVAL '{{ n_dateparts }} {{ datepart }}'{% endif %} AS DATE)) AS date_{{ datepart }} FROM TABLE(GENERATOR(ROWCOUNT => 100000))) WHERE date_{{ datepart }} <= CAST({% if end_date %}{{ end_date }}{% else %}CURRENT_DATE{% endif %} AS DATE){% else %}SELECT UNNEST(GENERATE_SERIES(CAST({% if start_date %}{{ start_date }}{% else %}CURRENT_DATE - INTERVAL '{{ n_dateparts }}' {{ datepart }}{% endif %} AS DATE), CAST({% if end_date %}{{ end_date }}{% else %}CURRENT_DATE{% endif %} AS DATE), INTERVAL '1' {{ datepart }})) AS date_{{ datepart }}{% endif %}"),
+            ("day_of_week", &["date=none", "isoweek=true"],
+             "EXTRACT(DOW FROM {{ date }})"),
+            ("n_days_ago", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE - INTERVAL '{{ n }}' DAY"),
+            ("n_days_away", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE + INTERVAL '{{ n }}' DAY"),
+            ("n_months_ago", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE - INTERVAL '{{ n }}' MONTH"),
+            ("n_months_away", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE + INTERVAL '{{ n }}' MONTH"),
+            ("n_weeks_ago", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE - INTERVAL '{{ n }}' WEEK"),
+            ("n_weeks_away", &["n", "date=none", "tz=none"],
+             "CURRENT_DATE + INTERVAL '{{ n }}' WEEK"),
+            ("now", &["tz=none"],
+             "CURRENT_TIMESTAMP"),
+            ("today", &["tz=none"],
+             "CURRENT_DATE"),
+            ("yesterday", &["tz=none"],
+             "CURRENT_DATE - INTERVAL '1' DAY"),
+            ("tomorrow", &["tz=none"],
+             "CURRENT_DATE + INTERVAL '1' DAY"),
+            ("date_part", &["datepart", "date"],
+             "EXTRACT({{ datepart }} FROM {{ date }})"),
+        ];
+
         // Register namespaces
         for (ns_name, ns_macros) in [
             ("dbt", dbt_macros as &[_]),
             ("dbt_utils", dbt_utils_macros),
+            ("dbt_date", dbt_date_macros),
             ("fivetran_utils", fivetran_utils_macros),
             ("snowplow_utils", snowplow_utils_macros),
             ("snowplow_web", snowplow_web_macros),
@@ -514,6 +450,39 @@ impl JinjaEngine {
                 args: args.clone(),
                 body: body.clone(),
             });
+        }
+    }
+
+    /// Register macros with package info. Package macros are registered under
+    /// their package namespace (e.g., `fivetran_utils.source_relation`).
+    /// Package macros that conflict with builtin namespace macros are only added
+    /// to the package namespace, not as bare macros.
+    pub fn load_macros_with_packages(&mut self, macros: &[(String, Vec<String>, String, Option<String>)]) {
+        // Collect builtin macro names for conflict detection
+        let builtin_macro_names: std::collections::HashSet<String> = self.builtin_namespaces.iter()
+            .flat_map(|ns| ns.macros.iter().map(|m| m.name.clone()))
+            .collect();
+
+        for (name, args, body, package) in macros {
+            let loaded = LoadedMacro {
+                name: name.clone(),
+                args: args.clone(),
+                body: body.clone(),
+            };
+            if let Some(pkg) = package {
+                // Package macros go into package_macros for namespace access
+                self.package_macros
+                    .entry(pkg.clone())
+                    .or_default()
+                    .push(loaded.clone());
+                // Only add as bare macro if it doesn't conflict with builtins
+                if !builtin_macro_names.contains(name) {
+                    self.custom_macros.push(loaded);
+                }
+            } else {
+                // Project macros always go into custom_macros
+                self.custom_macros.push(loaded);
+            }
         }
     }
 
@@ -544,9 +513,19 @@ impl JinjaEngine {
                         if fixed == "None" || fixed == "True" || fixed == "False" {
                             fixed = fixed.to_lowercase();
                         }
-                        // Function calls like var(...) → none
+                        // Evaluate well-known dbt type functions to their SQL types
                         if fixed.contains('(') && fixed.contains(')') {
-                            fixed = "none".to_string();
+                            fixed = match fixed.trim() {
+                                s if s.contains("type_string") => "'VARCHAR'".to_string(),
+                                s if s.contains("type_varchar") => "'VARCHAR'".to_string(),
+                                s if s.contains("type_timestamp") => "'TIMESTAMP'".to_string(),
+                                s if s.contains("type_int") => "'INTEGER'".to_string(),
+                                s if s.contains("type_bigint") => "'BIGINT'".to_string(),
+                                s if s.contains("type_float") => "'DOUBLE'".to_string(),
+                                s if s.contains("type_numeric") => "'NUMERIC'".to_string(),
+                                s if s.contains("type_boolean") => "'BOOLEAN'".to_string(),
+                                _ => "none".to_string(),
+                            };
                         }
                         // List literals with dict inside → []
                         if fixed.starts_with('[') && fixed.contains('{') {
@@ -562,19 +541,56 @@ impl JinjaEngine {
     /// Build a Jinja template string for a namespace, containing all its macro definitions.
     /// Preprocesses macro bodies to handle dict literals and {% do %} statements.
     /// Validates each macro individually and skips those that fail to parse.
-    fn build_namespace_template(macros: &[LoadedMacro]) -> String {
-        let test_env = Environment::new();
-        let mut s = String::new();
+    fn build_namespace_template(macros: &[LoadedMacro], target_type: &str) -> String {
+        let mut test_env = Environment::new();
+        add_jinja2_compat(&mut test_env);
+        // Collect macro names for dispatch resolution
+        let macro_names: std::collections::HashSet<String> =
+            macros.iter().map(|m| m.name.clone()).collect();
+
+        // First pass: build macro strings and track which ones pass the probe
+        struct MacroEntry {
+            name: String,
+            macro_str: String,
+            dispatch_target: Option<String>, // set if this is a dispatcher macro
+            passed_probe: bool,
+        }
+        let mut entries: Vec<MacroEntry> = Vec::new();
+
         for m in macros {
             let clean = Self::clean_args(&m.args);
             let args_str = clean.join(", ");
             let mut body = preprocess_macro_body(&m.body);
-            // Detect dispatcher macros: body is just `{{ return(adapter.dispatch(...)(args)) }}`
-            // Replace their body with empty — avoids runtime errors from undefined adapter.
+            let mut dispatch_target = None;
+
+            // Detect dispatcher macros: body calls adapter.dispatch('name')(...).
+            // Patterns: `{{ return(adapter.dispatch('name')(args)) }}` or
+            //           `{{ adapter.dispatch('name', ...)(args) }}`
+            // Replace with a direct call to the best available variant.
             if body.contains("adapter.dispatch(") {
                 let trimmed = body.trim();
-                if trimmed.starts_with("{{ return(") || trimmed.starts_with("{{return(") {
-                    body = String::new();
+                let is_dispatcher = trimmed.starts_with("{{ return(")
+                    || trimmed.starts_with("{{return(")
+                    || trimmed.starts_with("{{ adapter.dispatch(")
+                    || trimmed.starts_with("{{adapter.dispatch(");
+                if is_dispatcher {
+                    if let Some(dispatched) = extract_dispatch_name(&body) {
+                        // Try prefixes in order based on target type
+                        let prefixes: Vec<&str> = if target_type == "snowflake" {
+                            vec!["snowflake__", "default__", "postgres__"]
+                        } else {
+                            vec!["default__", "postgres__"]
+                        };
+                        let target = prefixes
+                            .iter()
+                            .map(|prefix| format!("{}{}", prefix, dispatched))
+                            .find(|name| macro_names.contains(name))
+                            .unwrap_or_else(|| format!("default__{}", dispatched));
+                        dispatch_target = Some(target.clone());
+                        body = format!("{{{{ {}({}) | trim }}}}", target, args_str);
+                    } else {
+                        body = String::new();
+                    }
                 }
             }
             let macro_str = format!(
@@ -583,9 +599,52 @@ impl JinjaEngine {
             );
             // Validate that this macro can be parsed
             let mut probe = test_env.clone();
-            if probe.add_template_owned(format!("__probe_{}", m.name), macro_str.clone()).is_ok() {
-                s.push_str(&macro_str);
+            let probe_result = probe.add_template_owned(format!("__probe_{}", m.name), macro_str.clone());
+            if let Err(ref e) = probe_result {
+                tracing::debug!("Macro '{}' failed probe: {}", m.name, e);
             }
+            let passed = probe_result.is_ok();
+            entries.push(MacroEntry {
+                name: m.name.clone(),
+                macro_str,
+                dispatch_target,
+                passed_probe: passed,
+            });
+        }
+
+        // Collect names of macros that passed the probe
+        let included_names: std::collections::HashSet<&str> = entries.iter()
+            .filter(|e| e.passed_probe)
+            .map(|e| e.name.as_str())
+            .collect();
+
+        // Second pass: build the template, fixing dispatchers whose targets were skipped
+        let mut s = String::new();
+        for entry in &entries {
+            if !entry.passed_probe {
+                continue;
+            }
+            if let Some(target) = &entry.dispatch_target {
+                if !included_names.contains(target.as_str()) {
+                    // Target macro was skipped — make dispatcher body empty
+                    // so it doesn't call an undefined macro at render time
+                    tracing::debug!(
+                        "Dispatch target '{}' not available for '{}', using empty body",
+                        target, entry.name
+                    );
+                    let clean = Self::clean_args(
+                        &macros.iter().find(|m| m.name == entry.name)
+                            .map(|m| m.args.clone()).unwrap_or_default()
+                    );
+                    let args_str = clean.join(", ");
+                    s.push_str(&format!(
+                        "{{% macro {}({}) %}}{{% endmacro %}}\n",
+                        entry.name, args_str
+                    ));
+                    continue;
+                }
+            }
+            s.push_str(&entry.macro_str);
         }
         s
     }
@@ -765,9 +824,8 @@ impl JinjaEngine {
         // This only affects keyword argument contexts.
         result = strip_ternary_in_kwargs(&result);
 
-        // Replace list concatenation with + that minijinja doesn't support:
-        // `list + ['item']` → `list`  and  `['a'] + func()` → `['a']`
-        result = strip_list_concat(&result);
+        // Rewrite list.append(item) → list = list + [item]
+        result = rewrite_list_append(&result);
 
         // Fix unary negation of function calls: minijinja can't handle `-func(...)`.
         // Replace `=-func(` with `=(0 - func(` in Jinja expression contexts.
@@ -781,10 +839,41 @@ impl JinjaEngine {
     pub fn render(&self, sql: &str, ctx: &DbtContext) -> anyhow::Result<String> {
         let mut env = self.env.clone();
 
+        // dbt and adapter globals are added later, after all template registration
+
         // Register namespace templates so {% import "dbt" as dbt %} works
+        // For builtin namespaces that have a package override, merge in package macros
+        // that aren't already defined as builtins (builtins take priority)
+        let builtin_ns_names: std::collections::HashSet<&str> = self.builtin_namespaces.iter()
+            .map(|ns| ns.name)
+            .collect();
         for ns in &self.builtin_namespaces {
-            let tmpl = Self::build_namespace_template(&ns.macros);
+            let mut merged_macros = ns.macros.clone();
+            // Add package macros that aren't already builtin
+            if let Some(pkg_macros) = self.package_macros.get(ns.name) {
+                let builtin_names: std::collections::HashSet<&str> = ns.macros.iter()
+                    .map(|m| m.name.as_str())
+                    .collect();
+                for m in pkg_macros {
+                    if !builtin_names.contains(m.name.as_str()) {
+                        merged_macros.push(m.clone());
+                    }
+                }
+            }
+            let tmpl = Self::build_namespace_template(&merged_macros, &ctx.target_type);
             env.add_template_owned(ns.name.to_string(), tmpl)?;
+        }
+
+        // Register package namespaces that aren't already builtin
+        let mut package_ns_names = Vec::new();
+        for (pkg_name, pkg_macros) in &self.package_macros {
+            if !builtin_ns_names.contains(pkg_name.as_str()) {
+                let tmpl = Self::build_namespace_template(pkg_macros, &ctx.target_type);
+                match env.add_template_owned(pkg_name.clone(), tmpl) {
+                    Ok(_) => { package_ns_names.push(pkg_name.clone()); }
+                    Err(_) => { /* skip if template fails to parse */ }
+                }
+            }
         }
 
         // All custom macros are included — their bodies are preprocessed
@@ -792,10 +881,11 @@ impl JinjaEngine {
         let safe_macros: Vec<&LoadedMacro> = self.custom_macros.iter().collect();
 
         // Register custom macros as a project-level namespace template
+        // Auto-import builtin namespaces so macros can call dbt.type_string(), etc.
         let mut project_ns_ok = false;
         if !safe_macros.is_empty() && !ctx.project_name.is_empty() {
             let safe_owned: Vec<LoadedMacro> = safe_macros.iter().map(|m| (*m).clone()).collect();
-            let project_tmpl = Self::build_namespace_template(&safe_owned);
+            let project_tmpl = Self::build_namespace_template(&safe_owned, &ctx.target_type);
             match env.add_template_owned(ctx.project_name.clone(), project_tmpl) {
                 Ok(_) => { project_ns_ok = true; }
                 Err(_) => { /* skip namespace import if template fails to parse */ }
@@ -806,10 +896,26 @@ impl JinjaEngine {
         let mut macro_prefix = String::new();
 
         // Auto-import all builtin namespaces
+        // Use a prefixed alias for "dbt" to avoid shadowing the dbt global
+        // (add_jinja2_compat breaks imported-template macros when an import
+        // variable shadows a global of the same name).
         for ns in &self.builtin_namespaces {
+            let alias = if ns.name == "dbt" {
+                "_dbt_macros".to_string()
+            } else {
+                ns.name.to_string()
+            };
             macro_prefix.push_str(&format!(
                 "{{% import \"{}\" as {} %}}\n",
-                ns.name, ns.name
+                ns.name, alias
+            ));
+        }
+
+        // Auto-import package namespaces
+        for pkg_name in &package_ns_names {
+            macro_prefix.push_str(&format!(
+                "{{% import \"{}\" as {} %}}\n",
+                pkg_name, pkg_name
             ));
         }
 
@@ -823,18 +929,32 @@ impl JinjaEngine {
 
         // Add bare macros with preprocessed bodies (only those that parse)
         {
-            let test_env = Environment::new();
+            let mut test_env = Environment::new();
+            add_jinja2_compat(&mut test_env);
+            let bare_macro_names: std::collections::HashSet<String> =
+                safe_macros.iter().map(|m| m.name.clone()).collect();
             for m in &safe_macros {
                 let clean = Self::clean_args(&m.args);
                 let args_str = clean.join(", ");
                 let mut body = preprocess_macro_body(&m.body);
-                // Detect dispatcher macros: body is just `{{ return(adapter.dispatch(...)(args)) }}`
-                // Replace their body with empty — the platform-specific variant
-                // (default__name or postgres__name) will be available as a separate macro.
+                // Detect dispatcher macros: body calls adapter.dispatch('name')(...).
                 if body.contains("adapter.dispatch(") {
                     let trimmed = body.trim();
-                    if trimmed.starts_with("{{ return(") || trimmed.starts_with("{{return(") {
-                        body = String::new();
+                    let is_dispatcher = trimmed.starts_with("{{ return(")
+                        || trimmed.starts_with("{{return(")
+                        || trimmed.starts_with("{{ adapter.dispatch(")
+                        || trimmed.starts_with("{{adapter.dispatch(");
+                    if is_dispatcher {
+                        if let Some(dispatched) = extract_dispatch_name(&body) {
+                            let target = ["default__", "postgres__"]
+                                .iter()
+                                .map(|prefix| format!("{}{}", prefix, dispatched))
+                                .find(|name| bare_macro_names.contains(name))
+                                .unwrap_or_else(|| format!("default__{}", dispatched));
+                            body = format!("{{{{ {}({}) | trim }}}}", target, args_str);
+                        } else {
+                            body = String::new();
+                        }
                     }
                 }
                 let macro_str = format!(
@@ -854,14 +974,18 @@ impl JinjaEngine {
 
 
 
-
         // Register the template; fall back to import-only prefix on parse errors
         if env.add_template_owned("__model__".to_string(), full_template).is_err() {
             let mut fallback_prefix = String::new();
             for ns in &self.builtin_namespaces {
+                let alias = if ns.name == "dbt" {
+                    "_dbt_macros".to_string()
+                } else {
+                    ns.name.to_string()
+                };
                 fallback_prefix.push_str(&format!(
                     "{{% import \"{}\" as {} %}}\n",
-                    ns.name, ns.name
+                    ns.name, alias
                 ));
             }
             if project_ns_ok {
@@ -917,7 +1041,7 @@ impl JinjaEngine {
             }
         });
 
-        // Register source() function
+        // Register source() function — returns a RelationObject with .database/.schema/.identifier
         let sources_clone = sources.clone();
         let source_resolutions_clone = source_resolutions.clone();
         env.add_function(
@@ -937,15 +1061,21 @@ impl JinjaEngine {
                     table_name: table_name.clone(),
                 });
 
-                if execute {
-                    let key = (source_name.clone(), table_name.clone());
-                    if let Some(relation) = source_resolutions_clone.get(&key) {
-                        Ok(Value::from(relation.as_str()))
-                    } else {
-                        Ok(Value::from(format!("{source_name}.{table_name}")))
-                    }
+                let key = (source_name.clone(), table_name.clone());
+                if let Some(info) = source_resolutions_clone.get(&key) {
+                    Ok(Value::from_object(RelationObject::with_rendered(
+                        &info.database,
+                        &info.schema,
+                        &info.identifier,
+                        info.rendered.clone(),
+                    )))
                 } else {
-                    Ok(Value::from(format!("{source_name}.{table_name}")))
+                    // Fallback: construct a basic relation from the args
+                    Ok(Value::from_object(RelationObject::new(
+                        "",
+                        &source_name,
+                        &table_name,
+                    )))
                 }
             },
         );
@@ -985,27 +1115,12 @@ impl JinjaEngine {
             let default = args.get(1);
 
             if let Some(val) = vars_clone.get(&var_name) {
-                // Try to preserve the original type: parse as bool/int/float before falling back to string
-                let result = if val == "true" || val == "True" {
-                    Value::from(true)
-                } else if val == "false" || val == "False" {
-                    Value::from(false)
-                } else if val == "none" || val == "None" {
-                    Value::from(())
-                } else if let Ok(n) = val.parse::<i64>() {
-                    Value::from(n)
-                } else if let Ok(n) = val.parse::<f64>() {
-                    Value::from(n)
-                } else {
-                    Value::from(val.as_str())
-                };
-                Ok(result)
+                Ok(yaml_to_minijinja(val))
             } else if let Some(default) = default {
                 Ok(default.clone())
             } else {
-                // Return empty list instead of UNDEFINED so that operations like
-                // var('a') + var('b') (list concat) don't fail with "unsupported types"
-                Ok(Value::from(Vec::<Value>::new()))
+                // Return UNDEFINED for vars with no default and no value.
+                Ok(Value::UNDEFINED)
             }
         });
 
@@ -1049,11 +1164,142 @@ impl JinjaEngine {
             },
         );
 
-        // Register return() function (dbt macro helper — just passes through the value)
+        // Register return() function (dbt macro helper — stores value in thread-local
+        // for fill_staging_columns to consume, renders as empty string like dbt's return())
         env.add_function(
             "return",
             |args: &[Value]| -> Result<Value, JinjaError> {
-                Ok(args.first().cloned().unwrap_or(Value::UNDEFINED))
+                let val = args.first().cloned().unwrap_or(Value::UNDEFINED);
+                LAST_RETURN_VALUE.with(|v| *v.borrow_mut() = Some(val.clone()));
+                Ok(Value::from(""))
+            },
+        );
+
+        // Register _fill_staging_columns_impl(source_columns, staging_columns)
+        // Implements dbt's fill_staging_columns: for each expected staging column,
+        // output the column if it exists in source, or CAST(NULL AS type) if missing.
+        env.add_function(
+            "_fill_staging_columns_impl",
+            |args: &[Value]| -> Result<Value, JinjaError> {
+                let source_columns = args.first().cloned().unwrap_or_else(|| Value::from(Vec::<Value>::new()));
+                // staging_columns may be an empty string when the caller is a
+                // Jinja macro that used return() — the structured value lives in
+                // LAST_RETURN_VALUE.  Fall back to it when the arg is not a list.
+                let staging_columns_val = args.get(1).cloned()
+                    .filter(|v| v.kind() == minijinja::value::ValueKind::Seq)
+                    .or_else(|| LAST_RETURN_VALUE.with(|v| v.borrow_mut().take()))
+                    .unwrap_or_else(|| Value::from(Vec::<Value>::new()));
+
+                // Build set of source column names (uppercase for case-insensitive matching)
+                let mut source_names = std::collections::HashSet::new();
+                if let Ok(iter) = source_columns.try_iter() {
+                    for item in iter {
+                        let name = item.get_attr("name")
+                            .ok()
+                            .map(|v: Value| v.to_string())
+                            .unwrap_or_default();
+                        if !name.is_empty() {
+                            source_names.insert(name.to_uppercase());
+                        }
+                    }
+                }
+
+                // If no source columns known, use staging columns and cast all as NULL
+                if source_names.is_empty() {
+                    let mut parts = Vec::new();
+                    if let Ok(iter) = staging_columns_val.try_iter() {
+                        for item in iter {
+                            let name = item.get_attr("name")
+                                .ok()
+                                .map(|v: Value| v.to_string())
+                                .unwrap_or_default();
+                            if name.is_empty() {
+                                continue;
+                            }
+                            let datatype = item.get_attr("datatype")
+                                .ok()
+                                .map(|v: Value| {
+                                    let s = v.to_string();
+                                    if s.is_empty() || s == "undefined" || s == "none" || s == "None" {
+                                        "VARCHAR".to_string()
+                                    } else {
+                                        s
+                                    }
+                                })
+                                .unwrap_or_else(|| "VARCHAR".to_string());
+                            let alias = item.get_attr("alias")
+                                .ok()
+                                .and_then(|v: Value| {
+                                    let s = v.to_string();
+                                    if s.is_empty() || s == "undefined" || s == "none" || s == "None" {
+                                        None
+                                    } else {
+                                        Some(s)
+                                    }
+                                });
+                            let output_name = alias.as_deref().unwrap_or(&name);
+                            parts.push(format!("cast(null as {}) as {}", datatype, output_name));
+                        }
+                    }
+                    if parts.is_empty() {
+                        return Ok(Value::from("*"));
+                    }
+                    return Ok(Value::from(format!("\n    {}", parts.join(",\n    "))));
+                }
+
+                // Build output: for each staging column, emit source col or CAST(NULL)
+                let mut parts = Vec::new();
+                if let Ok(iter) = staging_columns_val.try_iter() {
+                    for item in iter {
+                        let name = item.get_attr("name")
+                            .ok()
+                            .map(|v: Value| v.to_string())
+                            .unwrap_or_default();
+                        if name.is_empty() {
+                            continue;
+                        }
+                        let datatype = item.get_attr("datatype")
+                            .ok()
+                            .map(|v: Value| {
+                                let s = v.to_string();
+                                if s.is_empty() || s == "undefined" || s == "none" || s == "None" {
+                                    "VARCHAR".to_string()
+                                } else {
+                                    s
+                                }
+                            })
+                            .unwrap_or_else(|| "VARCHAR".to_string());
+                        let alias = item.get_attr("alias")
+                            .ok()
+                            .and_then(|v: Value| {
+                                let s = v.to_string();
+                                if s.is_empty() || s == "undefined" || s == "none" || s == "None" {
+                                    None
+                                } else {
+                                    Some(s)
+                                }
+                            });
+                        let output_name = alias.as_deref().unwrap_or(&name);
+
+                        if source_names.contains(&name.to_uppercase()) {
+                            // Column exists in source — select it, with alias if needed
+                            if alias.is_some() {
+                                parts.push(format!("{} as {}", name, output_name));
+                            } else {
+                                parts.push(name);
+                            }
+                        } else {
+                            // Column missing — output CAST(NULL AS type)
+                            parts.push(format!("cast(null as {}) as {}", datatype, output_name));
+                        }
+                    }
+                }
+
+                if parts.is_empty() {
+                    return Ok(Value::from("*"));
+                }
+
+                Ok(Value::from(format!("\n    {}", parts.join(",\n    "))))
             },
         );
 
@@ -1124,8 +1370,19 @@ impl JinjaEngine {
             profile_name: project_name,
         });
 
-        // Build adapter object
-        let adapter_obj = Value::from_object(AdapterObject {});
+        // Build adapter object with column info from context
+        let adapter_obj = Value::from_object(AdapterObject {
+            relation_columns: ctx.relation_columns.clone(),
+            target_type: ctx.target_type.clone(),
+        });
+
+        // Build dbt namespace object — accessible from inside macros (unlike {% import %})
+        let dbt_obj = Value::from_object(DbtNamespaceObject {});
+
+        // Add dbt and adapter as globals so they're accessible in ALL templates,
+        // including namespace templates where macros call dbt.type_string() etc.
+        env.add_global("dbt", dbt_obj.clone());
+        env.add_global("adapter", adapter_obj.clone());
 
         // First render attempt
         let first_err = {
@@ -1134,6 +1391,7 @@ impl JinjaEngine {
                 execute => execute,
                 target => &target_obj,
                 adapter => &adapter_obj,
+                dbt => &dbt_obj,
                 this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
             }) {
                 Ok(r) => return Ok(r),
@@ -1178,6 +1436,7 @@ impl JinjaEngine {
                     execute => execute,
                     target => &target_obj,
                     adapter => &adapter_obj,
+                    dbt => &dbt_obj,
                     this => this_relation.as_ref().map(|r| Value::from(r.as_str())).unwrap_or(Value::UNDEFINED),
                 })
             };
@@ -1190,8 +1449,16 @@ impl JinjaEngine {
         // Build error message with diagnostics
         let final_detail = last_err.detail().unwrap_or("").to_string();
         let mut msg = last_err.to_string();
-        if let Ok(tmpl_err) = env.get_template("__model__") {
-            if let Some(line_no) = last_err.line() {
+        // Read line content from the template that actually errored (not always __model__)
+        if let Some(line_no) = last_err.line() {
+            let err_tmpl_name = last_err.name().unwrap_or("__model__");
+            let tmpl_to_read = if err_tmpl_name == "__model__" {
+                env.get_template("__model__").ok()
+            } else {
+                env.get_template(err_tmpl_name).ok()
+                    .or_else(|| env.get_template("__model__").ok())
+            };
+            if let Some(tmpl_err) = tmpl_to_read {
                 let source = tmpl_err.source();
                 let lines: Vec<&str> = source.lines().collect();
                 if line_no > 0 && (line_no as usize) <= lines.len() {
@@ -1222,9 +1489,305 @@ struct TargetObj {
     profile_name: String,
 }
 
+/// Render a minijinja Value as a SQL-safe string.
+/// For string values, returns the raw string content (not wrapped in quotes).
+/// For other types, returns the display representation.
+fn render_value(val: &Value) -> String {
+    if let Some(s) = val.as_str() {
+        s.to_string()
+    } else {
+        val.to_string()
+    }
+}
+
+/// Global dbt namespace object — accessible from inside macros (unlike {% import %}).
+/// Extract an argument by position or by kwargs name from method args.
+/// MiniJinja passes kwargs as the last element of args (a Kwargs map).
+fn get_method_arg(args: &[Value], pos: usize, kwarg_names: &[&str]) -> String {
+    // First try positional (non-kwargs values)
+    if let Some(val) = args.get(pos) {
+        if !val.is_kwargs() {
+            return render_value(val);
+        }
+    }
+    // Try kwargs (last arg if it's a kwargs map)
+    if let Some(last) = args.last() {
+        if last.is_kwargs() {
+            for name in kwarg_names {
+                if let Ok(val) = last.get_attr(name) {
+                    let s = render_value(&val);
+                    if !s.is_empty() && s != "undefined" {
+                        return s;
+                    }
+                }
+            }
+        }
+    }
+    String::new()
+}
+
+/// Provides dbt.type_string(), dbt.date_trunc(), etc.
+#[derive(Debug)]
+struct DbtNamespaceObject {}
+
+impl fmt::Display for DbtNamespaceObject {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "<dbt>")
+    }
+}
+
+impl minijinja::value::Object for DbtNamespaceObject {
+    fn call_method(
+        self: &Arc<Self>,
+        _state: &minijinja::State,
+        method: &str,
+        args: &[Value],
+    ) -> Result<Value, JinjaError> {
+        match method {
+            "type_string" => Ok(Value::from("VARCHAR")),
+            "type_timestamp" => Ok(Value::from("TIMESTAMP")),
+            "type_int" => Ok(Value::from("INTEGER")),
+            "type_bigint" => Ok(Value::from("BIGINT")),
+            "type_float" => Ok(Value::from("DOUBLE")),
+            "type_numeric" => Ok(Value::from("NUMERIC")),
+            "type_boolean" => Ok(Value::from("BOOLEAN")),
+            "date_trunc" => {
+                let datepart = get_method_arg(args, 0, &["datepart"]);
+                let field = get_method_arg(args, 1, &["field", "relation"]);
+                Ok(Value::from(format!("DATE_TRUNC('{datepart}', {field})")))
+            }
+            "dateadd" => {
+                let datepart = get_method_arg(args, 0, &["datepart"]);
+                let interval = get_method_arg(args, 1, &["interval"]);
+                let from_date = get_method_arg(args, 2, &["from_date_or_timestamp"]);
+                let is_snowflake = _state
+                    .lookup("target")
+                    .and_then(|t| t.get_attr("type").ok())
+                    .map(|t| t.to_string() == "snowflake")
+                    .unwrap_or(false);
+                if is_snowflake {
+                    Ok(Value::from(format!("DATEADD({datepart}, {interval}, {from_date})")))
+                } else {
+                    Ok(Value::from(format!("{from_date} + INTERVAL '{interval}' {datepart}")))
+                }
+            }
+            "datediff" => {
+                // dbt convention: datediff(first_date, second_date, datepart)
+                let first_date = get_method_arg(args, 0, &["first_date"]);
+                let second_date = get_method_arg(args, 1, &["second_date"]);
+                let datepart = get_method_arg(args, 2, &["datepart"]);
+                let is_snowflake = _state
+                    .lookup("target")
+                    .and_then(|t| t.get_attr("type").ok())
+                    .map(|t| t.to_string() == "snowflake")
+                    .unwrap_or(false);
+                if is_snowflake {
+                    Ok(Value::from(format!(
+                        "DATEDIFF({datepart}, {first_date}, {second_date})"
+                    )))
+                } else {
+                    Ok(Value::from(format!(
+                        "DATE_DIFF('{datepart}', {first_date}, {second_date})"
+                    )))
+                }
+            }
+            "safe_cast" => {
+                let field = get_method_arg(args, 0, &["field"]);
+                let r#type = get_method_arg(args, 1, &["type"]);
+                Ok(Value::from(format!("TRY_CAST({field} AS {type})")))
+            }
+            "cast" => {
+                let field = get_method_arg(args, 0, &["field"]);
+                let r#type = get_method_arg(args, 1, &["type"]);
+                Ok(Value::from(format!("CAST({field} AS {type})")))
+            }
+            "current_timestamp" | "current_timestamp_backcompat" => {
+                Ok(Value::from("CURRENT_TIMESTAMP"))
+            }
+            "current_timestamp_in_utc_backcompat" => {
+                Ok(Value::from("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"))
+            }
+            "concat" => {
+                // dbt.concat() takes a single list argument
+                let list = args.first().cloned().unwrap_or_default();
+                let fields: Vec<String> = if let Ok(iter) = list.try_iter() {
+                    iter.map(|v| render_value(&v)).collect()
+                } else {
+                    // Fallback: treat all args as individual items
+                    args.iter().map(|v| render_value(v)).collect()
+                };
+                Ok(Value::from(format!("CONCAT({})", fields.join(", "))))
+            }
+            "split_part" => {
+                let string = get_method_arg(args, 0, &["string_text", "string"]);
+                let delimiter = get_method_arg(args, 1, &["delimiter_text", "delimiter"]);
+                let part = get_method_arg(args, 2, &["part_number", "part"]);
+                Ok(Value::from(format!("SPLIT_PART({string}, {delimiter}, {part})")))
+            }
+            "hash" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("MD5({field})")))
+            }
+            "position" => {
+                let substr = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let string = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("POSITION({substr} IN {string})")))
+            }
+            "length" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("LENGTH({field})")))
+            }
+            "right" => {
+                let string = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let length = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("RIGHT({string}, {length})")))
+            }
+            "replace" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let old = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                let new = args.get(2).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("REPLACE({field}, {old}, {new})")))
+            }
+            "except" => Ok(Value::from("EXCEPT")),
+            "listagg" | "string_agg" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let delimiter = args.get(1).map(|v| v.to_string()).unwrap_or("','".to_string());
+                let is_snowflake = _state
+                    .lookup("target")
+                    .and_then(|t| t.get_attr("type").ok())
+                    .map(|t| t.to_string() == "snowflake")
+                    .unwrap_or(false);
+                if is_snowflake {
+                    Ok(Value::from(format!("LISTAGG({field}, {delimiter})")))
+                } else {
+                    Ok(Value::from(format!("STRING_AGG({field}, {delimiter})")))
+                }
+            }
+            "bool_or" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("BOOL_OR({val})")))
+            }
+            "any_value" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("ANY_VALUE({val})")))
+            }
+            "generate_series" => {
+                let start = args.first().map(|v| v.to_string()).unwrap_or_default();
+                let stop = args.get(1).map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("GENERATE_SERIES({start}, {stop})")))
+            }
+            "escape_single_quotes" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(val.replace('\'', "''")))
+            }
+            "cast_bool_to_text" => {
+                let field = args.first().map(|v| v.to_string()).unwrap_or_default();
+                Ok(Value::from(format!("CAST({field} AS VARCHAR)")))
+            }
+            "last_day" => {
+                let date = get_method_arg(args, 0, &["date"]);
+                Ok(Value::from(format!("LAST_DAY({date})")))
+            }
+            "now" => Ok(Value::from("CURRENT_TIMESTAMP")),
+            "current_timestamp_in_utc" => {
+                Ok(Value::from("CURRENT_TIMESTAMP"))
+            }
+            _ => {
+                // Fall back to trying template-level macro
+                Ok(Value::from(""))
+            }
+        }
+    }
+}
+
+/// A dbt Relation object with `.database`, `.schema`, `.identifier` attributes.
+/// Renders to a SQL-safe qualified name when used in string context.
+#[derive(Debug, Clone)]
+struct RelationObject {
+    database: String,
+    schema: String,
+    identifier: String,
+    /// The rendered string form for SQL: "schema"."table" or "db"."schema"."table"
+    rendered: String,
+    /// Include database prefix in rendered output
+    include_database: bool,
+}
+
+impl RelationObject {
+    fn new(database: &str, schema: &str, identifier: &str) -> Self {
+        let rendered = format!("{schema}.{identifier}");
+        Self {
+            database: database.to_string(),
+            schema: schema.to_string(),
+            identifier: identifier.to_string(),
+            rendered,
+            include_database: false,
+        }
+    }
+
+    fn with_rendered(database: &str, schema: &str, identifier: &str, rendered: String) -> Self {
+        Self {
+            database: database.to_string(),
+            schema: schema.to_string(),
+            identifier: identifier.to_string(),
+            rendered,
+            include_database: false,
+        }
+    }
+}
+
+impl fmt::Display for RelationObject {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.rendered)
+    }
+}
+
+impl minijinja::value::Object for RelationObject {
+    fn repr(self: &Arc<Self>) -> minijinja::value::ObjectRepr {
+        minijinja::value::ObjectRepr::Plain
+    }
+
+    fn get_value(self: &Arc<Self>, key: &Value) -> Option<Value> {
+        match key.as_str()? {
+            "database" => Some(Value::from(self.database.as_str())),
+            "schema" => Some(Value::from(self.schema.as_str())),
+            "identifier" => Some(Value::from(self.identifier.as_str())),
+            "name" => Some(Value::from(self.identifier.as_str())),
+            "table" => Some(Value::from(self.identifier.as_str())),
+            "include_policy" | "quote_policy" => Some(Value::from("")),
+            _ => None,
+        }
+    }
+
+    fn render(self: &Arc<Self>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.rendered)
+    }
+
+    fn call_method(
+        self: &Arc<Self>,
+        _state: &minijinja::State,
+        method: &str,
+        _args: &[Value],
+    ) -> Result<Value, JinjaError> {
+        match method {
+            "render" | "__str__" => Ok(Value::from(self.rendered.as_str())),
+            "include" => {
+                // Return self — dbt's `relation.include(database=False)` etc.
+                Ok(Value::from_object(self.as_ref().clone()))
+            }
+            _ => Ok(Value::from(self.rendered.as_str())),
+        }
+    }
+}
+
 /// Stub adapter object that provides dbt adapter methods.
 #[derive(Debug)]
-struct AdapterObject {}
+struct AdapterObject {
+    /// Known columns for relations, keyed by model/seed name.
+    relation_columns: std::collections::HashMap<String, Vec<String>>,
+    /// Target type (e.g. "snowflake", "bigquery", "duckdb").
+    target_type: String,
+}
 
 impl fmt::Display for AdapterObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -1241,20 +1804,123 @@ impl minijinja::value::Object for AdapterObject {
     ) -> Result<Value, JinjaError> {
         match method {
             "get_columns_in_relation" => {
-                Ok(Value::from(Vec::<Value>::new()))
+                // Extract the relation identifier from the argument
+                let identifier = if let Some(arg) = args.first() {
+                    // Try to get .identifier attribute (RelationObject)
+                    arg.get_attr("identifier")
+                        .ok()
+                        .filter(|v| !v.is_undefined() && !v.is_none())
+                        .map(|v| v.to_string())
+                        .or_else(|| {
+                            // Try .name attribute
+                            arg.get_attr("name").ok()
+                                .filter(|v| !v.is_undefined() && !v.is_none())
+                                .map(|v| v.to_string())
+                        })
+                        .unwrap_or_else(|| {
+                            // Fall back to string representation, extract last part
+                            let s = arg.to_string();
+                            s.rsplit('.').next().unwrap_or(&s).to_string()
+                        })
+                } else {
+                    return Ok(Value::from(Vec::<Value>::new()));
+                };
+
+                // Clean up identifier: strip quotes, schema prefix, __dbt__cte__ prefix
+                let clean_id = identifier.trim_matches('"').trim_matches('\'');
+                let clean_id = clean_id.strip_prefix("__dbt__cte__").unwrap_or(clean_id);
+
+                // Look up columns by identifier (case-insensitive)
+                let cols = self.relation_columns.get(clean_id)
+                    .or_else(|| self.relation_columns.get(&clean_id.to_uppercase()))
+                    .or_else(|| self.relation_columns.get(&clean_id.to_lowercase()));
+
+                if cols.is_none() {
+                    tracing::debug!(
+                        "get_columns_in_relation: no columns for '{}', available={}",
+                        clean_id, self.relation_columns.len()
+                    );
+                }
+
+                if let Some(columns) = cols {
+                    // Return column objects with .name and .datatype attributes.
+                    // For Snowflake targets, uppercase column names to match how
+                    // Snowflake normalizes unquoted identifiers.
+                    let is_snowflake = self.target_type == "snowflake";
+                    let col_values: Vec<Value> = columns.iter().map(|name| {
+                        let mut map = std::collections::BTreeMap::new();
+                        let col_name = if is_snowflake { name.to_uppercase() } else { name.clone() };
+                        map.insert("name".to_string(), Value::from(col_name));
+                        map.insert("datatype".to_string(), Value::from("VARCHAR"));
+                        Value::from(map)
+                    }).collect();
+                    Ok(Value::from(col_values))
+                } else {
+                    Ok(Value::from(Vec::<Value>::new()))
+                }
             }
             "get_relation" => {
-                Ok(Value::UNDEFINED)
+                // Extract kwargs: adapter.get_relation(database=..., schema=..., identifier=...)
+                use minijinja::value::{Kwargs, from_args};
+                let mut database = String::new();
+                let mut schema = String::new();
+                let mut identifier = String::new();
+                if let Ok((_rest, kwargs)) = from_args::<(&[Value], Kwargs)>(args) {
+                    if let Some(v) = kwargs.get::<Option<String>>("database").ok().flatten() {
+                        database = v;
+                    }
+                    if let Some(v) = kwargs.get::<Option<String>>("schema").ok().flatten() {
+                        schema = v;
+                    }
+                    if let Some(v) = kwargs.get::<Option<String>>("identifier").ok().flatten() {
+                        identifier = v;
+                    }
+                }
+                // Fallback: try positional args
+                if database.is_empty() && schema.is_empty() && identifier.is_empty() {
+                    for (i, arg) in args.iter().enumerate() {
+                        let s = arg.to_string();
+                        if s != "none" && s != "undefined" {
+                            match i {
+                                0 => database = s,
+                                1 => schema = s,
+                                2 => identifier = s,
+                                _ => {}
+                            }
+                        }
+                    }
+                }
+                Ok(Value::from_object(RelationObject::new(&database, &schema, &identifier)))
             }
             "dispatch" => {
                 let macro_name = args
                     .first()
                     .map(|v| v.to_string())
                     .unwrap_or_default();
-                let target_name = format!("default__{macro_name}");
-                Ok(Value::from_object(DispatchResult { target_name }))
+                // Build a fallback chain: try adapter-specific variant first, then default__
+                let is_snowflake = _state
+                    .lookup("target")
+                    .and_then(|t| t.get_attr("type").ok())
+                    .map(|t| t.to_string() == "snowflake")
+                    .unwrap_or(false);
+                let mut candidates = Vec::new();
+                if is_snowflake {
+                    candidates.push(format!("snowflake__{macro_name}"));
+                }
+                candidates.push(format!("default__{macro_name}"));
+                Ok(Value::from_object(DispatchResult { candidates }))
             }
             "set_query_tag" | "set_query_comment" => {
+                Ok(Value::from(""))
+            }
+            "quote" => {
+                let val = args.first().map(|v| v.to_string()).unwrap_or_default();
+                // Snowflake normalizes unquoted identifiers to uppercase, so
+                // quoting a lowercase name must also uppercase it to match.
+                let val = if self.target_type == "snowflake" { val.to_uppercase() } else { val };
+                Ok(Value::from(format!("\"{val}\"")))
+            }
+            "rename_relation" | "drop_relation" | "create_schema" | "drop_schema" => {
                 Ok(Value::from(""))
             }
             _ => {
@@ -1264,26 +1930,27 @@ impl minijinja::value::Object for AdapterObject {
     }
 }
 
-/// Result of adapter.dispatch() — a callable that resolves to the default__ macro.
+/// Result of adapter.dispatch() — a callable that tries adapter-specific macros first.
 #[derive(Debug)]
 struct DispatchResult {
-    target_name: String,
+    candidates: Vec<String>,
 }
 
 impl fmt::Display for DispatchResult {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "<dispatch:{}>", self.target_name)
+        write!(f, "<dispatch:{}>", self.candidates.first().map(|s| s.as_str()).unwrap_or("?"))
     }
 }
 
 impl minijinja::value::Object for DispatchResult {
     fn call(self: &Arc<Self>, state: &minijinja::State, args: &[Value]) -> Result<Value, JinjaError> {
-        match state.call_macro(&self.target_name, args) {
-            Ok(result) => Ok(Value::from(result)),
-            Err(_) => {
-                Ok(Value::from(""))
+        for candidate in &self.candidates {
+            match state.call_macro(candidate, args) {
+                Ok(result) => return Ok(Value::from(result)),
+                Err(_) => continue,
             }
         }
+        Ok(Value::from(""))
     }
 }
 
@@ -1303,6 +1970,55 @@ fn parse_ref_args(args: &[Value]) -> Result<(String, Option<String>), JinjaError
             ErrorKind::MissingArgument,
             "ref() requires 1 or 2 arguments",
         )),
+    }
+}
+
+/// Extract the dispatched macro name from an adapter.dispatch() call.
+/// e.g., `{{ return(adapter.dispatch('cents_to_dollars')(column_name)) }}` -> Some("cents_to_dollars")
+fn extract_dispatch_name(body: &str) -> Option<String> {
+    let dispatch_pos = body.find("adapter.dispatch(")?;
+    let after_dispatch = &body[dispatch_pos + "adapter.dispatch(".len()..];
+    // Find the quote-delimited name: 'name' or "name"
+    let quote = after_dispatch.chars().next()?;
+    if quote != '\'' && quote != '"' {
+        return None;
+    }
+    let name_start = 1;
+    let name_end = after_dispatch[name_start..].find(quote)?;
+    Some(after_dispatch[name_start..name_start + name_end].to_string())
+}
+
+/// Convert a serde_yaml::Value to a minijinja::Value, preserving types.
+fn yaml_to_minijinja(val: &serde_yaml::Value) -> Value {
+    match val {
+        serde_yaml::Value::String(s) => Value::from(s.as_str()),
+        serde_yaml::Value::Bool(b) => Value::from(*b),
+        serde_yaml::Value::Number(n) => {
+            if let Some(i) = n.as_i64() {
+                Value::from(i)
+            } else if let Some(f) = n.as_f64() {
+                Value::from(f)
+            } else {
+                Value::from(n.to_string())
+            }
+        }
+        serde_yaml::Value::Sequence(seq) => {
+            let items: Vec<Value> = seq.iter().map(yaml_to_minijinja).collect();
+            Value::from(items)
+        }
+        serde_yaml::Value::Mapping(map) => {
+            let mut m = std::collections::BTreeMap::new();
+            for (k, v) in map {
+                let key = match k {
+                    serde_yaml::Value::String(s) => s.clone(),
+                    other => serde_yaml::to_string(other).unwrap_or_default().trim().to_string(),
+                };
+                m.insert(key, yaml_to_minijinja(v));
+            }
+            Value::from(m)
+        }
+        serde_yaml::Value::Null => Value::from(()),
+        _ => Value::UNDEFINED,
     }
 }
 
@@ -1394,7 +2110,82 @@ fn strip_config_blocks(sql: &str) -> String {
 
 /// Strip {% do ... %} statements from SQL (not supported by minijinja).
 /// Strip list concatenation with `+` operator that minijinja doesn't support.
+/// Wrap list-literal assignments with `_mklist()` when `.append(` is used later.
+///
+/// Detects `{% set VAR = [...] %}` and rewrites to `{% set VAR = _mklist([...]) %}`
+/// for any VAR that is later used with `.append(`. This enables true list mutation
+/// via jinja2's MutableList object.
+fn rewrite_list_append(sql: &str) -> String {
+    // First, collect variable names that use .append(
+    let mut appended_vars = std::collections::HashSet::new();
+    let mut pos = 0;
+    while let Some(idx) = sql[pos..].find(".append(") {
+        let abs = pos + idx;
+        // Walk backwards to find the variable name
+        let prefix = &sql[..abs];
+        let var_end = prefix.len();
+        let var_start = prefix.rfind(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+            .map(|i| i + 1)
+            .unwrap_or(0);
+        if var_start < var_end {
+            appended_vars.insert(sql[var_start..var_end].to_string());
+        }
+        pos = abs + 8;
+    }
+    if appended_vars.is_empty() {
+        return sql.to_string();
+    }
+
+    // Now rewrite `{% set VAR = [...]` to `{% set VAR = _mklist([...]`
+    // for any VAR in appended_vars
+    let mut result = sql.to_string();
+    for var in &appended_vars {
+        // Match patterns like {% set VAR = [ or {%- set VAR = [
+        let patterns = [
+            format!("{{% set {} = [", var),
+            format!("{{%- set {} = [", var),
+            format!("{{% set {} =[", var),
+            format!("{{%- set {} =[", var),
+        ];
+        for pat in &patterns {
+            if let Some(idx) = result.find(pat.as_str()) {
+                // Find the `= [` part and insert _mklist(
+                let eq_pos = result[idx..].find('=').unwrap() + idx;
+                let bracket_pos = result[eq_pos..].find('[').unwrap() + eq_pos;
+                // Find matching ]
+                let mut depth = 1;
+                let mut j = bracket_pos + 1;
+                let mut in_str: Option<char> = None;
+                let bytes = result.as_bytes();
+                while j < result.len() && depth > 0 {
+                    if let Some(q) = in_str {
+                        if bytes[j] == b'\\' { j += 1; }
+                        else if bytes[j] == q as u8 { in_str = None; }
+                    } else {
+                        match bytes[j] {
+                            b'\'' | b'"' => in_str = Some(bytes[j] as char),
+                            b'[' => depth += 1,
+                            b']' => depth -= 1,
+                            _ => {}
+                        }
+                    }
+                    j += 1;
+                }
+                if depth == 0 {
+                    // j now points past the closing ]
+                    // Insert _mklist( before [ and ) after ]
+                    result.insert_str(j, ")");
+                    result.insert_str(bracket_pos, "_mklist(");
+                    break; // Only process first occurrence per var
+                }
+            }
+        }
+    }
+    result
+}
+
 /// Removes the ` + EXPR` part where EXPR is a list literal or function call.
+#[allow(dead_code)]
 fn strip_list_concat(sql: &str) -> String {
     let mut result = sql.to_string();
     // Repeatedly find and remove ` + [...]` or ` + func(...)` patterns in Jinja contexts
@@ -1475,6 +2266,30 @@ fn strip_list_concat(sql: &str) -> String {
         }
     }
     result
+}
+
+/// Check if a column name is a SQL reserved keyword that needs quoting.
+fn is_sql_reserved_keyword(name: &str) -> bool {
+    matches!(
+        name.to_uppercase().as_str(),
+        "ORDER" | "SELECT" | "FROM" | "WHERE" | "GROUP" | "HAVING" | "LIMIT"
+            | "OFFSET" | "INSERT" | "UPDATE" | "DELETE" | "CREATE" | "DROP"
+            | "ALTER" | "TABLE" | "INDEX" | "VIEW" | "JOIN" | "LEFT" | "RIGHT"
+            | "INNER" | "OUTER" | "CROSS" | "ON" | "AND" | "OR" | "NOT" | "IN"
+            | "IS" | "NULL" | "TRUE" | "FALSE" | "AS" | "CASE" | "WHEN" | "THEN"
+            | "ELSE" | "END" | "BETWEEN" | "LIKE" | "EXISTS" | "ALL" | "ANY"
+            | "UNION" | "EXCEPT" | "INTERSECT" | "INTO" | "VALUES" | "SET"
+            | "DEFAULT" | "PRIMARY" | "KEY" | "FOREIGN" | "REFERENCES" | "CHECK"
+            | "UNIQUE" | "CONSTRAINT" | "DISTINCT" | "ASC" | "DESC" | "BY"
+            | "WITH" | "RECURSIVE" | "OVER" | "PARTITION" | "WINDOW" | "ROWS"
+            | "RANGE" | "RANK" | "ROW" | "FETCH" | "NEXT" | "ONLY" | "PERCENT"
+            | "ROLLUP" | "CUBE" | "GROUPING" | "FILTER" | "CURRENT" | "DATE"
+            | "TIME" | "TIMESTAMP" | "INTERVAL" | "YEAR" | "MONTH" | "DAY"
+            | "HOUR" | "MINUTE" | "SECOND" | "ZONE" | "BOTH" | "LEADING"
+            | "TRAILING" | "FOR" | "SOME" | "TO" | "USER" | "GRANT" | "REVOKE"
+            | "COLUMN" | "TYPE" | "FULL" | "NATURAL" | "USING" | "DO" | "IF"
+            | "BEGIN" | "COMMIT" | "ROLLBACK" | "START" | "TRANSACTION"
+    )
 }
 
 /// Fix unary negation of function calls: minijinja can't handle `-func(...)`.
@@ -1689,13 +2504,17 @@ fn strip_do_statements(sql: &str) -> String {
 /// blocks that minijinja cannot parse in function call keyword arguments.
 /// Replaces `=VALUE if COND else ALT` with `=VALUE`.
 fn strip_ternary_in_kwargs(sql: &str) -> String {
+    strip_ternary_in_kwargs_inner(sql, false)
+}
+
+fn strip_ternary_in_kwargs_inner(sql: &str, is_macro_body: bool) -> String {
     let mut result = sql.to_string();
     // Repeatedly find and replace ternary patterns
     // Pattern: ='string' if ... else 'string'  OR  ="string" if ... else "string"
     loop {
         let mut found = false;
         // Search for ` if ` that appears after a value in kwarg context
-        if let Some(if_pos) = find_kwarg_ternary(&result) {
+        if let Some(if_pos) = find_kwarg_ternary_inner(&result, is_macro_body) {
             if let Some(else_end) = find_else_end(&result, if_pos) {
                 // Remove from if_pos to else_end
                 result.replace_range(if_pos..else_end, "");
@@ -1712,54 +2531,78 @@ fn strip_ternary_in_kwargs(sql: &str) -> String {
 /// Find position of ` if ` that is part of a ternary expression in a kwarg context.
 /// Returns the start of ` if ` (including leading space).
 fn find_kwarg_ternary(sql: &str) -> Option<usize> {
+    find_kwarg_ternary_inner(sql, false)
+}
+
+fn find_kwarg_ternary_inner(sql: &str, is_macro_body: bool) -> Option<usize> {
     let bytes = sql.as_bytes();
     let len = bytes.len();
     let mut i = 0;
     while i + 4 < len {
         // Look for " if " or ")if " patterns
         if (bytes[i] == b' ' || bytes[i] == b')') && &bytes[i + 1..i + 4] == b"if " {
-            if is_inside_jinja(sql, i) {
+            if is_macro_body || is_inside_jinja(sql, i) {
                 // Verify there's a kwarg context: go backwards past value to find =
                 let trimmed = sql[..i].trim_end();
                 let has_kwarg = {
-                    // Check if the value before ` if ` is preceded by `=`
-                    // Value can be: 'string', "string", identifier, func_call()
-                    let mut j = trimmed.len();
-                    // Skip past string literal or identifier
-                    if j > 0 && (trimmed.as_bytes()[j - 1] == b'\'' || trimmed.as_bytes()[j - 1] == b'"') {
-                        let quote = trimmed.as_bytes()[j - 1];
-                        j -= 1;
-                        while j > 0 && trimmed.as_bytes()[j - 1] != quote {
+                    // Skip backwards over a chained expression:
+                    // e.g. source(a, b).database, func(), 'string', identifier
+                    let tb = trimmed.as_bytes();
+                    let mut j = tb.len();
+                    let mut moved = true;
+                    while moved && j > 0 {
+                        moved = false;
+                        let c = tb[j - 1];
+                        if c == b'\'' || c == b'"' {
+                            let quote = c;
                             j -= 1;
-                        }
-                        if j > 0 {
-                            j -= 1; // skip opening quote
-                        }
-                    } else if j > 0 && trimmed.as_bytes()[j - 1] == b')' {
-                        // Skip function call - find matching (
-                        let mut depth = 1;
-                        j -= 1;
-                        while j > 0 && depth > 0 {
+                            while j > 0 && tb[j - 1] != quote { j -= 1; }
+                            if j > 0 { j -= 1; }
+                            moved = true;
+                        } else if c == b')' {
+                            let mut depth = 1;
                             j -= 1;
-                            if trimmed.as_bytes()[j] == b')' {
-                                depth += 1;
-                            } else if trimmed.as_bytes()[j] == b'(' {
-                                depth -= 1;
+                            while j > 0 && depth > 0 {
+                                j -= 1;
+                                if tb[j] == b')' { depth += 1; }
+                                else if tb[j] == b'(' { depth -= 1; }
                             }
-                        }
-                        // Skip function name
-                        while j > 0 && (trimmed.as_bytes()[j - 1].is_ascii_alphanumeric() || trimmed.as_bytes()[j - 1] == b'_' || trimmed.as_bytes()[j - 1] == b'.') {
+                            moved = true;
+                        } else if c == b']' {
+                            let mut depth = 1;
                             j -= 1;
+                            while j > 0 && depth > 0 {
+                                j -= 1;
+                                if tb[j] == b']' { depth += 1; }
+                                else if tb[j] == b'[' { depth -= 1; }
+                            }
+                            moved = true;
+                        } else if c.is_ascii_alphanumeric() || c == b'_' {
+                            while j > 0 && (tb[j-1].is_ascii_alphanumeric() || tb[j-1] == b'_') {
+                                j -= 1;
+                            }
+                            moved = true;
                         }
-                    } else {
-                        // Skip identifier
-                        while j > 0 && (trimmed.as_bytes()[j - 1].is_ascii_alphanumeric() || trimmed.as_bytes()[j - 1] == b'_' || trimmed.as_bytes()[j - 1] == b'.') {
+                        // Consume dot or pipe to continue chaining
+                        if moved && j > 0 && (tb[j - 1] == b'.' || tb[j - 1] == b'|') {
                             j -= 1;
+                            moved = true;
                         }
                     }
                     // Check for = before the value
                     let before_val = trimmed[..j].trim_end();
-                    before_val.ends_with('=')
+                    if !before_val.ends_with('=') {
+                        false
+                    } else {
+                        // Exclude `{% set var = val if ... %}` — not a kwarg context
+                        let before_eq = before_val[..before_val.len()-1].trim_end();
+                        let mut vj = before_eq.len();
+                        while vj > 0 && (before_eq.as_bytes()[vj-1].is_ascii_alphanumeric() || before_eq.as_bytes()[vj-1] == b'_') {
+                            vj -= 1;
+                        }
+                        let keyword = before_eq[..vj].trim_end();
+                        !(keyword.ends_with("set") || keyword.ends_with("set-"))
+                    }
                 };
                 if has_kwarg {
                     return Some(i);
@@ -1830,51 +2673,65 @@ fn find_else_end(sql: &str, if_start: usize) -> Option<usize> {
 /// Handles: {'key': 'val'}, {"key": "val"}, and multiline dicts like
 /// {\n  "key": "val"\n}
 fn preprocess_dicts(sql: &str) -> String {
+    preprocess_dicts_inner(sql, false)
+}
+
+/// If `is_macro_body` is true, skips the expensive `is_inside_jinja` check
+/// since all content in a macro body is considered inside Jinja context.
+fn preprocess_dicts_inner(sql: &str, is_macro_body: bool) -> String {
     let mut result = String::with_capacity(sql.len());
     let chars: Vec<char> = sql.chars().collect();
     let len = chars.len();
     let mut i = 0;
+    // Track whether we're inside a Jinja tag: 0=raw, 1={{ }}, 2={% %}
+    let mut jinja_ctx: u8 = 0;
 
     while i < len {
-        // Look for { that's not part of {{ or {% or {#
+        // Detect Jinja delimiters to track context
+        if i + 1 < len {
+            match (chars[i], chars[i + 1]) {
+                ('{', '{') => { jinja_ctx = 1; }
+                ('{', '%') => { jinja_ctx = 2; }
+                ('}', '}') if jinja_ctx == 1 => { jinja_ctx = 0; }
+                ('%', '}') if jinja_ctx == 2 => { jinja_ctx = 0; }
+                // Handle whitespace-trimming variants: -%} and -}}
+                ('-', '%') if jinja_ctx == 2 && i + 2 < len && chars[i + 2] == '}' => { jinja_ctx = 0; }
+                ('-', '}') if jinja_ctx == 1 && i + 2 < len && chars[i + 2] == '}' => { jinja_ctx = 0; }
+                _ => {}
+            }
+        }
+
+        // Look for { that could be a dict literal
         if chars[i] == '{' && i + 1 < len {
             let next = chars[i + 1];
+            // Skip Jinja delimiters themselves
             if next == '{' || next == '%' || next == '#' || next == '-' {
                 result.push(chars[i]);
                 i += 1;
                 continue;
             }
-            // Only replace dicts that are inside a Jinja context
-            let byte_pos: usize = chars[..i].iter().map(|c| c.len_utf8()).sum();
-            if !is_inside_jinja(sql, byte_pos) {
+            // Preserve dicts inside Jinja tags — minijinja handles them natively
+            if jinja_ctx != 0 {
                 result.push(chars[i]);
                 i += 1;
                 continue;
             }
+            // Outside Jinja tags: only process dicts that are between Jinja
+            // blocks (e.g. inside {% if %}...{% endif %}) but not in raw SQL.
+            // Skip this expensive check for macro bodies (all content is inside Jinja).
+            if !is_macro_body {
+                let byte_pos: usize = chars[..i].iter().map(|c| c.len_utf8()).sum();
+                if !is_inside_jinja(sql, byte_pos) {
+                    result.push(chars[i]);
+                    i += 1;
+                    continue;
+                }
+            }
             // Check if this looks like a Python dict literal
-            // Pattern: { followed by optional whitespace/newlines then ' or "
-            // Only detect dict if preceded by = ( [ , : or whitespace (not random SQL chars)
             let prev_char = if i > 0 { chars[i - 1] } else { ' ' };
             let dict_context = prev_char == '=' || prev_char == '(' || prev_char == '['
                 || prev_char == ',' || prev_char == ':' || prev_char == ' '
                 || prev_char == '\n' || prev_char == '\t';
-            // Skip dicts inside {% set x = {...} %} — they're used for iteration
-            // and minijinja supports dict literals natively
-            let in_set_tag = {
-                let before: String = chars[..i].iter().collect();
-                let last_block_open = before.rfind("{%");
-                if let Some(o) = last_block_open {
-                    let tag_content = &before[o..];
-                    tag_content.contains(" set ") || tag_content.contains("-set ") || tag_content.contains(" set\n")
-                } else {
-                    false
-                }
-            };
-            if in_set_tag {
-                result.push(chars[i]);
-                i += 1;
-                continue;
-            }
             let mut peek = i + 1;
             while peek < len && (chars[peek] == ' ' || chars[peek] == '\n' || chars[peek] == '\r' || chars[peek] == '\t') {
                 peek += 1;
@@ -1925,9 +2782,10 @@ fn preprocess_dicts(sql: &str) -> String {
 /// - Replace dict literals with `none`
 /// - Remove {% do expr %} lines (convert to comments)
 fn preprocess_macro_body(body: &str) -> String {
-    let mut result = preprocess_dicts(body);
+    let mut result = preprocess_dicts_inner(body, true);
+    result = strip_ternary_in_kwargs_inner(&result, true);
+    result = rewrite_list_append(&result);
     result = strip_do_statements(&result);
-    result = strip_list_concat(&result);
     result
 }
 
@@ -2024,7 +2882,8 @@ mod tests {
     fn test_preprocess_dicts_inside_jinja() {
         let sql = "{{ func({'key': 'val'}) }}";
         let result = preprocess_dicts(sql);
-        assert_eq!(result, "{{ func(none) }}");
+        // Dicts inside {{ }} are preserved — minijinja handles them natively
+        assert_eq!(result, sql);
     }
 
     #[test]
@@ -2096,6 +2955,76 @@ mod tests {
         let cv = config_values.lock().unwrap();
         assert_eq!(cv.get("materialized"), Some(&"table".to_string()));
         assert_eq!(cv.get("schema"), Some(&"analytics".to_string()));
+    }
+
+    #[test]
+    fn test_globals_in_imported_templates() {
+        let mut env = Environment::new();
+        add_jinja2_compat(&mut env);
+        env.set_undefined_behavior(minijinja::UndefinedBehavior::Chainable);
+
+        // Register templates FIRST (before globals) — matching actual engine order
+        env.add_template_owned("myns".to_string(), r#"{% macro get_cols() %}{% set columns = [{"name": "test", "datatype": dbt.type_string()}] %}{% for c in columns %}{{ c.name }}:{{ c.datatype }}{% endfor %}{% endmacro %}"#.to_string()).unwrap();
+        env.add_template_owned("model".to_string(), r#"{% import "myns" as myns %}RESULT={{ myns.get_cols() }}"#.to_string()).unwrap();
+
+        // Add globals AFTER template registration
+        env.add_global("dbt", Value::from_object(DbtNamespaceObject {}));
+
+        let tmpl = env.get_template("model").unwrap();
+        // Also pass dbt in render context (like the engine does)
+        let result = tmpl.render(minijinja::context! {
+            dbt => Value::from_object(DbtNamespaceObject {}),
+        }).unwrap();
+        assert!(result.contains("VARCHAR"), "Expected VARCHAR in result: {}", result);
+    }
+
+    #[test]
+    fn test_engine_dbt_global_in_project_macros() {
+        // Use the actual JinjaEngine to render a model that calls a project
+        // macro which uses dbt.type_string() inside a {% set %} with dict literals.
+        let mut engine = JinjaEngine::new();
+
+        // Add a custom macro that mimics amazon-selling-partner's exact pattern
+        engine.load_macros(&[(
+            "get_type_test".to_string(),
+            vec![],
+            r#"
+{% set columns = [
+    {"name": "charge_kind", "datatype": dbt.type_string()},
+    {"name": "currency_amount", "datatype": dbt.type_float()},
+    {"name": "index", "datatype": dbt.type_int()}
+] %}
+{% for c in columns %}{{ c.name }}:{{ c.datatype }},{% endfor %}
+"#.to_string(),
+        )]);
+
+        let ctx = DbtContext {
+            project_name: "test_project".to_string(),
+            execute: false,
+            vars: std::collections::HashMap::new(),
+            target_name: "dev".to_string(),
+            target_schema: "public".to_string(),
+            target_database: "db".to_string(),
+            target_type: "duckdb".to_string(),
+            refs: std::sync::Arc::new(std::sync::Mutex::new(vec![])),
+            sources: std::sync::Arc::new(std::sync::Mutex::new(vec![])),
+            config_values: std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashMap::new())),
+            ref_resolutions: std::collections::HashMap::new(),
+            source_resolutions: std::collections::HashMap::new(),
+            full_refresh: false,
+            is_incremental: false,
+            this_relation: None,
+            relation_columns: std::collections::HashMap::new(),
+        };
+
+        // Model SQL that calls the project macro via the namespace
+        let sql = "SELECT {{ test_project.get_type_test() }} as result";
+        let result = engine.render(sql, &ctx);
+        match &result {
+            Ok(r) => eprintln!("Engine test result: {}", r),
+            Err(e) => eprintln!("Engine test error: {}", e),
+        }
+        assert!(result.is_ok(), "Engine render failed: {:?}", result.err());
     }
 
     #[test]

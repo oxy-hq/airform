@@ -122,8 +122,9 @@ fn test_with_clause_merging_in_existing_with() {
     let manifest = compile_ecommerce();
 
     // The orders mart model already has a WITH clause in its raw SQL.
-    // After ephemeral CTE injection, there should be a single merged WITH block,
-    // not nested WITH clauses.
+    // After ephemeral CTE injection, there should be a single top-level WITH
+    // keyword. Ephemeral models may contain their own nested WITH clauses inside
+    // __dbt__cte__ wrappers (at paren depth > 0), which is valid SQL.
     let orders_model = manifest
         .models()
         .find(|m| m.name == "orders")
@@ -131,20 +132,45 @@ fn test_with_clause_merging_in_existing_with() {
 
     let sql = orders_model.compiled_sql.as_ref().unwrap();
 
-    // Count occurrences of "with " at the start of lines (case-insensitive).
-    // There should be exactly one WITH keyword introducing the CTE block.
-    let with_count = sql
-        .to_uppercase()
-        .split('\n')
-        .filter(|line| {
-            let trimmed = line.trim();
-            trimmed.starts_with("WITH ") || trimmed == "WITH"
-        })
-        .count();
+    // Count top-level WITH keywords (at paren depth 0, not inside comments).
+    let mut depth: i32 = 0;
+    let mut in_line_comment = false;
+    let bytes = sql.as_bytes();
+    let upper = sql.to_uppercase();
+    let ubytes = upper.as_bytes();
+    let mut top_level_with_count = 0;
+    for i in 0..bytes.len() {
+        if bytes[i] == b'\n' {
+            in_line_comment = false;
+            continue;
+        }
+        if in_line_comment {
+            continue;
+        }
+        if i + 1 < bytes.len() && bytes[i] == b'-' && bytes[i + 1] == b'-' {
+            in_line_comment = true;
+            continue;
+        }
+        match ubytes[i] {
+            b'(' => depth += 1,
+            b')' => depth -= 1,
+            b'W' if depth == 0 => {
+                if upper[i..].starts_with("WITH ")
+                    || upper[i..].starts_with("WITH\n")
+                    || upper[i..].starts_with("WITH\r")
+                {
+                    if i == 0 || ubytes[i - 1].is_ascii_whitespace() {
+                        top_level_with_count += 1;
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
 
     assert_eq!(
-        with_count, 1,
-        "should have exactly one WITH keyword after merging, got {with_count}.\nSQL:\n{sql}"
+        top_level_with_count, 1,
+        "should have exactly one top-level WITH keyword after merging, got {top_level_with_count}.\nSQL:\n{sql}"
     );
 }
 

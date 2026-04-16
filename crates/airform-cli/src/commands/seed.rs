@@ -15,7 +15,10 @@ pub async fn run(project_dir: &Path) -> anyhow::Result<()> {
     let manifest = airform_parser::parse(&load_state, &engine)?;
 
     // Execute seed loading
-    let executor = Executor::new();
+    let target_schema = load_state.target.as_ref()
+        .and_then(|t| t.schema.clone())
+        .unwrap_or_else(|| "public".to_string());
+    let executor = Executor::new(&target_schema);
     let seed_results = executor.load_seeds(&manifest).await?;
 
     let duration = start.elapsed();

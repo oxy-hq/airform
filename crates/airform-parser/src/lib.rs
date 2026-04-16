@@ -19,7 +19,7 @@ pub fn parse(load_state: &LoadState, engine: &JinjaEngine) -> anyhow::Result<Man
     manifest.set_metadata(&load_state.project);
 
     // Parse sources from schema files first (models may reference them)
-    parse_sources(&load_state.project, &load_state.schema_files, &mut manifest)?;
+    parse_sources(&load_state.project, &load_state.schema_files, engine, &mut manifest)?;
 
     // Parse seeds (models may reference them via ref())
     parse_seeds(

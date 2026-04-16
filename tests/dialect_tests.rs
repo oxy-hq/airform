@@ -67,12 +67,12 @@ fn compile_and_analyze(
     }
 
     let mut engine = airform_jinja::JinjaEngine::new();
-    let macro_defs: Vec<(String, Vec<String>, String)> = load_state
+    let macro_defs: Vec<(String, Vec<String>, String, Option<String>)> = load_state
         .macro_definitions
         .iter()
-        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone()))
+        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone(), m.package.clone()))
         .collect();
-    engine.load_macros(&macro_defs);
+    engine.load_macros_with_packages(&macro_defs);
 
     let mut manifest = airform_parser::parse(&load_state, &engine)
         .expect("parse project");
@@ -454,6 +454,183 @@ mod snowflake_tests {
                 }
             }
         }
+    }
+}
+
+// ===========================================================================
+// TIER 3: Execute against Snowflake via WarehouseAdapter
+// ===========================================================================
+
+mod snowflake_adapter_tests {
+    use super::*;
+
+    fn try_create_adapter() -> Option<airform_executor::adapters::SnowflakeAdapter> {
+        dotenvy::dotenv().ok();
+        airform_executor::adapters::SnowflakeAdapter::from_env().ok()
+    }
+
+    #[tokio::test]
+    #[ignore = "tier3"]
+    async fn snowflake_adapter_execute_query() {
+        let adapter = match try_create_adapter() {
+            Some(a) => a,
+            None => {
+                eprintln!("Snowflake not configured, skipping");
+                return;
+            }
+        };
+
+        use airform_executor::WarehouseAdapter;
+        let result = adapter.execute_query("SELECT 1 AS one, 'hello' AS greeting").await;
+        assert!(result.is_ok(), "query should succeed: {:?}", result.err());
+        let qr = result.unwrap();
+        println!("QueryResult: row_count={}, columns={:?}, rows={:?}", qr.row_count, qr.columns, qr.rows);
+        assert!(qr.row_count > 0, "should have at least 1 row");
+        assert!(qr.columns.len() >= 2, "should have at least 2 columns");
+    }
+
+    #[tokio::test]
+    #[ignore = "tier3"]
+    async fn snowflake_adapter_seed_and_execute() {
+        let adapter = match try_create_adapter() {
+            Some(a) => a,
+            None => {
+                eprintln!("Snowflake not configured, skipping");
+                return;
+            }
+        };
+
+        // Compile the Snowflake test project
+        let project_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/dialect/projects/snowflake");
+        let (manifest, _compile_result, graph) = compile_and_analyze(&project_dir);
+
+        // Use the target_schema from the profile (sources compile to this schema)
+        let load_state = airform_loader::load_with_target(&project_dir, None).unwrap();
+        let target_schema = load_state
+            .target
+            .as_ref()
+            .and_then(|t| t.schema.clone())
+            .unwrap_or_else(|| "PUBLIC".to_string())
+            .to_uppercase();
+
+        let executor = airform_executor::Executor::with_adapter(
+            Box::new(adapter),
+            &target_schema,
+        );
+
+        // Load seeds and execute
+        let seed_results = executor.load_seeds(&manifest).await.expect("seeds");
+        println!("Seeds loaded: {}", seed_results.len());
+
+        let exec_result = executor.execute(&manifest, &graph, None).await.expect("execute");
+        println!(
+            "Execution: {} OK, {} ERR, {} SKIP",
+            exec_result.success_count(),
+            exec_result.error_count(),
+            exec_result.skipped_count()
+        );
+        for r in &exec_result.results {
+            if r.status == airform_executor::NodeStatus::Error {
+                println!("ERROR {}: {:?}", r.name, r.message);
+            }
+        }
+        assert!(
+            exec_result.success_count() > 0,
+            "at least one model should succeed"
+        );
+    }
+}
+
+// ===========================================================================
+// TIER 3: Execute against BigQuery via WarehouseAdapter
+// ===========================================================================
+
+mod bigquery_adapter_tests {
+    use super::*;
+
+    fn try_create_adapter() -> Option<airform_executor::adapters::BigQueryAdapter> {
+        dotenvy::dotenv().ok();
+        airform_executor::adapters::BigQueryAdapter::from_env().ok()
+    }
+
+    #[tokio::test]
+    #[ignore = "tier3"]
+    async fn bigquery_adapter_execute_query() {
+        let adapter = match try_create_adapter() {
+            Some(a) => a,
+            None => {
+                eprintln!("BigQuery not configured, skipping");
+                return;
+            }
+        };
+
+        use airform_executor::WarehouseAdapter;
+        let result = adapter
+            .execute_query("SELECT 1 AS one, 'hello' AS greeting")
+            .await;
+        assert!(result.is_ok(), "query should succeed: {:?}", result.err());
+        let qr = result.unwrap();
+        println!(
+            "QueryResult: row_count={}, columns={:?}, rows={:?}",
+            qr.row_count, qr.columns, qr.rows
+        );
+        assert!(qr.row_count > 0, "should have at least 1 row");
+        assert!(qr.columns.len() >= 2, "should have at least 2 columns");
+    }
+
+    #[tokio::test]
+    #[ignore = "tier3"]
+    async fn bigquery_adapter_seed_and_execute() {
+        let adapter = match try_create_adapter() {
+            Some(a) => a,
+            None => {
+                eprintln!("BigQuery not configured, skipping");
+                return;
+            }
+        };
+
+        // Compile the BigQuery test project
+        let project_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/dialect/projects/bigquery");
+        let (manifest, _compile_result, graph) = compile_and_analyze(&project_dir);
+
+        // Use the target_schema from the profile
+        let load_state = airform_loader::load_with_target(&project_dir, None).unwrap();
+        let target_schema = load_state
+            .target
+            .as_ref()
+            .and_then(|t| t.schema.clone())
+            .unwrap_or_else(|| "analytics".to_string());
+
+        let executor = airform_executor::Executor::with_adapter(
+            Box::new(adapter),
+            &target_schema,
+        );
+
+        // Load seeds and execute
+        let seed_results = executor.load_seeds(&manifest).await.expect("seeds");
+        println!("Seeds loaded: {}", seed_results.len());
+
+        let exec_result = executor
+            .execute(&manifest, &graph, None)
+            .await
+            .expect("execute");
+        println!(
+            "Execution: {} OK, {} ERR, {} SKIP",
+            exec_result.success_count(),
+            exec_result.error_count(),
+            exec_result.skipped_count()
+        );
+        for r in &exec_result.results {
+            if r.status == airform_executor::NodeStatus::Error {
+                println!("ERROR {}: {:?}", r.name, r.message);
+            }
+        }
+        assert!(
+            exec_result.success_count() > 0,
+            "at least one model should succeed"
+        );
     }
 }
 

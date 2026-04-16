@@ -1,6 +1,6 @@
 //! Unit-level tests for the Jinja rendering engine.
 
-use airform_jinja::{DbtContext, JinjaEngine};
+use airform_jinja::{DbtContext, JinjaEngine, SourceRelationInfo};
 
 fn default_ctx() -> DbtContext {
     DbtContext::new("test_project")
@@ -110,7 +110,12 @@ fn test_source_renders_in_execute_mode() {
     ctx.execute = true;
     ctx.source_resolutions.insert(
         ("jaffle_shop".to_string(), "raw_customers".to_string()),
-        "raw_customers".to_string(),
+        SourceRelationInfo {
+            database: "main".to_string(),
+            schema: "raw".to_string(),
+            identifier: "raw_customers".to_string(),
+            rendered: "raw.raw_customers".to_string(),
+        },
     );
 
     let sql = "SELECT * FROM {{ source('jaffle_shop', 'raw_customers') }}";
@@ -177,7 +182,7 @@ fn test_config_returns_empty_string() {
 fn test_var_with_value() {
     let engine = JinjaEngine::new();
     let mut ctx = default_ctx();
-    ctx.vars.insert("my_var".to_string(), "hello".to_string());
+    ctx.vars.insert("my_var".to_string(), "hello".into());
 
     let sql = "SELECT '{{ var('my_var') }}' as val";
     let rendered = engine.render(sql, &ctx).unwrap();
@@ -365,5 +370,50 @@ fn test_jinja_for_loop() {
     assert!(
         rendered.contains("a, b, c"),
         "expected 'a, b, c' in rendered output, got: {rendered}"
+    );
+}
+
+#[test]
+fn test_concat_with_urls() {
+    let engine = JinjaEngine::new();
+    let mut ctx = default_ctx();
+    ctx.target_type = "snowflake".to_string();
+
+    let sql = "SELECT {{ dbt.concat([\"'https://facebook.com/'\", dbt.split_part('id', \"'_'\", 1), \"'/posts/'\", dbt.split_part('id', \"'_'\", 2)]) }} as post_url";
+    let rendered = engine.render(sql, &ctx).unwrap();
+
+    // Should NOT have double-quoted URL strings
+    assert!(
+        !rendered.contains("\"'https://"),
+        "URL strings should not be double-quoted, got: {rendered}"
+    );
+    // Should have proper CONCAT with comma-separated args
+    assert!(
+        rendered.contains("CONCAT("),
+        "expected CONCAT function, got: {rendered}"
+    );
+    assert!(
+        rendered.contains("'https://facebook.com/'"),
+        "expected URL string with single quotes, got: {rendered}"
+    );
+    // Verify the SPLIT_PART calls are included properly
+    assert!(
+        rendered.contains("SPLIT_PART("),
+        "expected SPLIT_PART in output, got: {rendered}"
+    );
+}
+
+#[test]
+fn test_dbt_split_part() {
+    let engine = JinjaEngine::new();
+    let mut ctx = default_ctx();
+    ctx.target_type = "snowflake".to_string();
+
+    let sql = "SELECT {{ dbt.split_part('my_col', \"'-'\", 1) }} as part1";
+    let rendered = engine.render(sql, &ctx).unwrap();
+
+    assert!(
+        rendered.contains("SPLIT_PART(my_col, '-', 1)"),
+        "expected SPLIT_PART(my_col, '-', 1), got: {rendered}"
     );
 }

@@ -12,12 +12,12 @@ pub fn run(
     let mut engine = airform_jinja::JinjaEngine::new();
 
     // Load custom macros
-    let macro_defs: Vec<(String, Vec<String>, String)> = load_state
+    let macro_defs: Vec<(String, Vec<String>, String, Option<String>)> = load_state
         .macro_definitions
         .iter()
-        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone()))
+        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone(), m.package.clone()))
         .collect();
-    engine.load_macros(&macro_defs);
+    engine.load_macros_with_packages(&macro_defs);
 
     let mut manifest = airform_parser::parse(&load_state, &engine)?;
     let graph = airform_graph::build_graph(&manifest)?;
@@ -34,6 +34,7 @@ pub fn run(
     if let Some(col_name) = column {
         // Compile to get resolved SQL for accurate lineage
         let mut ctx = airform_jinja::DbtContext::new(&load_state.project.name);
+        ctx.populate_vars(&load_state.project.vars);
         if let Some(target) = &load_state.target {
             ctx.target_schema = target.schema.clone().unwrap_or_else(|| "public".to_string());
             ctx.target_database = target.database.clone().unwrap_or_else(|| "main".to_string());

@@ -156,12 +156,12 @@ fn test_repo_full(
     }
 
     let mut engine = airform_jinja::JinjaEngine::new();
-    let macro_defs: Vec<(String, Vec<String>, String)> = load_state
+    let macro_defs: Vec<(String, Vec<String>, String, Option<String>)> = load_state
         .macro_definitions
         .iter()
-        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone()))
+        .map(|m| (m.name.clone(), m.args.clone(), m.body.clone(), m.package.clone()))
         .collect();
-    engine.load_macros(&macro_defs);
+    engine.load_macros_with_packages(&macro_defs);
 
     // ---- Parse ----
     let mut manifest = match airform_parser::parse(&load_state, &engine) {

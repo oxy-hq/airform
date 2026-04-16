@@ -73,6 +73,9 @@ pub struct DbtProject {
     #[serde(default = "default_clean_targets", alias = "clean-targets")]
     pub clean_targets: Vec<String>,
 
+    #[serde(default = "default_packages_install_path", alias = "packages-install-path")]
+    pub packages_install_path: String,
+
     /// Model-level config overrides keyed by project name -> path -> config
     #[serde(default)]
     pub models: Option<serde_yaml::Value>,
@@ -311,4 +314,8 @@ fn default_target_path() -> String {
 }
 fn default_clean_targets() -> Vec<String> {
     vec!["target".to_string(), "dbt_packages".to_string()]
+}
+
+fn default_packages_install_path() -> String {
+    "dbt_packages".to_string()
 }

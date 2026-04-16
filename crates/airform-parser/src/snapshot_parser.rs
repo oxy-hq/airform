@@ -18,7 +18,8 @@ pub fn parse_snapshots(
         let unique_id = format!("snapshot.{}.{}", project.name, snapshot_file.name);
 
         // First pass: render with execute=false to extract refs/sources/config
-        let ctx = DbtContext::new(&project.name);
+        let mut ctx = DbtContext::new(&project.name);
+        ctx.populate_vars(&project.vars);
         let _ = engine.render(&raw_sql, &ctx);
 
         let refs = ctx.take_refs();
