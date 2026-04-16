@@ -541,7 +541,7 @@ impl JinjaEngine {
     /// Build a Jinja template string for a namespace, containing all its macro definitions.
     /// Preprocesses macro bodies to handle dict literals and {% do %} statements.
     /// Validates each macro individually and skips those that fail to parse.
-    fn build_namespace_template(macros: &[LoadedMacro], target_type: &str) -> String {
+    fn build_namespace_template(macros: &[LoadedMacro], target_type: &str, namespace_name: Option<&str>) -> String {
         let mut test_env = Environment::new();
         add_jinja2_compat(&mut test_env);
         // Collect macro names for dispatch resolution
@@ -562,6 +562,22 @@ impl JinjaEngine {
             let args_str = clean.join(", ");
             let mut body = preprocess_macro_body(&m.body);
             let mut dispatch_target = None;
+
+            // Strip self-namespace prefix from macro bodies so that macros
+            // within the same namespace can call each other without the prefix.
+            // e.g., inside "shopify" namespace: shopify.other_macro() → other_macro()
+            // Only strip when followed by a known macro name to avoid false positives.
+            if let Some(ns) = namespace_name {
+                if !ns.is_empty() {
+                    let prefix = format!("{}.", ns);
+                    for known_macro in &macro_names {
+                        let qualified = format!("{}{}", prefix, known_macro);
+                        if body.contains(&qualified) {
+                            body = body.replace(&qualified, known_macro);
+                        }
+                    }
+                }
+            }
 
             // Detect dispatcher macros: body calls adapter.dispatch('name')(...).
             // Patterns: `{{ return(adapter.dispatch('name')(args)) }}` or
@@ -835,9 +851,17 @@ impl JinjaEngine {
         // Rewrite list.append(item) → list = list + [item]
         result = rewrite_list_append(&result);
 
+        // Strip list concatenation with macro calls/variables: `[...] + func()` or `[...] + var`
+        // These fail in minijinja because macro calls return text, not lists.
+        result = strip_list_concat(&result);
+
         // Fix unary negation of function calls: minijinja can't handle `-func(...)`.
         // Replace `=-func(` with `=(0 - func(` in Jinja expression contexts.
         result = fix_unary_negation(&result);
+
+        // Wrap macro calls in {% set VAR = func(...) %} with _get_return() so that
+        // dbt macros using {{ return(val) }} return structured values, not text.
+        result = wrap_set_macro_calls(&result);
 
         result
     }
@@ -868,7 +892,7 @@ impl JinjaEngine {
                     }
                 }
             }
-            let tmpl = Self::build_namespace_template(&merged_macros, &ctx.target_type);
+            let tmpl = Self::build_namespace_template(&merged_macros, &ctx.target_type, Some(ns.name));
             env.add_template_owned(ns.name.to_string(), tmpl)?;
         }
 
@@ -876,7 +900,7 @@ impl JinjaEngine {
         let mut package_ns_names = Vec::new();
         for (pkg_name, pkg_macros) in &self.package_macros {
             if !builtin_ns_names.contains(pkg_name.as_str()) {
-                let tmpl = Self::build_namespace_template(pkg_macros, &ctx.target_type);
+                let tmpl = Self::build_namespace_template(pkg_macros, &ctx.target_type, Some(pkg_name));
                 match env.add_template_owned(pkg_name.clone(), tmpl) {
                     Ok(_) => { package_ns_names.push(pkg_name.clone()); }
                     Err(_) => { /* skip if template fails to parse */ }
@@ -893,7 +917,7 @@ impl JinjaEngine {
         let mut project_ns_ok = false;
         if !safe_macros.is_empty() && !ctx.project_name.is_empty() {
             let safe_owned: Vec<LoadedMacro> = safe_macros.iter().map(|m| (*m).clone()).collect();
-            let project_tmpl = Self::build_namespace_template(&safe_owned, &ctx.target_type);
+            let project_tmpl = Self::build_namespace_template(&safe_owned, &ctx.target_type, Some(&ctx.project_name));
             match env.add_template_owned(ctx.project_name.clone(), project_tmpl) {
                 Ok(_) => { project_ns_ok = true; }
                 Err(_) => { /* skip namespace import if template fails to parse */ }
@@ -1182,13 +1206,36 @@ impl JinjaEngine {
         );
 
         // Register return() function (dbt macro helper — stores value in thread-local
-        // for fill_staging_columns to consume, renders as empty string like dbt's return())
+        // so _get_return() can recover the structured value after a macro call,
+        // AND returns the value directly so {{ return(val) }} renders val as text)
         env.add_function(
             "return",
             |args: &[Value]| -> Result<Value, JinjaError> {
                 let val = args.first().cloned().unwrap_or(Value::UNDEFINED);
                 LAST_RETURN_VALUE.with(|v| *v.borrow_mut() = Some(val.clone()));
-                Ok(Value::from(""))
+                Ok(val)
+            },
+        );
+
+        // Register _get_return(text_output) — recovers structured return values from macro calls.
+        // In dbt, macros can use {{ return(val) }} to return structured data (lists, dicts).
+        // In minijinja, macros return text. This function bridges the gap:
+        // - If return() was called during the macro, drain the stored value and return it
+        // - Otherwise, return the text output as-is
+        env.add_function(
+            "_get_return",
+            |args: &[Value]| -> Result<Value, JinjaError> {
+                let fallback = args.first().cloned().unwrap_or(Value::UNDEFINED);
+                let stored = LAST_RETURN_VALUE.with(|v| v.borrow_mut().take());
+                Ok(stored.unwrap_or(fallback))
+            },
+        );
+
+        // Register load_result() stub — dbt internal for operation results (not supported)
+        env.add_function(
+            "load_result",
+            |_: &[Value]| -> Result<Value, JinjaError> {
+                Ok(Value::UNDEFINED)
             },
         );
 
@@ -2575,6 +2622,123 @@ fn strip_multi_set(sql: &str) -> String {
 
 /// Rewrite `{% do expr %}` → `{% set _do_N = expr %}` so minijinja evaluates the
 /// expression (including mutations like dict.update()) instead of silently stripping it.
+/// Wrap macro calls in `{% set VAR = func(...) %}` with `_get_return()` so that
+/// dbt macros using `{{ return(val) }}` have their structured return values recovered.
+/// Without this, macro calls in set-expressions return the text output (empty string)
+/// instead of the value passed to `return()`.
+fn wrap_set_macro_calls(sql: &str) -> String {
+    // Known built-in functions that don't use return() — skip wrapping these
+    const BUILTINS: &[&str] = &[
+        "var", "ref", "source", "env_var", "config", "range", "dict", "zip",
+        "_mklist", "_mkdict", "_get_return", "log", "print", "tojson", "fromjson",
+        "set", "namespace", "caller", "loop", "cycler", "joiner",
+        "load_result", "graph", "adapter", "target", "project_name", "modules",
+        "exceptions", "context", "execute", "flags", "invocation_id",
+        "run_started_at", "model", "this", "builtins",
+    ];
+
+    let mut result = sql.to_string();
+    let mut search_from = 0;
+
+    loop {
+        // Find {% set or {%- set
+        let set_tag = result[search_from..].find("{% set ")
+            .or_else(|| result[search_from..].find("{%- set "))
+            .or_else(|| result[search_from..].find("{%-set "))
+            .map(|p| search_from + p);
+        let Some(tag_start) = set_tag else { break };
+
+        // Find the = sign
+        let rest_after_set = &result[tag_start..];
+        let eq_rel = match rest_after_set.find('=') {
+            Some(p) => p,
+            None => { search_from = tag_start + 6; continue; }
+        };
+
+        // Check if this is a multi-assignment (a, b = expr) — skip
+        let between = &rest_after_set[..eq_rel];
+        if between.contains(',') {
+            search_from = tag_start + eq_rel + 1;
+            continue;
+        }
+
+        let eq_abs = tag_start + eq_rel;
+
+        // Find closing %} or -%} for this tag, accounting for strings
+        let after_eq = &result[eq_abs + 1..];
+        let mut in_str: Option<char> = None;
+        let mut close_pos = None;
+        let bytes = after_eq.as_bytes();
+        let mut j = 0;
+        while j < bytes.len().saturating_sub(1) {
+            if let Some(q) = in_str {
+                if bytes[j] == b'\\' { j += 2; continue; }
+                if bytes[j] == q as u8 { in_str = None; }
+            } else {
+                match bytes[j] {
+                    b'\'' | b'"' => in_str = Some(bytes[j] as char),
+                    b'-' if j + 2 < bytes.len() && bytes[j + 1] == b'%' && bytes[j + 2] == b'}' => {
+                        close_pos = Some(j);
+                        break;
+                    }
+                    b'%' if j + 1 < bytes.len() && bytes[j + 1] == b'}' => {
+                        close_pos = Some(j);
+                        break;
+                    }
+                    _ => {}
+                }
+            }
+            j += 1;
+        }
+        let Some(expr_end_offset) = close_pos else {
+            search_from = eq_abs + 1;
+            continue;
+        };
+
+        // Extract the expression (between = and %}/-%})
+        let expr = after_eq[..expr_end_offset].trim();
+        if expr.is_empty() {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+
+        // Check if expression starts with an identifier followed by (
+        let first_char = expr.chars().next().unwrap_or(' ');
+        if !first_char.is_ascii_alphabetic() && first_char != '_' {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+        let ident_end = expr.find(|c: char| !c.is_ascii_alphanumeric() && c != '_').unwrap_or(expr.len());
+        let ident = &expr[..ident_end];
+        let after_ident = expr[ident_end..].trim_start();
+
+        if !after_ident.starts_with('(') {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+
+        // Skip known builtins
+        if BUILTINS.contains(&ident) {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+
+        // Wrap the expression with _get_return()
+        let wrapped = format!("_get_return({})", expr);
+        let replace_start = eq_abs + 1 + (after_eq.len() - after_eq.trim_start().len());
+        let replace_end = eq_abs + 1 + expr_end_offset;
+        // Trim trailing whitespace from the expression region
+        let actual_end = {
+            let region = &result[replace_start..replace_end];
+            replace_start + region.trim_end().len()
+        };
+        result.replace_range(replace_start..actual_end, &wrapped);
+        search_from = replace_start + wrapped.len() + 2;
+    }
+
+    result
+}
+
 fn rewrite_do_statements(sql: &str) -> String {
     let mut result = sql.to_string();
     let mut counter = 0u32;
@@ -2931,8 +3095,10 @@ fn preprocess_macro_body(body: &str) -> String {
     let mut result = preprocess_dicts_inner(body, true);
     result = strip_ternary_in_kwargs_inner(&result, true);
     result = rewrite_list_append(&result);
+    result = strip_list_concat(&result);
     result = rewrite_dict_mutation(&result);
     result = rewrite_do_statements(&result);
+    result = wrap_set_macro_calls(&result);
     result
 }
 
@@ -3247,5 +3413,118 @@ mod tests {
         let sql = "{{ config(materialized='table', description='données utilisateur') }}\nSELECT 1";
         let result = strip_config_blocks(sql);
         assert_eq!(result, "SELECT 1");
+    }
+
+    #[test]
+    fn test_mutable_dict_rendering() {
+        // Test the full pipeline: rewrite_dict_mutation + rewrite_do_statements + render
+        let macro_body = r#"
+{%- set consistent_fields = ['spend', 'impressions', 'clicks'] -%}
+{%- set final_fields_superset={} -%}
+{%- for consistent_field in consistent_fields -%}
+    {%- do final_fields_superset.update({consistent_field: consistent_field}) -%}
+{%- endfor -%}
+select
+{%- for field in final_fields_superset.keys()|sort() %}
+  {{ field }}{% if not loop.last %},{% endif %}
+{%- endfor %}
+from test_table
+"#;
+        // Apply preprocessing (same as preprocess_macro_body)
+        let processed = preprocess_macro_body(macro_body);
+        eprintln!("Processed macro body:\n{}", processed);
+
+        // Build the template
+        let tpl = format!("{{% macro get_query() %}}{}{{% endmacro %}}", processed);
+        eprintln!("Full template:\n{}", tpl);
+
+        let mut env = Environment::new();
+        jinja2::add_jinja2_compat(&mut env);
+
+        // Try adding the template
+        match env.add_template_owned("ns".to_string(), tpl.clone()) {
+            Ok(()) => eprintln!("Template parsed OK"),
+            Err(e) => {
+                panic!("Template failed to parse: {}\n\nTemplate:\n{}", e, tpl);
+            }
+        }
+
+        let render_tpl = r#"{% import "ns" as ns %}{{ ns.get_query() }}"#;
+        env.add_template("render", render_tpl).unwrap();
+        let tmpl = env.get_template("render").unwrap();
+        match tmpl.render(minijinja::context!{}) {
+            Ok(result) => {
+                eprintln!("Render result:\n{}", result);
+                assert!(result.contains("clicks"), "expected 'clicks' in output: {}", result);
+                assert!(result.contains("impressions"), "expected 'impressions' in output: {}", result);
+                assert!(result.contains("spend"), "expected 'spend' in output: {}", result);
+            }
+            Err(e) => {
+                panic!("Render failed: {}", e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_return_value_recovery() {
+        // Test that macros using return() have their values recovered via _get_return()
+        let mut env = Environment::new();
+        jinja2::add_jinja2_compat(&mut env);
+
+        // Register return() and _get_return() — same as the engine does
+        env.add_function("return", |args: &[Value]| -> Result<Value, minijinja::Error> {
+            let val = args.first().cloned().unwrap_or(Value::UNDEFINED);
+            LAST_RETURN_VALUE.with(|v| *v.borrow_mut() = Some(val));
+            Ok(Value::from(""))
+        });
+        env.add_function("_get_return", |args: &[Value]| -> Result<Value, minijinja::Error> {
+            let fallback = args.first().cloned().unwrap_or(Value::UNDEFINED);
+            let stored = LAST_RETURN_VALUE.with(|v| v.borrow_mut().take());
+            Ok(stored.unwrap_or(fallback))
+        });
+
+        // Macro that returns a list via return()
+        let ns = r#"
+{% macro get_items() %}
+{% set items = _mklist([]) %}
+{% for x in ['a', 'b', 'c'] %}
+{% set _ = items.append(x) %}
+{% endfor %}
+{{ return(items) }}
+{% endmacro %}
+"#;
+        env.add_template_owned("ns".to_string(), ns.to_string()).unwrap();
+
+        // Model SQL that calls the macro — preprocessed to use _get_return()
+        let model = r#"{% import "ns" as ns %}{% set items = _get_return(ns.get_items()) %}{% for item in items %}{{ item }},{% endfor %}"#;
+        env.add_template("model", model).unwrap();
+        let result = env.get_template("model").unwrap().render(minijinja::context!{}).unwrap();
+        eprintln!("Return value test result: '{}'", result);
+        assert!(result.contains("a,"), "expected 'a,' in output: {}", result);
+        assert!(result.contains("b,"), "expected 'b,' in output: {}", result);
+        assert!(result.contains("c,"), "expected 'c,' in output: {}", result);
+    }
+
+    #[test]
+    fn test_wrap_set_macro_calls() {
+        // Basic macro call wrapping
+        let sql = "{% set x = get_items() %}";
+        let result = wrap_set_macro_calls(sql);
+        assert!(result.contains("_get_return(get_items())"), "got: {}", result);
+
+        // Should skip builtins
+        let sql2 = "{% set x = var('key', 'default') %}";
+        let result2 = wrap_set_macro_calls(sql2);
+        assert!(!result2.contains("_get_return"), "should not wrap var(): {}", result2);
+
+        // Should skip non-function expressions
+        let sql3 = "{% set x = 42 %}";
+        let result3 = wrap_set_macro_calls(sql3);
+        assert!(!result3.contains("_get_return"), "should not wrap literal: {}", result3);
+
+        // With trim markers
+        let sql4 = "{%- set items = get_enabled_packages() -%}";
+        let result4 = wrap_set_macro_calls(sql4);
+        assert!(result4.contains("_get_return(get_enabled_packages())"), "got: {}", result4);
     }
 }
