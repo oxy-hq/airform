@@ -576,10 +576,14 @@ impl JinjaEngine {
                 if is_dispatcher {
                     if let Some(dispatched) = extract_dispatch_name(&body) {
                         // Try prefixes in order based on target type
-                        let prefixes: Vec<&str> = if target_type == "snowflake" {
-                            vec!["snowflake__", "default__", "postgres__"]
-                        } else {
-                            vec!["default__", "postgres__"]
+                        let prefixes: Vec<&str> = match target_type {
+                            "snowflake" => vec!["snowflake__", "default__", "postgres__"],
+                            "duckdb" => vec!["duckdb__", "postgres__", "default__"],
+                            "bigquery" => vec!["bigquery__", "default__", "postgres__"],
+                            "redshift" => vec!["redshift__", "postgres__", "default__"],
+                            "spark" | "databricks" => vec!["spark__", "default__", "postgres__"],
+                            "postgres" => vec!["postgres__", "default__"],
+                            _ => vec!["default__", "postgres__"],
                         };
                         let target = prefixes
                             .iter()
@@ -803,8 +807,12 @@ impl JinjaEngine {
             break;
         }
 
-        // Remove {% do ... %} statements (not supported by minijinja)
-        result = strip_do_statements(&result);
+        // Rewrite list/dict initializers to mutable variants when mutations are used
+        result = rewrite_list_append(&result);
+        result = rewrite_dict_mutation(&result);
+
+        // Rewrite {% do expr %} → {% set _do_N = expr %} so minijinja evaluates mutations
+        result = rewrite_do_statements(&result);
 
         // Strip Python .copy() calls — minijinja sequences don't have this method.
         // In dbt/Jinja2, .copy() creates a shallow copy to avoid mutation; safe to remove.
@@ -946,7 +954,16 @@ impl JinjaEngine {
                         || trimmed.starts_with("{{adapter.dispatch(");
                     if is_dispatcher {
                         if let Some(dispatched) = extract_dispatch_name(&body) {
-                            let target = ["default__", "postgres__"]
+                            let prefixes: Vec<&str> = match ctx.target_type.as_str() {
+                                "snowflake" => vec!["snowflake__", "default__", "postgres__"],
+                                "duckdb" => vec!["duckdb__", "postgres__", "default__"],
+                                "bigquery" => vec!["bigquery__", "default__", "postgres__"],
+                                "redshift" => vec!["redshift__", "postgres__", "default__"],
+                                "spark" | "databricks" => vec!["spark__", "default__", "postgres__"],
+                                "postgres" => vec!["postgres__", "default__"],
+                                _ => vec!["default__", "postgres__"],
+                            };
+                            let target = prefixes
                                 .iter()
                                 .map(|prefix| format!("{}{}", prefix, dispatched))
                                 .find(|name| bare_macro_names.contains(name))
@@ -1898,14 +1915,26 @@ impl minijinja::value::Object for AdapterObject {
                     .map(|v| v.to_string())
                     .unwrap_or_default();
                 // Build a fallback chain: try adapter-specific variant first, then default__
-                let is_snowflake = _state
+                let target_type = _state
                     .lookup("target")
                     .and_then(|t| t.get_attr("type").ok())
-                    .map(|t| t.to_string() == "snowflake")
-                    .unwrap_or(false);
+                    .map(|t| t.to_string())
+                    .unwrap_or_default();
                 let mut candidates = Vec::new();
-                if is_snowflake {
-                    candidates.push(format!("snowflake__{macro_name}"));
+                match target_type.as_str() {
+                    "snowflake" => candidates.push(format!("snowflake__{macro_name}")),
+                    "duckdb" => {
+                        candidates.push(format!("duckdb__{macro_name}"));
+                        candidates.push(format!("postgres__{macro_name}"));
+                    }
+                    "bigquery" => candidates.push(format!("bigquery__{macro_name}")),
+                    "redshift" => {
+                        candidates.push(format!("redshift__{macro_name}"));
+                        candidates.push(format!("postgres__{macro_name}"));
+                    }
+                    "spark" | "databricks" => candidates.push(format!("spark__{macro_name}")),
+                    "postgres" => candidates.push(format!("postgres__{macro_name}")),
+                    _ => {}
                 }
                 candidates.push(format!("default__{macro_name}"));
                 Ok(Value::from_object(DispatchResult { candidates }))
@@ -2184,6 +2213,97 @@ fn rewrite_list_append(sql: &str) -> String {
     result
 }
 
+/// Detect dict variables that use `.update()`, `.pop()`, `.setdefault()`, or `.clear()`
+/// and rewrite their `{% set VAR = {...} %}` initialization to `{% set VAR = _mkdict({...}) %}`
+/// so mutations actually take effect via MutableDict.
+fn rewrite_dict_mutation(sql: &str) -> String {
+    // Collect variable names that use dict mutation methods
+    let mut mutated_vars = std::collections::HashSet::new();
+    for pattern in [".update(", ".pop(", ".setdefault(", ".clear("] {
+        let mut pos = 0;
+        while let Some(idx) = sql[pos..].find(pattern) {
+            let abs = pos + idx;
+            let prefix = &sql[..abs];
+            let var_end = prefix.len();
+            let var_start = prefix.rfind(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                .map(|i| i + 1)
+                .unwrap_or(0);
+            if var_start < var_end {
+                let var_name = &sql[var_start..var_end];
+                // Only add if it looks like a variable name (not a method chain)
+                if !var_name.is_empty() && var_name.chars().next().unwrap().is_ascii_alphabetic() {
+                    mutated_vars.insert(var_name.to_string());
+                }
+            }
+            pos = abs + pattern.len();
+        }
+    }
+    if mutated_vars.is_empty() {
+        return sql.to_string();
+    }
+
+    let mut result = sql.to_string();
+    for var in &mutated_vars {
+        // Match patterns like {% set VAR = { or {%- set VAR={ with flexible spacing
+        let set_patterns = [
+            format!("{{% set {}", var),
+            format!("{{%- set {}", var),
+            format!("{{%-set {}", var),
+        ];
+        let mut matched = false;
+        for pat in &set_patterns {
+            if matched { break; }
+            if let Some(idx) = result.find(pat.as_str()) {
+                // Find the `=` after the set VAR
+                let after_var = idx + pat.len();
+                let eq_pos = match result[after_var..].find('=') {
+                    Some(p) => after_var + p,
+                    None => continue,
+                };
+                // Find the `{` after `=`
+                let brace_pos = match result[eq_pos + 1..].find('{') {
+                    Some(p) => eq_pos + 1 + p,
+                    None => continue,
+                };
+                // Make sure this is a dict literal, not a Jinja tag
+                if brace_pos + 1 < result.len() {
+                    let next = result.as_bytes()[brace_pos + 1];
+                    if next == b'%' || next == b'{' || next == b'#' {
+                        continue; // Jinja delimiter, not dict
+                    }
+                }
+                // Find matching } accounting for nesting and strings
+                let mut depth = 1;
+                let mut j = brace_pos + 1;
+                let mut in_str: Option<char> = None;
+                let bytes = result.as_bytes();
+                while j < result.len() && depth > 0 {
+                    if let Some(q) = in_str {
+                        if bytes[j] == b'\\' { j += 1; }
+                        else if bytes[j] == q as u8 { in_str = None; }
+                    } else {
+                        match bytes[j] {
+                            b'\'' | b'"' => in_str = Some(bytes[j] as char),
+                            b'{' => depth += 1,
+                            b'}' => depth -= 1,
+                            _ => {}
+                        }
+                    }
+                    j += 1;
+                }
+                if depth == 0 {
+                    // j now points past the closing }
+                    result.insert_str(j, ")");
+                    result.insert_str(brace_pos, "_mkdict(");
+                    matched = true;
+                    break; // Only process first occurrence per var
+                }
+            }
+        }
+    }
+    result
+}
+
 /// Removes the ` + EXPR` part where EXPR is a list literal or function call.
 #[allow(dead_code)]
 fn strip_list_concat(sql: &str) -> String {
@@ -2453,17 +2573,32 @@ fn strip_multi_set(sql: &str) -> String {
     result
 }
 
-fn strip_do_statements(sql: &str) -> String {
+/// Rewrite `{% do expr %}` → `{% set _do_N = expr %}` so minijinja evaluates the
+/// expression (including mutations like dict.update()) instead of silently stripping it.
+fn rewrite_do_statements(sql: &str) -> String {
     let mut result = sql.to_string();
+    let mut counter = 0u32;
     loop {
         let found = result.find("{% do ")
             .or_else(|| result.find("{%- do "))
             .or_else(|| result.find("{%-do "));
         if let Some(start) = found {
-            // Find closing %} while respecting string literals
+            // Find the `do ` keyword position to extract the expression
+            let do_keyword_end = if result[start..].starts_with("{%- do ") || result[start..].starts_with("{%-do ") {
+                let offset = if result[start..].starts_with("{%-do ") {
+                    start + 6 // "{%-do "
+                } else {
+                    start + 7 // "{%- do "
+                };
+                offset
+            } else {
+                start + 6 // "{% do "
+            };
+            // Find closing %} or -%} while respecting string literals
             let rest = &result[start..];
             let mut in_string: Option<char> = None;
             let mut close_pos = None;
+            let mut has_trim_close = false;
             let bytes = rest.as_bytes();
             let mut j = 0;
             while j < bytes.len().saturating_sub(1) {
@@ -2476,8 +2611,13 @@ fn strip_do_statements(sql: &str) -> String {
                 } else {
                     match bytes[j] {
                         b'\'' | b'"' => in_string = Some(bytes[j] as char),
+                        b'-' if j + 2 < bytes.len() && bytes[j + 1] == b'%' && bytes[j + 2] == b'}' => {
+                            has_trim_close = true;
+                            close_pos = Some(j);
+                            break;
+                        }
                         b'%' if bytes[j + 1] == b'}' => {
-                            close_pos = Some(j + 2);
+                            close_pos = Some(j);
                             break;
                         }
                         _ => {}
@@ -2485,13 +2625,19 @@ fn strip_do_statements(sql: &str) -> String {
                 }
                 j += 1;
             }
-            if let Some(offset) = close_pos {
-                let mut end = start + offset;
-                // Consume trailing newline
-                if end < result.len() && result.as_bytes()[end] == b'\n' {
-                    end += 1;
-                }
-                result.replace_range(start..end, "");
+            if let Some(expr_end_offset) = close_pos {
+                let expr = result[do_keyword_end..start + expr_end_offset].trim();
+                let trim_open = result[start..].starts_with("{%-");
+                let open = if trim_open { "{%-" } else { "{%" };
+                let close = if has_trim_close { "-%}" } else { "%}" };
+                let replacement = format!("{} set _do_{} = {} {}", open, counter, expr, close);
+                let full_end = if has_trim_close {
+                    start + expr_end_offset + 3 // -% }
+                } else {
+                    start + expr_end_offset + 2 // %}
+                };
+                result.replace_range(start..full_end, &replacement);
+                counter += 1;
                 continue;
             }
         }
@@ -2785,7 +2931,8 @@ fn preprocess_macro_body(body: &str) -> String {
     let mut result = preprocess_dicts_inner(body, true);
     result = strip_ternary_in_kwargs_inner(&result, true);
     result = rewrite_list_append(&result);
-    result = strip_do_statements(&result);
+    result = rewrite_dict_mutation(&result);
+    result = rewrite_do_statements(&result);
     result
 }
 
@@ -2841,6 +2988,28 @@ mod tests {
     }
 
     #[test]
+    fn test_rewrite_dict_mutation() {
+        let sql = "{% set my_dict = {'a': 1} %}\n{% do my_dict.update({'b': 2}) %}";
+        let result = rewrite_dict_mutation(sql);
+        assert!(result.contains("_mkdict("), "expected _mkdict wrapper, got: {}", result);
+    }
+
+    #[test]
+    fn test_rewrite_dict_mutation_no_spaces() {
+        // ad-reporting style: {%- set final_fields_superset={} -%}
+        let sql = "{%- set final_fields_superset={} -%}\n{%- do final_fields_superset.update({'a': 'b'}) -%}";
+        let result = rewrite_dict_mutation(sql);
+        assert!(result.contains("_mkdict({}"), "expected _mkdict wrapper, got: {}", result);
+    }
+
+    #[test]
+    fn test_rewrite_dict_mutation_no_mutation() {
+        let sql = "{% set my_dict = {'a': 1} %}\n{{ my_dict.a }}";
+        let result = rewrite_dict_mutation(sql);
+        assert!(!result.contains("_mkdict("), "should not rewrite without mutations: {}", result);
+    }
+
+    #[test]
     fn test_strip_config_blocks_nested_parens() {
         let sql = "{{ config(materialized='table', pre_hook=sql_header(is_incremental())) }}\nSELECT 1";
         let result = strip_config_blocks(sql);
@@ -2855,10 +3024,12 @@ mod tests {
     }
 
     #[test]
-    fn test_strip_do_statements() {
+    fn test_rewrite_do_statements() {
         let sql = "{% do some_list.append('x') %}\nSELECT 1\n{%- do log('msg') %}";
-        let result = strip_do_statements(sql);
-        assert_eq!(result, "SELECT 1\n");
+        let result = rewrite_do_statements(sql);
+        assert!(result.contains("{% set _do_0 = some_list.append('x') %}"), "got: {}", result);
+        assert!(result.contains("SELECT 1"));
+        assert!(result.contains("{%- set _do_1 = log('msg') %}"), "got: {}", result);
     }
 
     #[test]
@@ -3047,10 +3218,11 @@ mod tests {
     }
 
     #[test]
-    fn test_strip_do_with_string_containing_percent_brace() {
+    fn test_rewrite_do_with_string_containing_percent_brace() {
         let sql = r#"{% do log("hello %} world") %}SELECT 1"#;
-        let result = strip_do_statements(sql);
-        assert_eq!(result, "SELECT 1");
+        let result = rewrite_do_statements(sql);
+        assert!(result.contains(r#"{% set _do_0 = log("hello %} world") %}"#), "got: {}", result);
+        assert!(result.contains("SELECT 1"));
     }
 
     #[test]
