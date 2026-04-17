@@ -1,0 +1,2161 @@
+{
+  "timestamp": "2026-04-17T17:52:53.519214+00:00",
+  "summary": {
+    "total": 491,
+    "passed": 487,
+    "failed": 4,
+    "skipped": 8,
+    "pass_rate": 99.2
+  },
+  "projects": [
+    {
+      "name": "amazon-selling-partner",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "amazon_selling_partner__orders",
+          "status": "pass"
+        },
+        {
+          "model": "int_amazon_selling_partner__item",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__fba_inventory_researching",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__fba_inventory_summary",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_classification_sales_rank",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_dimension",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_display_group_sales_rank",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_identifier",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_image",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_product_type",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_relationship",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__item_summary",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__order_item",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__order_item_promotion_id",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__orders",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amazon_selling_partner__payment_method_detail_item",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "amplitude",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "amplitude__event_enhanced",
+          "status": "pass"
+        },
+        {
+          "model": "amplitude__sessions",
+          "status": "pass"
+        },
+        {
+          "model": "amplitude__user_enhanced",
+          "status": "pass"
+        },
+        {
+          "model": "int_amplitude__date_spine",
+          "status": "skipped"
+        },
+        {
+          "model": "stg_amplitude__event",
+          "status": "pass"
+        },
+        {
+          "model": "stg_amplitude__event_type",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "attribution-playbook",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "attribution_touches",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "dbt-project-evaluator",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "fct_model_9",
+          "status": "pass"
+        },
+        {
+          "model": "model_8",
+          "status": "pass"
+        },
+        {
+          "model": "stg_model_1",
+          "status": "pass"
+        },
+        {
+          "model": "stg_model_2",
+          "status": "pass"
+        },
+        {
+          "model": "stg_model_3",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "github",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "github__daily_metrics",
+          "status": "pass"
+        },
+        {
+          "model": "github__monthly_metrics",
+          "status": "pass"
+        },
+        {
+          "model": "github__quarterly_metrics",
+          "status": "pass"
+        },
+        {
+          "model": "github__weekly_metrics",
+          "status": "pass"
+        },
+        {
+          "model": "int_github__issue_assignees",
+          "status": "pass"
+        },
+        {
+          "model": "int_github__issue_comments",
+          "status": "pass"
+        },
+        {
+          "model": "int_github__issue_label_joined",
+          "status": "pass"
+        },
+        {
+          "model": "int_github__issue_open_length",
+          "status": "pass"
+        },
+        {
+          "model": "int_github__pull_request_reviewers",
+          "status": "pass"
+        },
+        {
+          "model": "int_github__pull_request_times",
+          "status": "pass"
+        },
+        {
+          "model": "int_github__repository_teams",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__issue",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__issue_assignee",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__issue_closed_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__issue_comment",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__issue_label",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__issue_merged",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__label",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__pull_request",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__pull_request_review",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__repo_team",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__repository",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__requested_reviewer_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__team",
+          "status": "pass"
+        },
+        {
+          "model": "stg_github__user",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "greenhouse",
+      "total": 39,
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "greenhouse__application_history",
+          "status": "pass"
+        },
+        {
+          "model": "greenhouse__interview_scorecard_detail",
+          "status": "pass"
+        },
+        {
+          "model": "int_greenhouse__candidate_contacts",
+          "status": "pass"
+        },
+        {
+          "model": "int_greenhouse__candidate_tags",
+          "status": "pass"
+        },
+        {
+          "model": "int_greenhouse__interview_scorecard",
+          "status": "pass"
+        },
+        {
+          "model": "int_greenhouse__job_departments",
+          "status": "pass"
+        },
+        {
+          "model": "int_greenhouse__job_offices",
+          "status": "pass"
+        },
+        {
+          "model": "int_greenhouse__user_emails",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__activity",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__application",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__application_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__attachment",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__candidate",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__candidate_tag",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__department",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__eeoc",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__email_address",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__hiring_team",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__interview",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__job",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__job_application",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__job_department",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__job_office",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__job_opening",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__job_post",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__job_stage",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__office",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__phone_number",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__prospect_pool",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__prospect_stage",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__scheduled_interview",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__scheduled_interviewer",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__scorecard",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__scorecard_attribute",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__social_media_address",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__source",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__tag",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__user",
+          "status": "pass"
+        },
+        {
+          "model": "stg_greenhouse__user_email",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "jira",
+      "total": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "int_jira__issue_calendar_spine",
+          "status": "skipped"
+        },
+        {
+          "model": "int_jira__issue_comments",
+          "status": "pass"
+        },
+        {
+          "model": "int_jira__issue_field_history",
+          "status": "pass"
+        },
+        {
+          "model": "int_jira__issue_multiselect_history",
+          "status": "pass"
+        },
+        {
+          "model": "int_jira__project_metrics",
+          "status": "pass"
+        },
+        {
+          "model": "int_jira__user_metrics",
+          "status": "pass"
+        },
+        {
+          "model": "jira__daily_sprint_issue_history",
+          "status": "pass"
+        },
+        {
+          "model": "jira__issue_status_transitions",
+          "status": "pass"
+        },
+        {
+          "model": "jira__sprint_enhanced",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__comment",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__component",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__field",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__field_option",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__issue",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__issue_field_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__issue_link",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__issue_multiselect_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__issue_type",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__priority",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__project",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__resolution",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__sprint",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__status",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__status_category",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__team",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__user",
+          "status": "pass"
+        },
+        {
+          "model": "stg_jira__version",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "mailchimp",
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "int_mailchimp__automation_recipients",
+          "status": "pass"
+        },
+        {
+          "model": "int_mailchimp__automation_unsubscribes",
+          "status": "pass"
+        },
+        {
+          "model": "int_mailchimp__campaign_activities_by_campaign",
+          "status": "pass"
+        },
+        {
+          "model": "int_mailchimp__campaign_activities_by_email",
+          "status": "pass"
+        },
+        {
+          "model": "int_mailchimp__campaign_activities_by_list",
+          "status": "pass"
+        },
+        {
+          "model": "int_mailchimp__campaign_activities_by_member",
+          "status": "pass"
+        },
+        {
+          "model": "int_mailchimp__campaign_activities_by_segment",
+          "status": "pass"
+        },
+        {
+          "model": "int_mailchimp__members_by_list",
+          "status": "pass"
+        },
+        {
+          "model": "mailchimp__automation_activities",
+          "status": "pass"
+        },
+        {
+          "model": "mailchimp__campaign_activities",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__automation_activities",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__automation_emails",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__automation_recipients",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__automations",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__campaign_activities",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__campaign_recipients",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__campaigns",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__lists",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__members",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__segment_members",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__segments",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mailchimp__unsubscribes",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "mixpanel",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "mixpanel__daily_events",
+          "status": "pass"
+        },
+        {
+          "model": "mixpanel__monthly_events",
+          "status": "pass"
+        },
+        {
+          "model": "mixpanel__sessions",
+          "status": "pass"
+        },
+        {
+          "model": "stg_mixpanel__user_event_date_spine",
+          "status": "skipped"
+        }
+      ]
+    },
+    {
+      "name": "netsuite",
+      "total": 69,
+      "passed": 69,
+      "failed": 0,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "int_netsuite2__accounting_periods",
+          "status": "pass"
+        },
+        {
+          "model": "int_netsuite2__accounts",
+          "status": "pass"
+        },
+        {
+          "model": "int_netsuite2__customers",
+          "status": "pass"
+        },
+        {
+          "model": "int_netsuite2__locations",
+          "status": "pass"
+        },
+        {
+          "model": "int_netsuite2__transaction_lines",
+          "status": "pass"
+        },
+        {
+          "model": "int_netsuite__accountxperiod_exchange_rate_map",
+          "status": "pass"
+        },
+        {
+          "model": "int_netsuite__transaction_and_reporting_periods",
+          "status": "pass"
+        },
+        {
+          "model": "int_netsuite__transaction_lines_w_accounting_period",
+          "status": "pass"
+        },
+        {
+          "model": "netsuite2__entity_subsidiary_relationships",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__account_types",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__accounting_book_subsidiaries",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__accounting_books",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__accounting_period_fiscal_cal",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__accounting_periods",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__accounts",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__classes",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__consolidated_exchange_rates",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__currencies",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__customer_subsidiary_relationships",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__customers",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__departments",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__employees",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__entities",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__entity_address",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__items",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__jobs",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__location_main_address",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__locations",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__nexuses",
+          "status": "skipped"
+        },
+        {
+          "model": "stg_netsuite2__subsidiaries",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__transaction_accounting_lines",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__transaction_lines",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__transactions",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__vendor_categories",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__vendor_subsidiary_relationships",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite2__vendors",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__accounting_books",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__accounting_books_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__accounting_periods",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__accounting_periods_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__accounts",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__accounts_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__classes",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__classes_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__consolidated_exchange_rates",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__consolidated_exchange_rates_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__currencies",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__currencies_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__customers",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__customers_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__departments",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__departments_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__expense_accounts",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__expense_accounts_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__income_accounts",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__income_accounts_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__items",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__items_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__locations",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__locations_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__subsidiaries",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__subsidiaries_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__transaction_lines",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__transaction_lines_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__transactions",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__transactions_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__vendor_types",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__vendor_types_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__vendors",
+          "status": "pass"
+        },
+        {
+          "model": "stg_netsuite__vendors_tmp",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "pardot",
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "int__activities_by_list",
+          "status": "pass"
+        },
+        {
+          "model": "int__activities_by_prospect",
+          "status": "pass"
+        },
+        {
+          "model": "int__opportunity_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "pardot__campaigns",
+          "status": "pass"
+        },
+        {
+          "model": "pardot__opportunities",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__campaign",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__list",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__list_membership",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__opportunity",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__opportunity_prospect",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__prospect",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__visitor",
+          "status": "pass"
+        },
+        {
+          "model": "stg_pardot__visitor_activity",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "recharge",
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "int_recharge__calendar_spine",
+          "status": "skipped"
+        },
+        {
+          "model": "int_recharge__customer_details",
+          "status": "pass"
+        },
+        {
+          "model": "recharge__billing_history",
+          "status": "pass"
+        },
+        {
+          "model": "recharge__charge_line_item_history",
+          "status": "pass"
+        },
+        {
+          "model": "recharge__line_item_enhanced",
+          "status": "pass"
+        },
+        {
+          "model": "recharge__monthly_recurring_revenue",
+          "status": "pass"
+        },
+        {
+          "model": "recharge__subscription_overview",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__address",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__address_discounts",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__address_shipping_line",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__charge",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__charge_discount",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__charge_line_item",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__charge_order_attribute",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__charge_shipping_line",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__charge_tax_line",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__customer",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__discount",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__one_time_product",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__order",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__order_line_item",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__subscription",
+          "status": "pass"
+        },
+        {
+          "model": "stg_recharge__subscription_history",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "sage-intacct",
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "int_sage_intacct__account_classifications",
+          "status": "pass"
+        },
+        {
+          "model": "int_sage_intacct__active_gl_detail",
+          "status": "pass"
+        },
+        {
+          "model": "int_sage_intacct__general_ledger_balances",
+          "status": "pass"
+        },
+        {
+          "model": "int_sage_intacct__general_ledger_date_spine",
+          "status": "skipped"
+        },
+        {
+          "model": "int_sage_intacct__retained_earnings",
+          "status": "pass"
+        },
+        {
+          "model": "sage_intacct__ap_ar_enhanced",
+          "status": "pass"
+        },
+        {
+          "model": "sage_intacct__balance_sheet",
+          "status": "pass"
+        },
+        {
+          "model": "sage_intacct__general_ledger_by_period",
+          "status": "pass"
+        },
+        {
+          "model": "sage_intacct__profit_and_loss",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sage_intacct__ap_bill",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sage_intacct__ap_bill_item",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sage_intacct__ar_invoice",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sage_intacct__ar_invoice_item",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sage_intacct__gl_account",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sage_intacct__gl_batch",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sage_intacct__gl_detail",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "sap",
+      "total": 162,
+      "passed": 162,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "bsad",
+          "status": "pass"
+        },
+        {
+          "model": "bsak",
+          "status": "pass"
+        },
+        {
+          "model": "bsid",
+          "status": "pass"
+        },
+        {
+          "model": "coss",
+          "status": "pass"
+        },
+        {
+          "model": "faglflexa",
+          "status": "pass"
+        },
+        {
+          "model": "int_coep__acdoca_base",
+          "status": "pass"
+        },
+        {
+          "model": "int_cosp__acdoca_base",
+          "status": "pass"
+        },
+        {
+          "model": "int_cosp__coep_derived",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__0employee_date_changes",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__0fi_gl_10_sums",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__0fi_gl_10_unpivot",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__company",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__customer",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__material",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__material_type",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__plant",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_document_category",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_document_header",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_document_history",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_document_item",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_document_schedule_line",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_document_status",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_document_type",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_group",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__purchasing_organization",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__sales_document_header",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__sales_document_header_status",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__sales_document_item",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__sales_document_item_status",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__sales_document_rejection_reason",
+          "status": "pass"
+        },
+        {
+          "model": "int_sap__vendor",
+          "status": "pass"
+        },
+        {
+          "model": "marc",
+          "status": "pass"
+        },
+        {
+          "model": "mchb",
+          "status": "pass"
+        },
+        {
+          "model": "mkpf",
+          "status": "pass"
+        },
+        {
+          "model": "mseg",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0comp_code_attr",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0comp_code_text",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0company_text",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0customer_attr",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0employee_attr",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0fi_gl_10",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0fi_gl_14",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0gl_account_attr",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0material_attr",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0vendor_attr",
+          "status": "pass"
+        },
+        {
+          "model": "sap__0vendor_text",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__acdoca",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__acdoca_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bkpf",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bkpf_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bsad_bck",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bsad_bck_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bsak_bck",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bsak_bck_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bseg",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__bseg_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__coep",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__coep_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__cosp_bak",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__cosp_bak_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__dd07l",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__dd07l_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__dd07t",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__dd07t_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ekbe",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ekbe_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__eket",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__eket_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ekko",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ekko_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ekpo",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ekpo_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__faglflexa",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__faglflexa_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__faglflext",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__faglflext_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__finsc_cmp_versnd",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__finsc_cmp_versnd_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__finsc_ld_cmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__finsc_ld_cmp_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__finsc_ledger_rep",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__finsc_ledger_rep_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__kna1",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__kna1_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__lfa1",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__lfa1_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__makt",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__makt_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__mara",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__mara_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__marc",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__marc_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__matdoc",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__matdoc_extract",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__matdoc_extract_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__matdoc_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__mchb",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__mchb_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__mchp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__mchp_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0000",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0000_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0001",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0001_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0007",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0007_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0008",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0008_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0031",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__pa0031_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__prps",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__prps_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_clsnr",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_clsnr_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_maritc",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_maritc_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_nosca",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_nosca_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_tunos",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__sapsll_tunos_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ska1",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__ska1_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t000",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t000_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t001",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t001_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t001w",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t001w_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t006",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t006_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t024",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t024_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t024e",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t024e_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t134",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t134_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t134t",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t134t_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t161",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t161_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t161t",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t161t_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t503",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t503_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t880",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__t880_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tj01",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tj01_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tka01",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tka01_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tvag",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tvag_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tvagt",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__tvagt_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbak",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbak_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbap",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbap_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbuk",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbuk_tmp",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbup",
+          "status": "pass"
+        },
+        {
+          "model": "stg_sap__vbup_tmp",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "social-media-reporting",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "social_media_reporting__facebook_posts_reporting",
+          "status": "pass"
+        },
+        {
+          "model": "social_media_reporting__instagram_posts_reporting",
+          "status": "pass"
+        },
+        {
+          "model": "social_media_reporting__linkedin_posts_reporting",
+          "status": "pass"
+        },
+        {
+          "model": "social_media_reporting__rollup_report",
+          "status": "skipped"
+        },
+        {
+          "model": "social_media_reporting__twitter_posts_reporting",
+          "status": "pass"
+        },
+        {
+          "model": "social_media_reporting__youtube_videos_reporting",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "twilio",
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "models": [
+        {
+          "model": "int_twilio__messages",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__account_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__address",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__call",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__incoming_phone_number",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__message",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__messaging_service",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__outgoing_caller_id",
+          "status": "pass"
+        },
+        {
+          "model": "stg_twilio__usage_record",
+          "status": "pass"
+        },
+        {
+          "model": "twilio__account_overview",
+          "status": "pass"
+        },
+        {
+          "model": "twilio__message_enhanced",
+          "status": "pass"
+        },
+        {
+          "model": "twilio__number_overview",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "zendesk",
+      "total": 51,
+      "passed": 47,
+      "failed": 4,
+      "skipped": 1,
+      "models": [
+        {
+          "model": "int_zendesk__agent_work_time_business_hours",
+          "status": "fail"
+        },
+        {
+          "model": "int_zendesk__agent_work_time_calendar_hours",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__agent_work_time_filtered_statuses",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__assignee_updates",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__calendar_spine",
+          "status": "skipped"
+        },
+        {
+          "model": "int_zendesk__commenter_reply_at",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__comments_enriched",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__latest_ticket_form",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__organization_aggregates",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__reply_time_calendar_hours",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__requester_updates",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__requester_wait_time_business_hours",
+          "status": "fail"
+        },
+        {
+          "model": "int_zendesk__requester_wait_time_calendar_hours",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__requester_wait_time_filtered_statuses",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__schedule_holiday",
+          "status": "fail"
+        },
+        {
+          "model": "int_zendesk__sla_policy_applied",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_aggregates",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_historical_assignee",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_historical_group",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_historical_satisfaction",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_historical_status",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_resolution_times_calendar",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_schedules",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__ticket_work_time_business",
+          "status": "fail"
+        },
+        {
+          "model": "int_zendesk__ticket_work_time_calendar",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__timezone_daylight",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__updater_information",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__updates",
+          "status": "pass"
+        },
+        {
+          "model": "int_zendesk__user_aggregates",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__brand",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__daylight_time",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__domain_name",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__group",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__organization",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__organization_tag",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__schedule",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__schedule_holiday",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__sla_policy_metric_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__ticket",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__ticket_comment",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__ticket_field_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__ticket_form_history",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__ticket_schedule",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__ticket_sla_policy",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__ticket_tag",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__time_zone",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__user",
+          "status": "pass"
+        },
+        {
+          "model": "stg_zendesk__user_tag",
+          "status": "pass"
+        },
+        {
+          "model": "zendesk__sla_policies",
+          "status": "pass"
+        },
+        {
+          "model": "zendesk__ticket_backlog",
+          "status": "pass"
+        },
+        {
+          "model": "zendesk__ticket_enriched",
+          "status": "pass"
+        },
+        {
+          "model": "zendesk__ticket_summary",
+          "status": "pass"
+        }
+      ]
+    }
+  ]
+}
