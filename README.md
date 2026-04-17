@@ -2,6 +2,10 @@
   <img src="assets/airform.svg" alt="airform" width="60%">
 </p>
 
+<p align="center">
+  <a href="https://github.com/oxy-hq/airform/actions/workflows/golden-sql.yaml"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/oxy-hq/airform/main/.github/badges/golden-sql.json" alt="dbt parity"></a>
+</p>
+
 # Airform
 
 **A Rust-powered, dbt-compatible SQL transformation engine.**
@@ -336,6 +340,57 @@ cd examples/jaffle-shop && cargo run --bin airform -- seed && cargo run --bin ai
 ```
 
 Please open an issue before submitting large changes.
+
+### Adding dbt projects for parity testing
+
+We measure SQL compilation parity against real-world dbt packages. You can help expand coverage by adding new projects to the test suite.
+
+**1. Add the repo to `tests/compat/repos.json`:**
+
+```json
+{
+  "name": "my-package",
+  "repo": "org/dbt_my_package",
+  "project_subdir": null,
+  "adapter_type": "duckdb",
+  "expected_models": 25,
+  "notes": "Brief description of what this package does"
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `name` | Short name used for directories and CLI filtering |
+| `repo` | GitHub `org/repo` path |
+| `project_subdir` | Subdirectory containing the dbt project, or `null` for root |
+| `adapter_type` | Target warehouse dialect (`duckdb`, `snowflake`, `bigquery`, `postgres`) |
+| `expected_models` | Approximate model count (for reference only) |
+| `notes` | What makes this package interesting for testing |
+
+**2. Generate the compat project and golden SQL:**
+
+```bash
+# Generate the self-contained test project from the repo
+python3 scripts/generate_compat_projects.py --repos my-package
+
+# Compile with dbt to produce golden references (requires dbt installed)
+python3 scripts/generate_golden_sql.py my-package
+
+# Verify airform compiles it and compare against golden SQL
+python3 scripts/test_golden_sql.py my-package -v
+```
+
+**3. Submit a PR** with:
+- The updated `tests/compat/repos.json`
+- The golden SQL files in `tests/golden/my-package/expected/`
+
+The CI pipeline will automatically run the golden SQL tests and report parity.
+
+**What makes a good test project?**
+- Uses interesting macro patterns (dispatch, custom materializations, complex Jinja)
+- Has seed data so it can compile without a warehouse connection
+- Covers dbt features not yet well-tested (snapshots, hooks, custom schemas)
+- Is a widely-used community package (fivetran, dbt-labs, etc.)
 
 ---
 
