@@ -11,3 +11,5 @@
 .test-ports.env
 .claude/
 tests/compat-projects/
+__pycache__/
+tests/golden-results-*.json

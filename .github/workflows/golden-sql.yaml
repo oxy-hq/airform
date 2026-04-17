@@ -1,0 +1,123 @@
+name: Golden SQL Parity
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  golden-sql:
+    name: Golden SQL Tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install sqlglot
+        run: pip install sqlglot
+
+      - name: Build airform
+        run: cargo build -p airform
+
+      - name: Restore compat projects
+        uses: actions/cache@v4
+        with:
+          path: tests/compat-projects
+          key: compat-projects-${{ hashFiles('tests/compat/repos.json', 'scripts/generate_compat_projects.py') }}
+
+      - name: Generate compat projects
+        run: python3 scripts/generate_compat_projects.py
+        timeout-minutes: 10
+
+      - name: Run golden SQL tests
+        run: python3 scripts/test_golden_sql.py --no-build 2>&1 | tee golden-sql-output.txt
+        timeout-minutes: 20
+        continue-on-error: true
+
+      - name: Extract results
+        id: results
+        run: |
+          if [ -f tests/golden-results.json ]; then
+            passed=$(python3 -c "import json; r=json.load(open('tests/golden-results.json')); print(r['summary']['passed'])")
+            total=$(python3 -c "import json; r=json.load(open('tests/golden-results.json')); print(r['summary']['total'])")
+            pct=$(python3 -c "import json; r=json.load(open('tests/golden-results.json')); print(r['summary']['pass_rate'])")
+            echo "passed=$passed" >> "$GITHUB_OUTPUT"
+            echo "total=$total" >> "$GITHUB_OUTPUT"
+            echo "pct=$pct" >> "$GITHUB_OUTPUT"
+          else
+            echo "passed=0" >> "$GITHUB_OUTPUT"
+            echo "total=0" >> "$GITHUB_OUTPUT"
+            echo "pct=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          pct="${{ steps.results.outputs.pct }}"
+          # Color: green >= 95, yellow >= 80, red < 80
+          if (( $(echo "$pct >= 95" | bc -l) )); then
+            color="brightgreen"
+          elif (( $(echo "$pct >= 80" | bc -l) )); then
+            color="yellow"
+          else
+            color="red"
+          fi
+          mkdir -p .github/badges
+          cat > .github/badges/golden-sql.json <<BADGE
+          {
+            "schemaVersion": 1,
+            "label": "dbt parity",
+            "message": "${pct}% (${passed}/${total})",
+            "color": "${color}"
+          }
+          BADGE
+        env:
+          passed: ${{ steps.results.outputs.passed }}
+          total: ${{ steps.results.outputs.total }}
+
+      - name: Commit badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/badges/golden-sql.json
+          git diff --cached --quiet || git commit -m "Update golden SQL parity badge [skip ci]"
+          git push || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: golden-sql-results
+          path: |
+            tests/golden-results.json
+            golden-sql-output.txt
+
+      - name: Summary
+        run: |
+          echo "## Golden SQL Parity Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**${{ steps.results.outputs.passed }}/${{ steps.results.outputs.total }} models match (${{ steps.results.outputs.pct }}%)**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat golden-sql-output.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
