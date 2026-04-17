@@ -1,6 +1,6 @@
 use crate::context::DbtContext;
 use airform_core::{RefCall, SourceCall};
-use jinja2::add_jinja2_compat;
+use jinja::add_jinja2_compat;
 use minijinja::{Environment, Error as JinjaError, ErrorKind, Value};
 use std::cell::RefCell;
 use std::fmt;
@@ -53,7 +53,7 @@ impl JinjaEngine {
         // Lenient undefined handling (dbt is permissive with undefined vars)
         env.set_undefined_behavior(minijinja::UndefinedBehavior::Chainable);
 
-        // jinja2::add_jinja2_compat() already provides:
+        // jinja::add_jinja2_compat() already provides:
         // - Full Python method compatibility (items, keys, values, get, strip, replace, etc.)
         // - as_bool filter
         // - All 51 Jinja2 filters, 33 tests, 7 globals
@@ -541,7 +541,7 @@ impl JinjaEngine {
     /// Build a Jinja template string for a namespace, containing all its macro definitions.
     /// Preprocesses macro bodies to handle dict literals and {% do %} statements.
     /// Validates each macro individually and skips those that fail to parse.
-    fn build_namespace_template(macros: &[LoadedMacro], target_type: &str) -> String {
+    fn build_namespace_template(macros: &[LoadedMacro], target_type: &str, namespace_name: Option<&str>) -> String {
         let mut test_env = Environment::new();
         add_jinja2_compat(&mut test_env);
         // Collect macro names for dispatch resolution
@@ -563,6 +563,22 @@ impl JinjaEngine {
             let mut body = preprocess_macro_body(&m.body);
             let mut dispatch_target = None;
 
+            // Strip self-namespace prefix from macro bodies so that macros
+            // within the same namespace can call each other without the prefix.
+            // e.g., inside "shopify" namespace: shopify.other_macro() → other_macro()
+            // Only strip when followed by a known macro name to avoid false positives.
+            if let Some(ns) = namespace_name {
+                if !ns.is_empty() {
+                    let prefix = format!("{}.", ns);
+                    for known_macro in &macro_names {
+                        let qualified = format!("{}{}", prefix, known_macro);
+                        if body.contains(&qualified) {
+                            body = body.replace(&qualified, known_macro);
+                        }
+                    }
+                }
+            }
+
             // Detect dispatcher macros: body calls adapter.dispatch('name')(...).
             // Patterns: `{{ return(adapter.dispatch('name')(args)) }}` or
             //           `{{ adapter.dispatch('name', ...)(args) }}`
@@ -576,10 +592,14 @@ impl JinjaEngine {
                 if is_dispatcher {
                     if let Some(dispatched) = extract_dispatch_name(&body) {
                         // Try prefixes in order based on target type
-                        let prefixes: Vec<&str> = if target_type == "snowflake" {
-                            vec!["snowflake__", "default__", "postgres__"]
-                        } else {
-                            vec!["default__", "postgres__"]
+                        let prefixes: Vec<&str> = match target_type {
+                            "snowflake" => vec!["snowflake__", "default__", "postgres__"],
+                            "duckdb" => vec!["duckdb__", "postgres__", "default__"],
+                            "bigquery" => vec!["bigquery__", "default__", "postgres__"],
+                            "redshift" => vec!["redshift__", "postgres__", "default__"],
+                            "spark" | "databricks" => vec!["spark__", "default__", "postgres__"],
+                            "postgres" => vec!["postgres__", "default__"],
+                            _ => vec!["default__", "postgres__"],
                         };
                         let target = prefixes
                             .iter()
@@ -803,8 +823,12 @@ impl JinjaEngine {
             break;
         }
 
-        // Remove {% do ... %} statements (not supported by minijinja)
-        result = strip_do_statements(&result);
+        // Rewrite list/dict initializers to mutable variants when mutations are used
+        result = rewrite_list_append(&result);
+        result = rewrite_dict_mutation(&result);
+
+        // Rewrite {% do expr %} → {% set _do_N = expr %} so minijinja evaluates mutations
+        result = rewrite_do_statements(&result);
 
         // Strip Python .copy() calls — minijinja sequences don't have this method.
         // In dbt/Jinja2, .copy() creates a shallow copy to avoid mutation; safe to remove.
@@ -827,9 +851,17 @@ impl JinjaEngine {
         // Rewrite list.append(item) → list = list + [item]
         result = rewrite_list_append(&result);
 
+        // Strip list concatenation with macro calls/variables: `[...] + func()` or `[...] + var`
+        // These fail in minijinja because macro calls return text, not lists.
+        result = strip_list_concat(&result);
+
         // Fix unary negation of function calls: minijinja can't handle `-func(...)`.
         // Replace `=-func(` with `=(0 - func(` in Jinja expression contexts.
         result = fix_unary_negation(&result);
+
+        // Wrap macro calls in {% set VAR = func(...) %} with _get_return() so that
+        // dbt macros using {{ return(val) }} return structured values, not text.
+        result = wrap_set_macro_calls(&result);
 
         result
     }
@@ -860,7 +892,7 @@ impl JinjaEngine {
                     }
                 }
             }
-            let tmpl = Self::build_namespace_template(&merged_macros, &ctx.target_type);
+            let tmpl = Self::build_namespace_template(&merged_macros, &ctx.target_type, Some(ns.name));
             env.add_template_owned(ns.name.to_string(), tmpl)?;
         }
 
@@ -868,7 +900,7 @@ impl JinjaEngine {
         let mut package_ns_names = Vec::new();
         for (pkg_name, pkg_macros) in &self.package_macros {
             if !builtin_ns_names.contains(pkg_name.as_str()) {
-                let tmpl = Self::build_namespace_template(pkg_macros, &ctx.target_type);
+                let tmpl = Self::build_namespace_template(pkg_macros, &ctx.target_type, Some(pkg_name));
                 match env.add_template_owned(pkg_name.clone(), tmpl) {
                     Ok(_) => { package_ns_names.push(pkg_name.clone()); }
                     Err(_) => { /* skip if template fails to parse */ }
@@ -885,7 +917,7 @@ impl JinjaEngine {
         let mut project_ns_ok = false;
         if !safe_macros.is_empty() && !ctx.project_name.is_empty() {
             let safe_owned: Vec<LoadedMacro> = safe_macros.iter().map(|m| (*m).clone()).collect();
-            let project_tmpl = Self::build_namespace_template(&safe_owned, &ctx.target_type);
+            let project_tmpl = Self::build_namespace_template(&safe_owned, &ctx.target_type, Some(&ctx.project_name));
             match env.add_template_owned(ctx.project_name.clone(), project_tmpl) {
                 Ok(_) => { project_ns_ok = true; }
                 Err(_) => { /* skip namespace import if template fails to parse */ }
@@ -946,7 +978,16 @@ impl JinjaEngine {
                         || trimmed.starts_with("{{adapter.dispatch(");
                     if is_dispatcher {
                         if let Some(dispatched) = extract_dispatch_name(&body) {
-                            let target = ["default__", "postgres__"]
+                            let prefixes: Vec<&str> = match ctx.target_type.as_str() {
+                                "snowflake" => vec!["snowflake__", "default__", "postgres__"],
+                                "duckdb" => vec!["duckdb__", "postgres__", "default__"],
+                                "bigquery" => vec!["bigquery__", "default__", "postgres__"],
+                                "redshift" => vec!["redshift__", "postgres__", "default__"],
+                                "spark" | "databricks" => vec!["spark__", "default__", "postgres__"],
+                                "postgres" => vec!["postgres__", "default__"],
+                                _ => vec!["default__", "postgres__"],
+                            };
+                            let target = prefixes
                                 .iter()
                                 .map(|prefix| format!("{}{}", prefix, dispatched))
                                 .find(|name| bare_macro_names.contains(name))
@@ -1165,13 +1206,36 @@ impl JinjaEngine {
         );
 
         // Register return() function (dbt macro helper — stores value in thread-local
-        // for fill_staging_columns to consume, renders as empty string like dbt's return())
+        // so _get_return() can recover the structured value after a macro call,
+        // AND returns the value directly so {{ return(val) }} renders val as text)
         env.add_function(
             "return",
             |args: &[Value]| -> Result<Value, JinjaError> {
                 let val = args.first().cloned().unwrap_or(Value::UNDEFINED);
                 LAST_RETURN_VALUE.with(|v| *v.borrow_mut() = Some(val.clone()));
-                Ok(Value::from(""))
+                Ok(val)
+            },
+        );
+
+        // Register _get_return(text_output) — recovers structured return values from macro calls.
+        // In dbt, macros can use {{ return(val) }} to return structured data (lists, dicts).
+        // In minijinja, macros return text. This function bridges the gap:
+        // - If return() was called during the macro, drain the stored value and return it
+        // - Otherwise, return the text output as-is
+        env.add_function(
+            "_get_return",
+            |args: &[Value]| -> Result<Value, JinjaError> {
+                let fallback = args.first().cloned().unwrap_or(Value::UNDEFINED);
+                let stored = LAST_RETURN_VALUE.with(|v| v.borrow_mut().take());
+                Ok(stored.unwrap_or(fallback))
+            },
+        );
+
+        // Register load_result() stub — dbt internal for operation results (not supported)
+        env.add_function(
+            "load_result",
+            |_: &[Value]| -> Result<Value, JinjaError> {
+                Ok(Value::UNDEFINED)
             },
         );
 
@@ -1201,6 +1265,43 @@ impl JinjaEngine {
                         if !name.is_empty() {
                             source_names.insert(name.to_uppercase());
                         }
+                    }
+                }
+
+                // Helper: check if a column name should be quoted.
+                // Respects the explicit "quote" attribute, and also auto-quotes
+                // SQL reserved keywords that commonly appear in dbt staging columns.
+                fn should_quote_col(item: &Value, name: &str) -> bool {
+                    // Explicit quote attribute
+                    if let Ok(q) = item.get_attr("quote") {
+                        if q.is_true() {
+                            return true;
+                        }
+                    }
+                    // Auto-quote known SQL reserved keywords
+                    matches!(name.to_uppercase().as_str(),
+                        "ALL" | "ALTER" | "AND" | "AS" | "BEGIN" | "BETWEEN" | "BY" |
+                        "CASE" | "CHECK" | "COLUMN" | "CREATE" | "CROSS" | "CURRENT" |
+                        "DELETE" | "DESC" | "DISTINCT" | "DROP" | "ELSE" | "END" |
+                        "EXISTS" | "FOR" | "FROM" | "FULL" | "GROUP" | "HAVING" |
+                        "IN" | "INDEX" | "INNER" | "INSERT" | "INTO" | "IS" |
+                        "JOIN" | "LEFT" | "LIKE" | "LIMIT" | "NOT" | "NULL" |
+                        "ON" | "OR" | "ORDER" | "OUTER" | "PRIMARY" | "RIGHT" |
+                        "SELECT" | "SET" | "START" | "TABLE" | "THEN" | "TYPE" |
+                        "UNION" | "UPDATE" | "VALUES" | "WHEN" | "WHERE" | "WITH" |
+                        "DATE" | "TIME" | "TIMESTAMP" | "NUMBER" | "COMMENT" |
+                        "ROW" | "ROWS" | "ROLE" | "GRANT" | "REVOKE" | "TRIGGER" |
+                        "KEY" | "REFERENCES" | "CONSTRAINT" | "DEFAULT" | "UNIQUE"
+                    )
+                }
+
+                // Helper: format a column name, quoting if needed.
+                // Uses uppercase double-quoting (Snowflake convention).
+                fn format_col_name(item: &Value, name: &str) -> String {
+                    if should_quote_col(item, name) {
+                        format!("\"{}\"", name.to_uppercase())
+                    } else {
+                        name.to_string()
                     }
                 }
 
@@ -1237,7 +1338,8 @@ impl JinjaEngine {
                                         Some(s)
                                     }
                                 });
-                            let output_name = alias.as_deref().unwrap_or(&name);
+                            let col_name = format_col_name(&item, &name);
+                            let output_name = alias.as_deref().unwrap_or(&col_name);
                             parts.push(format!("cast(null as {}) as {}", datatype, output_name));
                         }
                     }
@@ -1279,14 +1381,19 @@ impl JinjaEngine {
                                     Some(s)
                                 }
                             });
-                        let output_name = alias.as_deref().unwrap_or(&name);
+                        let col_name = format_col_name(&item, &name);
+                        let output_name = if alias.is_some() {
+                            alias.as_deref().unwrap().to_string()
+                        } else {
+                            col_name.clone()
+                        };
 
                         if source_names.contains(&name.to_uppercase()) {
                             // Column exists in source — select it, with alias if needed
                             if alias.is_some() {
-                                parts.push(format!("{} as {}", name, output_name));
+                                parts.push(format!("{} as {}", col_name, output_name));
                             } else {
-                                parts.push(name);
+                                parts.push(col_name);
                             }
                         } else {
                             // Column missing — output CAST(NULL AS type)
@@ -1898,14 +2005,26 @@ impl minijinja::value::Object for AdapterObject {
                     .map(|v| v.to_string())
                     .unwrap_or_default();
                 // Build a fallback chain: try adapter-specific variant first, then default__
-                let is_snowflake = _state
+                let target_type = _state
                     .lookup("target")
                     .and_then(|t| t.get_attr("type").ok())
-                    .map(|t| t.to_string() == "snowflake")
-                    .unwrap_or(false);
+                    .map(|t| t.to_string())
+                    .unwrap_or_default();
                 let mut candidates = Vec::new();
-                if is_snowflake {
-                    candidates.push(format!("snowflake__{macro_name}"));
+                match target_type.as_str() {
+                    "snowflake" => candidates.push(format!("snowflake__{macro_name}")),
+                    "duckdb" => {
+                        candidates.push(format!("duckdb__{macro_name}"));
+                        candidates.push(format!("postgres__{macro_name}"));
+                    }
+                    "bigquery" => candidates.push(format!("bigquery__{macro_name}")),
+                    "redshift" => {
+                        candidates.push(format!("redshift__{macro_name}"));
+                        candidates.push(format!("postgres__{macro_name}"));
+                    }
+                    "spark" | "databricks" => candidates.push(format!("spark__{macro_name}")),
+                    "postgres" => candidates.push(format!("postgres__{macro_name}")),
+                    _ => {}
                 }
                 candidates.push(format!("default__{macro_name}"));
                 Ok(Value::from_object(DispatchResult { candidates }))
@@ -2184,6 +2303,97 @@ fn rewrite_list_append(sql: &str) -> String {
     result
 }
 
+/// Detect dict variables that use `.update()`, `.pop()`, `.setdefault()`, or `.clear()`
+/// and rewrite their `{% set VAR = {...} %}` initialization to `{% set VAR = _mkdict({...}) %}`
+/// so mutations actually take effect via MutableDict.
+fn rewrite_dict_mutation(sql: &str) -> String {
+    // Collect variable names that use dict mutation methods
+    let mut mutated_vars = std::collections::HashSet::new();
+    for pattern in [".update(", ".pop(", ".setdefault(", ".clear("] {
+        let mut pos = 0;
+        while let Some(idx) = sql[pos..].find(pattern) {
+            let abs = pos + idx;
+            let prefix = &sql[..abs];
+            let var_end = prefix.len();
+            let var_start = prefix.rfind(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                .map(|i| i + 1)
+                .unwrap_or(0);
+            if var_start < var_end {
+                let var_name = &sql[var_start..var_end];
+                // Only add if it looks like a variable name (not a method chain)
+                if !var_name.is_empty() && var_name.chars().next().unwrap().is_ascii_alphabetic() {
+                    mutated_vars.insert(var_name.to_string());
+                }
+            }
+            pos = abs + pattern.len();
+        }
+    }
+    if mutated_vars.is_empty() {
+        return sql.to_string();
+    }
+
+    let mut result = sql.to_string();
+    for var in &mutated_vars {
+        // Match patterns like {% set VAR = { or {%- set VAR={ with flexible spacing
+        let set_patterns = [
+            format!("{{% set {}", var),
+            format!("{{%- set {}", var),
+            format!("{{%-set {}", var),
+        ];
+        let mut matched = false;
+        for pat in &set_patterns {
+            if matched { break; }
+            if let Some(idx) = result.find(pat.as_str()) {
+                // Find the `=` after the set VAR
+                let after_var = idx + pat.len();
+                let eq_pos = match result[after_var..].find('=') {
+                    Some(p) => after_var + p,
+                    None => continue,
+                };
+                // Find the `{` after `=`
+                let brace_pos = match result[eq_pos + 1..].find('{') {
+                    Some(p) => eq_pos + 1 + p,
+                    None => continue,
+                };
+                // Make sure this is a dict literal, not a Jinja tag
+                if brace_pos + 1 < result.len() {
+                    let next = result.as_bytes()[brace_pos + 1];
+                    if next == b'%' || next == b'{' || next == b'#' {
+                        continue; // Jinja delimiter, not dict
+                    }
+                }
+                // Find matching } accounting for nesting and strings
+                let mut depth = 1;
+                let mut j = brace_pos + 1;
+                let mut in_str: Option<char> = None;
+                let bytes = result.as_bytes();
+                while j < result.len() && depth > 0 {
+                    if let Some(q) = in_str {
+                        if bytes[j] == b'\\' { j += 1; }
+                        else if bytes[j] == q as u8 { in_str = None; }
+                    } else {
+                        match bytes[j] {
+                            b'\'' | b'"' => in_str = Some(bytes[j] as char),
+                            b'{' => depth += 1,
+                            b'}' => depth -= 1,
+                            _ => {}
+                        }
+                    }
+                    j += 1;
+                }
+                if depth == 0 {
+                    // j now points past the closing }
+                    result.insert_str(j, ")");
+                    result.insert_str(brace_pos, "_mkdict(");
+                    matched = true;
+                    break; // Only process first occurrence per var
+                }
+            }
+        }
+    }
+    result
+}
+
 /// Removes the ` + EXPR` part where EXPR is a list literal or function call.
 #[allow(dead_code)]
 fn strip_list_concat(sql: &str) -> String {
@@ -2453,17 +2663,149 @@ fn strip_multi_set(sql: &str) -> String {
     result
 }
 
-fn strip_do_statements(sql: &str) -> String {
+/// Rewrite `{% do expr %}` → `{% set _do_N = expr %}` so minijinja evaluates the
+/// expression (including mutations like dict.update()) instead of silently stripping it.
+/// Wrap macro calls in `{% set VAR = func(...) %}` with `_get_return()` so that
+/// dbt macros using `{{ return(val) }}` have their structured return values recovered.
+/// Without this, macro calls in set-expressions return the text output (empty string)
+/// instead of the value passed to `return()`.
+fn wrap_set_macro_calls(sql: &str) -> String {
+    // Known built-in functions that don't use return() — skip wrapping these
+    const BUILTINS: &[&str] = &[
+        "var", "ref", "source", "env_var", "config", "range", "dict", "zip",
+        "_mklist", "_mkdict", "_get_return", "log", "print", "tojson", "fromjson",
+        "set", "namespace", "caller", "loop", "cycler", "joiner",
+        "load_result", "graph", "adapter", "target", "project_name", "modules",
+        "exceptions", "context", "execute", "flags", "invocation_id",
+        "run_started_at", "model", "this", "builtins",
+    ];
+
     let mut result = sql.to_string();
+    let mut search_from = 0;
+
+    loop {
+        // Find {% set or {%- set
+        let set_tag = result[search_from..].find("{% set ")
+            .or_else(|| result[search_from..].find("{%- set "))
+            .or_else(|| result[search_from..].find("{%-set "))
+            .map(|p| search_from + p);
+        let Some(tag_start) = set_tag else { break };
+
+        // Find the = sign
+        let rest_after_set = &result[tag_start..];
+        let eq_rel = match rest_after_set.find('=') {
+            Some(p) => p,
+            None => { search_from = tag_start + 6; continue; }
+        };
+
+        // Check if this is a multi-assignment (a, b = expr) — skip
+        let between = &rest_after_set[..eq_rel];
+        if between.contains(',') {
+            search_from = tag_start + eq_rel + 1;
+            continue;
+        }
+
+        let eq_abs = tag_start + eq_rel;
+
+        // Find closing %} or -%} for this tag, accounting for strings
+        let after_eq = &result[eq_abs + 1..];
+        let mut in_str: Option<char> = None;
+        let mut close_pos = None;
+        let bytes = after_eq.as_bytes();
+        let mut j = 0;
+        while j < bytes.len().saturating_sub(1) {
+            if let Some(q) = in_str {
+                if bytes[j] == b'\\' { j += 2; continue; }
+                if bytes[j] == q as u8 { in_str = None; }
+            } else {
+                match bytes[j] {
+                    b'\'' | b'"' => in_str = Some(bytes[j] as char),
+                    b'-' if j + 2 < bytes.len() && bytes[j + 1] == b'%' && bytes[j + 2] == b'}' => {
+                        close_pos = Some(j);
+                        break;
+                    }
+                    b'%' if j + 1 < bytes.len() && bytes[j + 1] == b'}' => {
+                        close_pos = Some(j);
+                        break;
+                    }
+                    _ => {}
+                }
+            }
+            j += 1;
+        }
+        let Some(expr_end_offset) = close_pos else {
+            search_from = eq_abs + 1;
+            continue;
+        };
+
+        // Extract the expression (between = and %}/-%})
+        let expr = after_eq[..expr_end_offset].trim();
+        if expr.is_empty() {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+
+        // Check if expression starts with an identifier followed by (
+        let first_char = expr.chars().next().unwrap_or(' ');
+        if !first_char.is_ascii_alphabetic() && first_char != '_' {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+        let ident_end = expr.find(|c: char| !c.is_ascii_alphanumeric() && c != '_').unwrap_or(expr.len());
+        let ident = &expr[..ident_end];
+        let after_ident = expr[ident_end..].trim_start();
+
+        if !after_ident.starts_with('(') {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+
+        // Skip known builtins
+        if BUILTINS.contains(&ident) {
+            search_from = eq_abs + 1 + expr_end_offset + 2;
+            continue;
+        }
+
+        // Wrap the expression with _get_return()
+        let wrapped = format!("_get_return({})", expr);
+        let replace_start = eq_abs + 1 + (after_eq.len() - after_eq.trim_start().len());
+        let replace_end = eq_abs + 1 + expr_end_offset;
+        // Trim trailing whitespace from the expression region
+        let actual_end = {
+            let region = &result[replace_start..replace_end];
+            replace_start + region.trim_end().len()
+        };
+        result.replace_range(replace_start..actual_end, &wrapped);
+        search_from = replace_start + wrapped.len() + 2;
+    }
+
+    result
+}
+
+fn rewrite_do_statements(sql: &str) -> String {
+    let mut result = sql.to_string();
+    let mut counter = 0u32;
     loop {
         let found = result.find("{% do ")
             .or_else(|| result.find("{%- do "))
             .or_else(|| result.find("{%-do "));
         if let Some(start) = found {
-            // Find closing %} while respecting string literals
+            // Find the `do ` keyword position to extract the expression
+            let do_keyword_end = if result[start..].starts_with("{%- do ") || result[start..].starts_with("{%-do ") {
+                let offset = if result[start..].starts_with("{%-do ") {
+                    start + 6 // "{%-do "
+                } else {
+                    start + 7 // "{%- do "
+                };
+                offset
+            } else {
+                start + 6 // "{% do "
+            };
+            // Find closing %} or -%} while respecting string literals
             let rest = &result[start..];
             let mut in_string: Option<char> = None;
             let mut close_pos = None;
+            let mut has_trim_close = false;
             let bytes = rest.as_bytes();
             let mut j = 0;
             while j < bytes.len().saturating_sub(1) {
@@ -2476,8 +2818,13 @@ fn strip_do_statements(sql: &str) -> String {
                 } else {
                     match bytes[j] {
                         b'\'' | b'"' => in_string = Some(bytes[j] as char),
+                        b'-' if j + 2 < bytes.len() && bytes[j + 1] == b'%' && bytes[j + 2] == b'}' => {
+                            has_trim_close = true;
+                            close_pos = Some(j);
+                            break;
+                        }
                         b'%' if bytes[j + 1] == b'}' => {
-                            close_pos = Some(j + 2);
+                            close_pos = Some(j);
                             break;
                         }
                         _ => {}
@@ -2485,13 +2832,19 @@ fn strip_do_statements(sql: &str) -> String {
                 }
                 j += 1;
             }
-            if let Some(offset) = close_pos {
-                let mut end = start + offset;
-                // Consume trailing newline
-                if end < result.len() && result.as_bytes()[end] == b'\n' {
-                    end += 1;
-                }
-                result.replace_range(start..end, "");
+            if let Some(expr_end_offset) = close_pos {
+                let expr = result[do_keyword_end..start + expr_end_offset].trim();
+                let trim_open = result[start..].starts_with("{%-");
+                let open = if trim_open { "{%-" } else { "{%" };
+                let close = if has_trim_close { "-%}" } else { "%}" };
+                let replacement = format!("{} set _do_{} = {} {}", open, counter, expr, close);
+                let full_end = if has_trim_close {
+                    start + expr_end_offset + 3 // -% }
+                } else {
+                    start + expr_end_offset + 2 // %}
+                };
+                result.replace_range(start..full_end, &replacement);
+                counter += 1;
                 continue;
             }
         }
@@ -2785,7 +3138,10 @@ fn preprocess_macro_body(body: &str) -> String {
     let mut result = preprocess_dicts_inner(body, true);
     result = strip_ternary_in_kwargs_inner(&result, true);
     result = rewrite_list_append(&result);
-    result = strip_do_statements(&result);
+    result = strip_list_concat(&result);
+    result = rewrite_dict_mutation(&result);
+    result = rewrite_do_statements(&result);
+    result = wrap_set_macro_calls(&result);
     result
 }
 
@@ -2841,6 +3197,28 @@ mod tests {
     }
 
     #[test]
+    fn test_rewrite_dict_mutation() {
+        let sql = "{% set my_dict = {'a': 1} %}\n{% do my_dict.update({'b': 2}) %}";
+        let result = rewrite_dict_mutation(sql);
+        assert!(result.contains("_mkdict("), "expected _mkdict wrapper, got: {}", result);
+    }
+
+    #[test]
+    fn test_rewrite_dict_mutation_no_spaces() {
+        // ad-reporting style: {%- set final_fields_superset={} -%}
+        let sql = "{%- set final_fields_superset={} -%}\n{%- do final_fields_superset.update({'a': 'b'}) -%}";
+        let result = rewrite_dict_mutation(sql);
+        assert!(result.contains("_mkdict({}"), "expected _mkdict wrapper, got: {}", result);
+    }
+
+    #[test]
+    fn test_rewrite_dict_mutation_no_mutation() {
+        let sql = "{% set my_dict = {'a': 1} %}\n{{ my_dict.a }}";
+        let result = rewrite_dict_mutation(sql);
+        assert!(!result.contains("_mkdict("), "should not rewrite without mutations: {}", result);
+    }
+
+    #[test]
     fn test_strip_config_blocks_nested_parens() {
         let sql = "{{ config(materialized='table', pre_hook=sql_header(is_incremental())) }}\nSELECT 1";
         let result = strip_config_blocks(sql);
@@ -2855,10 +3233,12 @@ mod tests {
     }
 
     #[test]
-    fn test_strip_do_statements() {
+    fn test_rewrite_do_statements() {
         let sql = "{% do some_list.append('x') %}\nSELECT 1\n{%- do log('msg') %}";
-        let result = strip_do_statements(sql);
-        assert_eq!(result, "SELECT 1\n");
+        let result = rewrite_do_statements(sql);
+        assert!(result.contains("{% set _do_0 = some_list.append('x') %}"), "got: {}", result);
+        assert!(result.contains("SELECT 1"));
+        assert!(result.contains("{%- set _do_1 = log('msg') %}"), "got: {}", result);
     }
 
     #[test]
@@ -3047,10 +3427,11 @@ mod tests {
     }
 
     #[test]
-    fn test_strip_do_with_string_containing_percent_brace() {
+    fn test_rewrite_do_with_string_containing_percent_brace() {
         let sql = r#"{% do log("hello %} world") %}SELECT 1"#;
-        let result = strip_do_statements(sql);
-        assert_eq!(result, "SELECT 1");
+        let result = rewrite_do_statements(sql);
+        assert!(result.contains(r#"{% set _do_0 = log("hello %} world") %}"#), "got: {}", result);
+        assert!(result.contains("SELECT 1"));
     }
 
     #[test]
@@ -3075,5 +3456,118 @@ mod tests {
         let sql = "{{ config(materialized='table', description='données utilisateur') }}\nSELECT 1";
         let result = strip_config_blocks(sql);
         assert_eq!(result, "SELECT 1");
+    }
+
+    #[test]
+    fn test_mutable_dict_rendering() {
+        // Test the full pipeline: rewrite_dict_mutation + rewrite_do_statements + render
+        let macro_body = r#"
+{%- set consistent_fields = ['spend', 'impressions', 'clicks'] -%}
+{%- set final_fields_superset={} -%}
+{%- for consistent_field in consistent_fields -%}
+    {%- do final_fields_superset.update({consistent_field: consistent_field}) -%}
+{%- endfor -%}
+select
+{%- for field in final_fields_superset.keys()|sort() %}
+  {{ field }}{% if not loop.last %},{% endif %}
+{%- endfor %}
+from test_table
+"#;
+        // Apply preprocessing (same as preprocess_macro_body)
+        let processed = preprocess_macro_body(macro_body);
+        eprintln!("Processed macro body:\n{}", processed);
+
+        // Build the template
+        let tpl = format!("{{% macro get_query() %}}{}{{% endmacro %}}", processed);
+        eprintln!("Full template:\n{}", tpl);
+
+        let mut env = Environment::new();
+        jinja::add_jinja2_compat(&mut env);
+
+        // Try adding the template
+        match env.add_template_owned("ns".to_string(), tpl.clone()) {
+            Ok(()) => eprintln!("Template parsed OK"),
+            Err(e) => {
+                panic!("Template failed to parse: {}\n\nTemplate:\n{}", e, tpl);
+            }
+        }
+
+        let render_tpl = r#"{% import "ns" as ns %}{{ ns.get_query() }}"#;
+        env.add_template("render", render_tpl).unwrap();
+        let tmpl = env.get_template("render").unwrap();
+        match tmpl.render(minijinja::context!{}) {
+            Ok(result) => {
+                eprintln!("Render result:\n{}", result);
+                assert!(result.contains("clicks"), "expected 'clicks' in output: {}", result);
+                assert!(result.contains("impressions"), "expected 'impressions' in output: {}", result);
+                assert!(result.contains("spend"), "expected 'spend' in output: {}", result);
+            }
+            Err(e) => {
+                panic!("Render failed: {}", e);
+            }
+        }
+    }
+
+    #[test]
+    fn test_return_value_recovery() {
+        // Test that macros using return() have their values recovered via _get_return()
+        let mut env = Environment::new();
+        jinja::add_jinja2_compat(&mut env);
+
+        // Register return() and _get_return() — same as the engine does
+        env.add_function("return", |args: &[Value]| -> Result<Value, minijinja::Error> {
+            let val = args.first().cloned().unwrap_or(Value::UNDEFINED);
+            LAST_RETURN_VALUE.with(|v| *v.borrow_mut() = Some(val));
+            Ok(Value::from(""))
+        });
+        env.add_function("_get_return", |args: &[Value]| -> Result<Value, minijinja::Error> {
+            let fallback = args.first().cloned().unwrap_or(Value::UNDEFINED);
+            let stored = LAST_RETURN_VALUE.with(|v| v.borrow_mut().take());
+            Ok(stored.unwrap_or(fallback))
+        });
+
+        // Macro that returns a list via return()
+        let ns = r#"
+{% macro get_items() %}
+{% set items = _mklist([]) %}
+{% for x in ['a', 'b', 'c'] %}
+{% set _ = items.append(x) %}
+{% endfor %}
+{{ return(items) }}
+{% endmacro %}
+"#;
+        env.add_template_owned("ns".to_string(), ns.to_string()).unwrap();
+
+        // Model SQL that calls the macro — preprocessed to use _get_return()
+        let model = r#"{% import "ns" as ns %}{% set items = _get_return(ns.get_items()) %}{% for item in items %}{{ item }},{% endfor %}"#;
+        env.add_template("model", model).unwrap();
+        let result = env.get_template("model").unwrap().render(minijinja::context!{}).unwrap();
+        eprintln!("Return value test result: '{}'", result);
+        assert!(result.contains("a,"), "expected 'a,' in output: {}", result);
+        assert!(result.contains("b,"), "expected 'b,' in output: {}", result);
+        assert!(result.contains("c,"), "expected 'c,' in output: {}", result);
+    }
+
+    #[test]
+    fn test_wrap_set_macro_calls() {
+        // Basic macro call wrapping
+        let sql = "{% set x = get_items() %}";
+        let result = wrap_set_macro_calls(sql);
+        assert!(result.contains("_get_return(get_items())"), "got: {}", result);
+
+        // Should skip builtins
+        let sql2 = "{% set x = var('key', 'default') %}";
+        let result2 = wrap_set_macro_calls(sql2);
+        assert!(!result2.contains("_get_return"), "should not wrap var(): {}", result2);
+
+        // Should skip non-function expressions
+        let sql3 = "{% set x = 42 %}";
+        let result3 = wrap_set_macro_calls(sql3);
+        assert!(!result3.contains("_get_return"), "should not wrap literal: {}", result3);
+
+        // With trim markers
+        let sql4 = "{%- set items = get_enabled_packages() -%}";
+        let result4 = wrap_set_macro_calls(sql4);
+        assert!(result4.contains("_get_return(get_enabled_packages())"), "got: {}", result4);
     }
 }

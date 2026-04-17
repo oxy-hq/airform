@@ -159,7 +159,7 @@ version = "0.1.0"
 dependencies = [
  "airform-core",
  "anyhow",
- "jinja2",
+ "jinja",
  "minijinja",
  "serde",
  "serde_yaml",
@@ -2244,9 +2244,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
-name = "jinja2"
-version = "0.2.0"
+name = "jinja"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "670c58c7dcd21f0980c64207395f929eb55bb7bfb54a3c5c908eb7379a2bb40e"
 dependencies = [
+ "indexmap",
  "minijinja",
  "minijinja-contrib",
  "serde",

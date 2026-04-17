@@ -1,0 +1,256 @@
+with  __dbt__cte__int_mailchimp__campaign_activities_by_segment as (
+
+
+with recipients as (
+
+    select *
+    from "mailchimp"."main_mailchimp"."mailchimp__campaign_recipients"
+
+), pivoted as (
+
+    select
+        source_relation,
+        segment_id,
+        count(*) as sends,
+        sum(opens) as opens,
+        sum(clicks) as clicks,
+        count(distinct case when was_opened = True then member_id end) as unique_opens,
+        count(distinct case when was_clicked = True then member_id end) as unique_clicks
+
+        
+        , count(distinct case when was_unsubscribed = True then member_id end) as unsubscribes
+        
+    from recipients
+    where segment_id is not null
+    group by 1,2
+
+)
+
+select *
+from pivoted
+),  __dbt__cte__int_mailchimp__automation_recipients as (
+
+
+with recipients as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__automation_recipients"
+
+), automation_emails as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__automation_emails"
+
+), automations as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__automations"
+
+), joined as (
+
+    select
+        recipients.*,
+        automations.segment_id,
+        automations.automation_id
+
+    from recipients
+    left join automation_emails
+        on recipients.automation_email_id = automation_emails.automation_email_id
+        and recipients.source_relation = automation_emails.source_relation
+    left join automations
+        on automation_emails.automation_id = automations.automation_id
+        and automation_emails.source_relation = automations.source_relation
+
+)
+
+select * 
+from joined
+),  __dbt__cte__int_mailchimp__automation_unsubscribes as (
+
+
+with unsubscribes as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__unsubscribes"
+
+), automation_emails as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__automation_emails"
+
+), automations as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__automations"
+
+), joined as (
+
+    select
+        unsubscribes.*,
+        automations.segment_id,
+        automations.automation_id
+
+    from unsubscribes
+    left join automation_emails
+        on unsubscribes.campaign_id = automation_emails.automation_email_id
+        and unsubscribes.source_relation = automation_emails.source_relation
+    left join automations
+        on automation_emails.automation_id = automations.automation_id
+        and automation_emails.source_relation = automations.source_relation
+
+)
+
+select * 
+from joined
+),  __dbt__cte__int_mailchimp__automation_activities_by_segment as (
+
+
+with activities as (
+
+    select *
+    from "mailchimp"."main_mailchimp"."mailchimp__automation_activities"
+
+), recipients as (
+
+    select *
+    from __dbt__cte__int_mailchimp__automation_recipients
+
+
+), unsubscribes as (
+
+    select *
+    from __dbt__cte__int_mailchimp__automation_unsubscribes
+
+), unsubscribes_xf as (
+
+    select
+        source_relation,
+        segment_id,
+        count(*) as unsubscribes
+    from unsubscribes
+    where segment_id is not null
+    group by 1,2
+
+
+-- aggregate automation opens and clicks by segment
+
+), pivoted as (
+
+    select
+        source_relation,
+        segment_id,
+        sum(case when action_type = 'open' then 1 end) as opens,
+        sum(case when action_type = 'click' then 1 end) as clicks,
+        count(distinct case when action_type = 'open' then segment_id end) as unique_opens,
+        count(distinct case when action_type = 'click' then segment_id end) as unique_clicks
+    from activities
+    where segment_id is not null
+    group by 1,2
+
+), sends as (
+
+    select
+        source_relation,
+        segment_id,
+        count(*) as sends
+    from recipients
+    where segment_id is not null
+    group by 1,2
+
+), joined as (
+
+    select
+        coalesce(sends.source_relation
+            , pivoted.source_relation
+            , unsubscribes_xf.source_relation
+            ) as source_relation,
+        coalesce(sends.segment_id
+            , pivoted.segment_id
+            , unsubscribes_xf.segment_id
+            ) as segment_id,
+        pivoted.opens,
+        pivoted.clicks,
+        pivoted.unique_opens,
+        pivoted.unique_clicks,
+        sends.sends
+        , unsubscribes_xf.unsubscribes
+    from sends
+    left join pivoted
+        on pivoted.segment_id = sends.segment_id
+        and pivoted.source_relation = sends.source_relation
+
+    
+    left join unsubscribes_xf
+        on unsubscribes_xf.segment_id = sends.segment_id
+        and unsubscribes_xf.source_relation = sends.source_relation
+    
+)
+
+select *
+from joined
+), segments as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__segments"
+
+), campaign_activities as (
+
+    select *
+    from __dbt__cte__int_mailchimp__campaign_activities_by_segment
+
+), lists as (
+
+    select *
+    from "mailchimp"."main_stg_mailchimp"."stg_mailchimp__lists"
+
+), metrics as (
+
+    select
+        segments.*,
+        lists.name as list_name,
+        coalesce(campaign_activities.sends,0) as campaign_sends,
+        coalesce(campaign_activities.opens,0) as campaign_opens,
+        coalesce(campaign_activities.clicks,0) as campaign_clicks,
+        coalesce(campaign_activities.unique_opens,0) as campaign_unique_opens,
+        coalesce(campaign_activities.unique_clicks,0) as campaign_unique_clicks
+
+        
+        , coalesce(campaign_activities.unsubscribes,0) as campaign_unsubscribes
+        
+    from segments
+    left join campaign_activities
+        on segments.segment_id = campaign_activities.segment_id
+        and segments.source_relation = campaign_activities.source_relation
+    left join lists
+        on segments.list_id = lists.list_id
+        and segments.source_relation = lists.source_relation
+
+
+
+), automation_activities as (
+
+    select *
+    from __dbt__cte__int_mailchimp__automation_activities_by_segment
+
+), metrics_xf as (
+
+    select
+        metrics.*,
+        coalesce(automation_activities.sends,0) as automation_sends,
+        coalesce(automation_activities.opens,0) as automation_opens,
+        coalesce(automation_activities.clicks,0) as automation_clicks,
+        coalesce(automation_activities.unique_opens,0) as automation_unique_opens,
+        coalesce(automation_activities.unique_clicks,0) as automation_unique_clicks
+
+        
+        , coalesce(automation_activities.unsubscribes,0) as automation_unsubscribes
+        
+    from metrics
+    left join automation_activities
+        on metrics.segment_id = automation_activities.segment_id
+        and metrics.source_relation = automation_activities.source_relation
+
+)
+
+select *
+from metrics_xf

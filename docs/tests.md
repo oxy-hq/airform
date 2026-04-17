@@ -203,3 +203,15 @@ Tests run after all models have been executed. Airform:
 - Use `relationships` tests to verify foreign key integrity between models.
 - Use `accepted_values` for columns with known, finite value sets (statuses, categories, types).
 - Run `airform test` in CI to catch data quality regressions before they reach production.
+
+## Golden SQL parity tests
+
+In addition to data quality tests, airform maintains a golden SQL test suite that verifies compilation output matches dbt. These tests live in `tests/golden/` and are described in the [architecture docs](architecture.md#golden-sql-parity-tests).
+
+To run them:
+
+```bash
+python3 scripts/test_golden_sql.py --verbose
+```
+
+This compares airform-compiled SQL against dbt-compiled references using sqlglot AST normalization, ensuring semantic equivalence regardless of formatting differences.
