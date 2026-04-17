@@ -343,8 +343,9 @@ def test_project(
 
 
 def save_results(project_results: list[dict], grand_total: int, grand_passed: int,
-                 grand_failed: int, grand_skipped: int) -> None:
-    """Save results to tests/golden-results.json."""
+                 grand_failed: int, grand_skipped: int,
+                 results_file: Path = RESULTS_FILE) -> None:
+    """Save results to a JSON file."""
     results = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "summary": {
@@ -356,7 +357,7 @@ def save_results(project_results: list[dict], grand_total: int, grand_passed: in
         },
         "projects": project_results,
     }
-    RESULTS_FILE.write_text(json.dumps(results, indent=2) + "\n")
+    results_file.write_text(json.dumps(results, indent=2) + "\n")
 
 
 def main():
@@ -455,9 +456,19 @@ def main():
     print(f"Elapsed: {elapsed:.1f}s")
     print(f"{'='*60}")
 
-    # Save results
-    save_results(all_project_results, grand_total, grand_passed, grand_failed, grand_skipped)
-    print(f"Results saved to {RESULTS_FILE.relative_to(ROOT)}")
+    # Save results — partial runs go to a separate file to avoid clobbering full results
+    if args.models:
+        label = "_".join(args.models[:3])
+        if len(args.models) > 3:
+            label += f"_+{len(args.models) - 3}"
+        results_file = ROOT / "tests" / f"golden-results-{label}.json"
+    elif args.projects:
+        results_file = ROOT / "tests" / f"golden-results-{'-'.join(args.projects[:3])}.json"
+    else:
+        results_file = RESULTS_FILE
+    save_results(all_project_results, grand_total, grand_passed, grand_failed, grand_skipped,
+                 results_file)
+    print(f"Results saved to {results_file.relative_to(ROOT)}")
 
     sys.exit(0 if grand_failed == 0 else 1)
 
