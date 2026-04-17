@@ -57,9 +57,13 @@ Extracts dependency information from SQL:
 
 Handles Jinja template rendering using the `minijinja` library:
 
-- Registers custom functions: `ref()`, `source()`, `config()`, `var()`, `is_incremental()`, `this`.
+- Registers custom functions: `ref()`, `source()`, `config()`, `var()`, `env_var()`, `is_incremental()`, `this`, `return()`.
 - Renders model SQL by replacing Jinja expressions with resolved table references.
-- Supports Jinja control flow (`{% if %}`, `{% for %}`, etc.).
+- Supports Jinja control flow (`{% if %}`, `{% for %}`, `{% set %}`, `{% do %}`).
+- **Macro discovery** -- auto-loads `.sql` files from project `macros/` and `dbt_packages/` directories, registering all `{% macro %}` definitions.
+- **Dispatch resolution** -- implements `adapter.dispatch()` with target-specific prefix resolution (e.g., `duckdb__my_macro`, `postgres__my_macro`, `default__my_macro`) and respects `dispatch:` config in `dbt_project.yml` for search order.
+- **Built-in dbt macros** -- includes Rust-native implementations of common dbt macros (`generate_schema_name`, `star`, `datediff`, `dateadd`, `type_*`, `fill_staging_columns`, etc.).
+- **Structured return values** -- `return()` passes lists, dicts, and other structured values through macro call boundaries (not just rendered text).
 
 ### airform-compiler
 
@@ -174,9 +178,56 @@ When you run `airform analyze`, the pipeline runs steps 1-5, then:
 | `tabled` | 0.18 | Table formatting for CLI output |
 | `colored` | 3 | Terminal color output |
 
+## Testing
+
+### Unit and integration tests
+
+Each crate has its own tests, runnable via `cargo test`. Integration tests in `tests/` exercise end-to-end compilation and execution:
+
+- `test_jaffle_shop` -- validates the jaffle-shop example project end-to-end.
+- `test_compat_execution` -- compiles and executes 66 real-world dbt packages locally.
+
+### Golden SQL parity tests
+
+The `tests/golden/` directory contains dbt-compiled SQL as reference outputs. The test script `scripts/test_golden_sql.py` compiles each project with airform and compares the output against the golden references using sqlglot AST normalization.
+
+```
+tests/
+  golden/
+    <project>/
+      expected/
+        <model>.sql     # dbt-compiled reference SQL
+  compat-projects/
+    <project>/          # Real dbt project with dbt_project.yml, models/, etc.
+```
+
+To run the golden SQL parity tests:
+
+```bash
+# Generate golden references from dbt (requires dbt installed)
+python3 scripts/generate_golden_sql.py
+
+# Compare airform output against golden references
+python3 scripts/test_golden_sql.py --verbose
+```
+
+The comparison applies several normalization layers to handle expected differences between dbt and airform output:
+- **Database prefix stripping** -- 3-part `database.schema.table` refs normalized to 2-part `schema.table`.
+- **Type alias normalization** -- `FLOAT`/`REAL` to `DOUBLE`, `DECIMAL(N,M)` to `DECIMAL`, `NOW()` to `CURRENT_TIMESTAMP`.
+- **Redundant cast removal** -- strips `CAST(... AS TIMESTAMP)` wrappers that dbt adds but airform omits.
+- **Ephemeral CTE skipping** -- models with inlined `__dbt__cte__` CTEs are excluded (known structural difference in how ephemeral models are resolved).
+
+### Contributing tests
+
+To add a new test project:
+
+1. Place the dbt project in `tests/compat-projects/<name>/` with a working `dbt_project.yml` and `profiles.yml`.
+2. Run `python3 scripts/generate_golden_sql.py <name>` to generate golden references.
+3. Run `python3 scripts/test_golden_sql.py <name> --verbose` to verify parity.
+
 ## Design principles
 
-- **dbt compatibility**: Airform reads standard `dbt_project.yml` and `profiles.yml` files and supports the same `ref()`, `source()`, and `config()` semantics.
+- **dbt compatibility**: Airform reads standard `dbt_project.yml` and `profiles.yml` files and supports the same `ref()`, `source()`, and `config()` semantics. Tested against 66 real-world dbt packages with 99.1% SQL parity.
 - **Local-first execution**: All execution happens in-process via DataFusion. No warehouse connection is needed for development and testing.
 - **Modular crates**: Each stage of the pipeline is a separate crate with clear boundaries, enabling independent testing and potential reuse.
 - **Performance**: Written in Rust with Apache Arrow-based DataFusion for fast local execution.

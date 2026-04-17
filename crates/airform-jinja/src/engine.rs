@@ -1,6 +1,6 @@
 use crate::context::DbtContext;
 use airform_core::{RefCall, SourceCall};
-use jinja2::add_jinja2_compat;
+use jinja::add_jinja2_compat;
 use minijinja::{Environment, Error as JinjaError, ErrorKind, Value};
 use std::cell::RefCell;
 use std::fmt;
@@ -53,7 +53,7 @@ impl JinjaEngine {
         // Lenient undefined handling (dbt is permissive with undefined vars)
         env.set_undefined_behavior(minijinja::UndefinedBehavior::Chainable);
 
-        // jinja2::add_jinja2_compat() already provides:
+        // jinja::add_jinja2_compat() already provides:
         // - Full Python method compatibility (items, keys, values, get, strip, replace, etc.)
         // - as_bool filter
         // - All 51 Jinja2 filters, 33 tests, 7 globals
@@ -3482,7 +3482,7 @@ from test_table
         eprintln!("Full template:\n{}", tpl);
 
         let mut env = Environment::new();
-        jinja2::add_jinja2_compat(&mut env);
+        jinja::add_jinja2_compat(&mut env);
 
         // Try adding the template
         match env.add_template_owned("ns".to_string(), tpl.clone()) {
@@ -3512,7 +3512,7 @@ from test_table
     fn test_return_value_recovery() {
         // Test that macros using return() have their values recovered via _get_return()
         let mut env = Environment::new();
-        jinja2::add_jinja2_compat(&mut env);
+        jinja::add_jinja2_compat(&mut env);
 
         // Register return() and _get_return() — same as the engine does
         env.add_function("return", |args: &[Value]| -> Result<Value, minijinja::Error> {

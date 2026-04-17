@@ -44,7 +44,7 @@ clap = { version = "4", features = ["derive"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tokio = { version = "1", features = ["full"] }
-jinja2 = { path = "../jinja2rust" }
+jinja = "0.1.0"
 minijinja = { version = "2", features = ["loader"] }
 datafusion = "53"
 regex = "1"

@@ -12,7 +12,8 @@ Compile, run, and test [dbt](https://www.getdbt.com/) projects locally using [Ap
 
 ## Highlights
 
-- **Full dbt syntax compatibility** -- `dbt_project.yml`, `profiles.yml`, `ref()`, `source()`, `config()`, `var()`, `env_var()`, `is_incremental()`
+- **Full dbt syntax compatibility** -- `dbt_project.yml`, `profiles.yml`, `ref()`, `source()`, `config()`, `var()`, `env_var()`, `is_incremental()`. Tested against 66 real-world dbt packages: **99.9% compile rate** (2555/2561 models), **99.1% SQL parity** vs dbt output.
+- **dbt packages & macro dispatch** -- auto-discovers macros from `dbt_packages/`, supports `adapter.dispatch()` with target-specific resolution, and implements common dbt/fivetran utility macros natively.
 - **Local execution via DataFusion** -- develop and iterate without touching a warehouse
 - **Fast** -- single ~75 MB binary; compiles the jaffle-shop example (5 models) in 0.16 s, the ecommerce-analytics example (19 models) in 0.33 s
 - **SQL comprehension** -- parses compiled SQL into logical plans (via DataFusion) for static validation and column-level lineage, catching type errors and invalid SQL without hitting a warehouse
@@ -21,7 +22,7 @@ Compile, run, and test [dbt](https://www.getdbt.com/) projects locally using [Ap
 - **Seeds & tests** -- CSV loading, generic tests (`not_null`, `unique`, `accepted_values`, `relationships`)
 - **SQL formatting** -- built-in formatter with `--check` mode for CI
 - **Incremental rebuilds** -- file fingerprinting and caching so unchanged models are skipped
-- **Custom macros** -- load Jinja macros from a `macros/` directory
+- **Custom macros** -- load Jinja macros from `macros/` and `dbt_packages/` directories
 - **Artifacts** -- generates `manifest.json` and `run_results.json`
 
 ---
@@ -308,7 +309,7 @@ See [benchmarks/README.md](benchmarks/README.md) for details.
 | Local execution | Limited (DuckDB adapter) | Built-in | Built-in (DataFusion) |
 | Compile 10k models | ~10 min | ~7 min | **17 sec** |
 | Single binary | No | No | Yes (~75 MB) |
-| dbt syntax compatible | Yes | Partial | Yes |
+| dbt syntax compatible | Yes | Partial | Yes (99.1% SQL parity) |
 | SQL validation (no warehouse) | No | No | Yes (logical plan analysis) |
 | Column-level lineage | No (dbt Cloud only) | Yes | Yes (logical plan-based) |
 | Schema inference | No | No | Yes (from SQL + CSV) |

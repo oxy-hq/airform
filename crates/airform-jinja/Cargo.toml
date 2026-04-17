@@ -9,6 +9,6 @@ anyhow.workspace = true
 thiserror.workspace = true
 serde.workspace = true
 serde_yaml.workspace = true
-jinja2.workspace = true
+jinja.workspace = true
 minijinja.workspace = true
 tracing.workspace = true

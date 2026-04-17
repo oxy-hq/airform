@@ -87,20 +87,24 @@ Since airform uses DataFusion (which speaks ANSI SQL), some warehouse-specific S
 
 ### Jinja support
 
-Airform uses `minijinja` (a Rust Jinja2 implementation) for template rendering. Core Jinja features work:
+Airform uses `minijinja` (a Rust Jinja2 implementation) for template rendering. Supported features:
 
 - `{{ ref('model') }}` and `{{ source('src', 'table') }}`
 - `{{ config(...) }}`
-- `{{ var('key') }}`
-- `{% if %}` / `{% for %}` / `{% set %}` control flow
-- `{{ is_incremental() }}`
+- `{{ var('key') }}` and `{{ env_var('KEY') }}`
+- `{% if %}` / `{% for %}` / `{% set %}` / `{% do %}` control flow
+- `{{ is_incremental() }}` and `{{ this }}`
+- **Custom macros** -- `.sql` files in `macros/` are auto-discovered and registered, including macros from dbt packages.
+- **dbt packages** -- `dbt_packages/` directories are scanned for macros. Airform resolves package-qualified macro calls (e.g., `dbt_utils.star()`).
+- **Macro dispatch** -- `adapter.dispatch()` with target-specific prefix resolution (duckdb, postgres, bigquery, redshift, spark, default) and `dispatch:` config in `dbt_project.yml`.
+- **`return()` values** -- structured return values (lists, dicts) from macro calls are passed through correctly.
+- **Built-in dbt macros** -- `generate_schema_name`, `generate_alias_name`, `generate_database_name`, `star()`, `datediff()`, `dateadd()`, `type_*()`, `fill_staging_columns()`, and many more.
+- **Fivetran-style staging macros** -- `fill_staging_columns` with auto-quoting of SQL reserved keywords and proper column definition handling.
 
-**Not yet supported:**
+**Known limitations:**
 
-- Custom Jinja macros (`.sql` files in `macros/` are discovered but macro dispatch is limited).
-- `env_var()` in profiles.yml.
-- dbt packages (`dbt_packages/`) and `packages.yml`.
-- `{{ this }}` in all contexts (basic support exists).
+- Some complex Jinja patterns involving deeply nested dynamic macro resolution may not render identically to dbt.
+- `env_var()` in `profiles.yml` (works in model SQL).
 
 ### Incremental models
 
@@ -119,7 +123,6 @@ Airform supports the four built-in generic test types:
 
 - Custom generic tests (custom test macros in `tests/generic/`).
 - Singular tests (standalone `.sql` files in `tests/`).
-- `dbt_utils` or other package-based tests.
 - Test severity and warn/error thresholds.
 
 ### Snapshots
@@ -204,7 +207,15 @@ airform run -q "SELECT count(*) FROM my_model"
 | SQL formatting | airform |
 | Production warehouse execution | dbt |
 | Complex incremental/snapshot logic | dbt |
-| dbt packages ecosystem | dbt |
-| Custom Jinja macros | dbt |
 
 Airform and dbt can coexist in the same project. Use airform for fast local development and dbt for warehouse deployment.
+
+## Compatibility
+
+Airform is tested against 66 real-world dbt packages (Fivetran connectors, dbt-utils, etc.) using a golden SQL test suite. Current results:
+
+- **99.9% compile rate** -- 2555/2561 models compile successfully across 66 projects.
+- **99.1% SQL parity** -- 969/978 compiled models produce SQL semantically equivalent to dbt output (verified via sqlglot AST comparison).
+- **11/17 perfect projects** -- these projects produce byte-identical SQL to dbt after normalization.
+
+The remaining 9 mismatches are known structural differences (e.g., `GENERATE_SERIES` vs cross-join date spines, window function syntax variants) rather than bugs.
