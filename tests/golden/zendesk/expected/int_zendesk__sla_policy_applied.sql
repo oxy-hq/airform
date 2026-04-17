@@ -1,0 +1,115 @@
+-- step 1, figure out when sla was applied to tickets
+
+-- more on SLA policies here: https://support.zendesk.com/hc/en-us/articles/204770038-Defining-and-using-SLA-policies-Professional-and-Enterprise-
+-- SLA policies are calculated for next_reply_time, first_reply_time, agent_work_time, requester_wait_time.  If you're company uses other SLA metrics, and would like this
+-- package to support those, please reach out to the Fivetran team on Slack.
+
+
+
+with ticket_field_history as (
+
+  select *
+  from "zendesk"."main_zendesk_intermediate"."int_zendesk__updates"
+
+), sla_policy_name as (
+
+  select 
+    *
+  from "zendesk"."main_zendesk_intermediate"."int_zendesk__updates"
+  where field_name = ('sla_policy')
+
+), ticket as (
+
+  select *
+  from "zendesk"."main_zendesk_intermediate"."int_zendesk__ticket_aggregates"
+
+
+), sla_policy_metrics as (
+
+    select *
+    from "zendesk"."main_zendesk_source"."stg_zendesk__sla_policy_metric_history"
+    where is_most_recent_record
+
+), ticket_sla_policy as (
+
+    select *
+    from "zendesk"."main_zendesk_source"."stg_zendesk__ticket_sla_policy"
+
+
+
+), sla_policy_applied as (
+
+  select
+    ticket_field_history.source_relation,
+    ticket_field_history.ticket_id,
+    ticket.created_at as ticket_created_at,
+    ticket_field_history.valid_starting_at,
+    ticket.status as ticket_current_status,
+    ticket_field_history.field_name as metric,
+    case when ticket_field_history.field_name = 'first_reply_time' then row_number() over (partition by ticket_field_history.ticket_id, ticket_field_history.field_name  order by ticket_field_history.valid_starting_at desc) else 1 end as latest_sla,
+    case when ticket_field_history.field_name = 'first_reply_time' then ticket.created_at else ticket_field_history.valid_starting_at end as sla_applied_at,
+    cast(
+
+  json_extract_path_text(ticket_field_history.value,'minutes')
+
+ as integer ) as target,
+    
+
+  json_extract_path_text(ticket_field_history.value,'in_business_hours')
+
+ = 'true' as in_business_hours,
+    ticket.priority as current_priority
+  from ticket_field_history
+  join ticket
+    on ticket.ticket_id = ticket_field_history.ticket_id
+    and ticket.source_relation = ticket_field_history.source_relation
+  where ticket_field_history.value is not null
+    and ticket_field_history.field_name in ('next_reply_time', 'first_reply_time', 'agent_work_time', 'requester_wait_time')
+
+), add_sla_policy_name as (
+
+  select
+    sla_policy_applied.*,
+    sla_policy_name.value as sla_policy_name
+  from sla_policy_applied
+  left join sla_policy_name
+    on sla_policy_name.ticket_id = sla_policy_applied.ticket_id
+    and sla_policy_name.source_relation = sla_policy_applied.source_relation
+      and date_trunc('second', sla_policy_applied.valid_starting_at) >= date_trunc('second', sla_policy_name.valid_starting_at)
+      and date_trunc('second', sla_policy_applied.valid_starting_at) < coalesce(date_trunc('second', sla_policy_name.valid_ending_at), now())
+  where sla_policy_applied.latest_sla = 1
+
+), final as (
+
+
+
+    select
+      add_sla_policy_name.source_relation,
+      add_sla_policy_name.ticket_id,
+      add_sla_policy_name.ticket_created_at,
+      add_sla_policy_name.valid_starting_at,
+      add_sla_policy_name.ticket_current_status,
+      add_sla_policy_name.metric,
+      add_sla_policy_name.latest_sla,
+      add_sla_policy_name.sla_applied_at,
+      coalesce(sla_policy_metrics.target, add_sla_policy_name.target) as target,
+      add_sla_policy_name.in_business_hours,
+      add_sla_policy_name.current_priority,
+      add_sla_policy_name.sla_policy_name
+
+    from add_sla_policy_name 
+    left join ticket_sla_policy -- Bringing this in for joining purposes only. Alternatively can join on sla_policy_name, but that is subject to change
+      on add_sla_policy_name.ticket_id = ticket_sla_policy.ticket_id
+      and add_sla_policy_name.source_relation = ticket_sla_policy.source_relation
+      and add_sla_policy_name.sla_applied_at = ticket_sla_policy.policy_applied_at
+    left join sla_policy_metrics
+      on add_sla_policy_name.metric = sla_policy_metrics.metric
+      and ticket_sla_policy.sla_policy_id = sla_policy_metrics.sla_policy_id
+      and add_sla_policy_name.current_priority = sla_policy_metrics.priority
+      and add_sla_policy_name.source_relation = sla_policy_metrics.source_relation
+
+
+)
+
+select *
+from final

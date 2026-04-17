@@ -1,0 +1,3 @@
+select consolidated_exchange_rate_id
+from "netsuite"."main_netsuite_source"."stg_netsuite__consolidated_exchange_rates"
+where consolidated_exchange_rate_id is null

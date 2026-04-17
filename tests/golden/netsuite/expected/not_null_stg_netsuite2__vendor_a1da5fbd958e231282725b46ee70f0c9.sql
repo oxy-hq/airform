@@ -1,0 +1,3 @@
+select vendor_subsidiary_relationship_id
+from "netsuite"."main_netsuite_source"."stg_netsuite2__vendor_subsidiary_relationships"
+where vendor_subsidiary_relationship_id is null

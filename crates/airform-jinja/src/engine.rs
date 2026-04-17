@@ -1268,6 +1268,43 @@ impl JinjaEngine {
                     }
                 }
 
+                // Helper: check if a column name should be quoted.
+                // Respects the explicit "quote" attribute, and also auto-quotes
+                // SQL reserved keywords that commonly appear in dbt staging columns.
+                fn should_quote_col(item: &Value, name: &str) -> bool {
+                    // Explicit quote attribute
+                    if let Ok(q) = item.get_attr("quote") {
+                        if q.is_true() {
+                            return true;
+                        }
+                    }
+                    // Auto-quote known SQL reserved keywords
+                    matches!(name.to_uppercase().as_str(),
+                        "ALL" | "ALTER" | "AND" | "AS" | "BEGIN" | "BETWEEN" | "BY" |
+                        "CASE" | "CHECK" | "COLUMN" | "CREATE" | "CROSS" | "CURRENT" |
+                        "DELETE" | "DESC" | "DISTINCT" | "DROP" | "ELSE" | "END" |
+                        "EXISTS" | "FOR" | "FROM" | "FULL" | "GROUP" | "HAVING" |
+                        "IN" | "INDEX" | "INNER" | "INSERT" | "INTO" | "IS" |
+                        "JOIN" | "LEFT" | "LIKE" | "LIMIT" | "NOT" | "NULL" |
+                        "ON" | "OR" | "ORDER" | "OUTER" | "PRIMARY" | "RIGHT" |
+                        "SELECT" | "SET" | "START" | "TABLE" | "THEN" | "TYPE" |
+                        "UNION" | "UPDATE" | "VALUES" | "WHEN" | "WHERE" | "WITH" |
+                        "DATE" | "TIME" | "TIMESTAMP" | "NUMBER" | "COMMENT" |
+                        "ROW" | "ROWS" | "ROLE" | "GRANT" | "REVOKE" | "TRIGGER" |
+                        "KEY" | "REFERENCES" | "CONSTRAINT" | "DEFAULT" | "UNIQUE"
+                    )
+                }
+
+                // Helper: format a column name, quoting if needed.
+                // Uses uppercase double-quoting (Snowflake convention).
+                fn format_col_name(item: &Value, name: &str) -> String {
+                    if should_quote_col(item, name) {
+                        format!("\"{}\"", name.to_uppercase())
+                    } else {
+                        name.to_string()
+                    }
+                }
+
                 // If no source columns known, use staging columns and cast all as NULL
                 if source_names.is_empty() {
                     let mut parts = Vec::new();
@@ -1301,7 +1338,8 @@ impl JinjaEngine {
                                         Some(s)
                                     }
                                 });
-                            let output_name = alias.as_deref().unwrap_or(&name);
+                            let col_name = format_col_name(&item, &name);
+                            let output_name = alias.as_deref().unwrap_or(&col_name);
                             parts.push(format!("cast(null as {}) as {}", datatype, output_name));
                         }
                     }
@@ -1343,14 +1381,19 @@ impl JinjaEngine {
                                     Some(s)
                                 }
                             });
-                        let output_name = alias.as_deref().unwrap_or(&name);
+                        let col_name = format_col_name(&item, &name);
+                        let output_name = if alias.is_some() {
+                            alias.as_deref().unwrap().to_string()
+                        } else {
+                            col_name.clone()
+                        };
 
                         if source_names.contains(&name.to_uppercase()) {
                             // Column exists in source — select it, with alias if needed
                             if alias.is_some() {
-                                parts.push(format!("{} as {}", name, output_name));
+                                parts.push(format!("{} as {}", col_name, output_name));
                             } else {
-                                parts.push(name);
+                                parts.push(col_name);
                             }
                         } else {
                             // Column missing — output CAST(NULL AS type)

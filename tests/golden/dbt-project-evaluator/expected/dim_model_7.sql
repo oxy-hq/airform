@@ -1,0 +1,25 @@
+with __dbt__cte__stg_model_2 as (
+-- depends on: "dbt_project_evaluator_integration_tests_2"."real_schema"."table_1"
+-- depends on: "dbt_project_evaluator_integration_tests_2"."real_schema"."table_2"
+
+select 1 as id
+),  __dbt__cte__stg_model_4 as (
+-- depends on: __dbt__cte__stg_model_2
+
+select 1 as id
+),  __dbt__cte__stg_model_1 as (
+-- this needs to be valid SQL for the fake test to run
+-- depends on: "dbt_project_evaluator_integration_tests_2"."real_schema"."table_1"
+select 1 as id 
+union all 
+select 2 as id
+),  __dbt__cte__int_model_4 as (
+-- depends on: __dbt__cte__stg_model_1
+-- depends on: "dbt_project_evaluator_integration_tests_2"."real_schema"."table_2"
+
+select 1 as id
+),  __dbt__cte__int_model_5 as (
+__dbt__cte__int_model_4
+__dbt__cte__stg_model_1
+) __dbt__cte__stg_model_4
+__dbt__cte__int_model_5
