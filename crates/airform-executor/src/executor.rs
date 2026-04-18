@@ -58,6 +58,15 @@ impl Executor {
         self.adapter.register_info_schema(manifest, graph).await
     }
 
+    /// Return the underlying DataFusion `SessionContext` when the executor is
+    /// backed by the local DataFusion adapter.  Returns `None` for cloud adapters.
+    pub fn session_context(&self) -> Option<&datafusion::prelude::SessionContext> {
+        self.adapter
+            .as_any()
+            .downcast_ref::<DataFusionAdapter>()
+            .map(|a| a.session_context())
+    }
+
     /// Register all seed CSV files as tables.
     /// Must be called BEFORE execute() so models can reference seeds.
     pub async fn load_seeds(&self, manifest: &Manifest) -> anyhow::Result<Vec<NodeResult>> {
@@ -492,6 +501,207 @@ impl Executor {
         }
 
         Ok(ExecutionResult { results })
+    }
+
+    /// Streaming variant of [`execute`]: sends each [`NodeResult`] to `tx` as soon as it completes.
+    pub async fn execute_streaming(
+        &self,
+        manifest: &Manifest,
+        graph: &DbtGraph,
+        selected: Option<&[UniqueId]>,
+        tx: tokio::sync::mpsc::Sender<NodeResult>,
+    ) -> anyhow::Result<()> {
+        let order = graph.topological_sort()?;
+
+        for unique_id in &order {
+            if manifest.sources.contains_key(unique_id) {
+                continue;
+            }
+            if let Some(selected) = selected {
+                if !selected.contains(unique_id) {
+                    continue;
+                }
+            }
+            let Some(node) = manifest.nodes.get(unique_id) else {
+                continue;
+            };
+
+            match node {
+                ManifestNode::Model(model) => {
+                    if model.config.enabled == Some(false) {
+                        let _ = tx.send(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Skipped,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("disabled".to_string()),
+                        }).await;
+                        continue;
+                    }
+
+                    if model.config.materialized == Materialization::Ephemeral {
+                        let _ = tx.send(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Skipped,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("ephemeral (CTE only)".to_string()),
+                        }).await;
+                        continue;
+                    }
+
+                    let Some(compiled_sql) = &model.compiled_sql else {
+                        let _ = tx.send(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Error,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("No compiled SQL".to_string()),
+                        }).await;
+                        continue;
+                    };
+
+                    let sql_trimmed = compiled_sql
+                        .lines()
+                        .filter(|l| { let t = l.trim(); !t.is_empty() && !t.starts_with("--") })
+                        .collect::<Vec<_>>()
+                        .join("\n");
+                    let upper = sql_trimmed.to_uppercase();
+                    let has_sql_keyword = upper.contains("SELECT")
+                        || upper.contains("INSERT")
+                        || upper.contains("CREATE")
+                        || upper.contains("WITH")
+                        || upper.contains("MERGE");
+                    if !has_sql_keyword {
+                        let _ = tx.send(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Skipped,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("empty SQL (disabled model)".to_string()),
+                        }).await;
+                        continue;
+                    }
+
+                    let table_name = model.config.alias.as_deref().unwrap_or(&model.name);
+                    let schema = generate_schema_name(model.config.schema.as_deref(), &self.target_schema);
+
+                    let effective_sql = if model.config.materialized == Materialization::Incremental {
+                        let table_exists = self.adapter.table_exists(&schema, table_name).await.unwrap_or(false);
+                        if !table_exists {
+                            model.compiled_sql_full_refresh.clone().unwrap_or_else(|| compiled_sql.clone())
+                        } else {
+                            compiled_sql.clone()
+                        }
+                    } else {
+                        compiled_sql.clone()
+                    };
+
+                    let start = Instant::now();
+                    if !model.config.pre_hook.is_empty() {
+                        self.execute_hooks(&model.config.pre_hook, &format!("pre-hook({})", model.name)).await;
+                    }
+                    let result = self.adapter.materialize(
+                        &schema,
+                        table_name,
+                        &effective_sql,
+                        &model.config.materialized,
+                        model.config.unique_key.as_deref(),
+                        model.config.incremental_strategy.as_deref(),
+                    ).await;
+                    if !model.config.post_hook.is_empty() {
+                        self.execute_hooks(&model.config.post_hook, &format!("post-hook({})", model.name)).await;
+                    }
+
+                    let node_result = match result {
+                        Ok(rows) => NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Success,
+                            duration: start.elapsed(),
+                            rows_affected: Some(rows),
+                            message: None,
+                        },
+                        Err(e) => NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: model.name.clone(),
+                            status: NodeStatus::Error,
+                            duration: start.elapsed(),
+                            rows_affected: None,
+                            message: Some(e.to_string()),
+                        },
+                    };
+                    let _ = tx.send(node_result).await;
+                }
+                ManifestNode::Snapshot(snapshot) => {
+                    let Some(compiled_sql) = &snapshot.compiled_sql else {
+                        let _ = tx.send(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: snapshot.name.clone(),
+                            status: NodeStatus::Error,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some("No compiled SQL".to_string()),
+                        }).await;
+                        continue;
+                    };
+
+                    let table_name = snapshot.config.alias.as_deref().unwrap_or(&snapshot.name);
+                    let schema = generate_schema_name(snapshot.config.schema.as_deref(), &self.target_schema);
+                    let strategy = snapshot.config.strategy.as_deref().unwrap_or("timestamp");
+
+                    let Some(unique_key) = snapshot.config.unique_key.as_deref() else {
+                        let _ = tx.send(NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: snapshot.name.clone(),
+                            status: NodeStatus::Error,
+                            duration: Duration::ZERO,
+                            rows_affected: None,
+                            message: Some(format!("Snapshot '{}' requires a unique_key config", snapshot.name)),
+                        }).await;
+                        continue;
+                    };
+
+                    let start = Instant::now();
+                    let result = self.adapter.execute_snapshot(
+                        &schema,
+                        table_name,
+                        compiled_sql,
+                        unique_key,
+                        strategy,
+                        snapshot.config.updated_at.as_deref(),
+                        snapshot.config.check_cols.as_deref(),
+                    ).await;
+
+                    let node_result = match result {
+                        Ok(rows) => NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: snapshot.name.clone(),
+                            status: NodeStatus::Success,
+                            duration: start.elapsed(),
+                            rows_affected: Some(rows),
+                            message: None,
+                        },
+                        Err(e) => NodeResult {
+                            unique_id: unique_id.clone(),
+                            name: snapshot.name.clone(),
+                            status: NodeStatus::Error,
+                            duration: start.elapsed(),
+                            rows_affected: None,
+                            message: Some(e.to_string()),
+                        },
+                    };
+                    let _ = tx.send(node_result).await;
+                }
+                _ => {}
+            }
+        }
+
+        Ok(())
     }
 
     /// Execute an ad-hoc SQL query against the current adapter.

@@ -298,6 +298,10 @@ impl Drop for SnowflakeAdapter {
 
 #[async_trait]
 impl WarehouseAdapter for SnowflakeAdapter {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
     async fn execute_query(&self, sql: &str) -> anyhow::Result<QueryResult> {
         let resp = self.execute_sql(sql)?;
         Ok(self.parse_response(&resp))
