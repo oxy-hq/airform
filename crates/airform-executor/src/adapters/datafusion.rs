@@ -24,10 +24,6 @@ impl DataFusionAdapter {
         }
     }
 
-    /// Get a reference to the underlying DataFusion session context.
-    pub fn session_context(&self) -> &SessionContext {
-        &self.ctx
-    }
 }
 
 // ---------------------------------------------------------------------------
@@ -36,10 +32,6 @@ impl DataFusionAdapter {
 
 #[async_trait]
 impl WarehouseAdapter for DataFusionAdapter {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
-
     async fn execute_query(&self, sql: &str) -> anyhow::Result<QueryResult> {
         let df = self.ctx.sql(sql).await?;
         let batches = df.collect().await?;

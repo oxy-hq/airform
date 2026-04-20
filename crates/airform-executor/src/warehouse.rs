@@ -75,9 +75,7 @@ fn value_display_str(v: &serde_json::Value) -> String {
 /// materializing models, loading seeds, etc. The `Executor` orchestrates
 /// the dbt graph and delegates actual SQL execution to the adapter.
 #[async_trait]
-pub trait WarehouseAdapter: Send + Sync + std::any::Any {
-    /// Return `self` as `&dyn Any` to enable downcasting to concrete types.
-    fn as_any(&self) -> &dyn std::any::Any;
+pub trait WarehouseAdapter: Send + Sync {
     /// Execute a SELECT query and return tabular results.
     async fn execute_query(&self, sql: &str) -> anyhow::Result<QueryResult>;
 

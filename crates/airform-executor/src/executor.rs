@@ -58,15 +58,6 @@ impl Executor {
         self.adapter.register_info_schema(manifest, graph).await
     }
 
-    /// Return the underlying DataFusion `SessionContext` when the executor is
-    /// backed by the local DataFusion adapter.  Returns `None` for cloud adapters.
-    pub fn session_context(&self) -> Option<&datafusion::prelude::SessionContext> {
-        self.adapter
-            .as_any()
-            .downcast_ref::<DataFusionAdapter>()
-            .map(|a| a.session_context())
-    }
-
     /// Register all seed CSV files as tables.
     /// Must be called BEFORE execute() so models can reference seeds.
     pub async fn load_seeds(&self, manifest: &Manifest) -> anyhow::Result<Vec<NodeResult>> {
