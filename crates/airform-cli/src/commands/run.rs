@@ -25,7 +25,7 @@ pub async fn run(
     let selected = common::apply_selection(&manifest, &graph, select, exclude);
 
     // Execute - load seeds first, then models
-    let executor = common::create_executor(&load_state, &output.target_schema)?;
+    let executor = common::create_executor(&load_state, &output.target_schema).await?;
 
     // Register information schema tables
     if let Err(e) = executor.register_info_schema(&manifest, &graph).await {

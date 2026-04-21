@@ -16,7 +16,7 @@ pub async fn run(
     let graph = output.graph;
 
     // Execute seeds + models
-    let executor = common::create_executor(&output.load_state, &output.target_schema)?;
+    let executor = common::create_executor(&output.load_state, &output.target_schema).await?;
     executor.load_seeds(&manifest).await?;
     executor.execute(&manifest, &graph, None).await?;
 
