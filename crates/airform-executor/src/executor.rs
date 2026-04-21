@@ -494,6 +494,46 @@ impl Executor {
         Ok(ExecutionResult { results })
     }
 
+    /// Like `execute`, but sends each `NodeResult` through `node_tx` as nodes complete.
+    /// Useful for streaming progress to the caller while execution is still in progress.
+    pub async fn execute_streaming(
+        &self,
+        manifest: &Manifest,
+        graph: &DbtGraph,
+        selected: Option<&[UniqueId]>,
+        node_tx: tokio::sync::mpsc::Sender<NodeResult>,
+    ) -> anyhow::Result<ExecutionResult> {
+        let order = graph.topological_sort()?;
+        let mut results = Vec::new();
+
+        for unique_id in &order {
+            if manifest.sources.contains_key(unique_id) {
+                continue;
+            }
+            if let Some(selected) = selected {
+                if !selected.contains(unique_id) {
+                    continue;
+                }
+            }
+            let Some(node) = manifest.nodes.get(unique_id) else {
+                continue;
+            };
+            // Re-use execute() for each individual node to avoid code duplication.
+            // We run a single-node execution by passing a one-element slice as the
+            // selection so the existing logic handles disabled/ephemeral/missing SQL.
+            let single = vec![unique_id.clone()];
+            let result = self.execute(manifest, graph, Some(&single)).await?;
+            for r in result.results {
+                let _ = node_tx.send(r.clone()).await;
+                results.push(r);
+            }
+            // Drop unused node binding to satisfy the `match` we skip
+            let _ = node;
+        }
+
+        Ok(ExecutionResult { results })
+    }
+
     /// Execute an ad-hoc SQL query against the current adapter.
     pub async fn execute_query(&self, sql: &str) -> anyhow::Result<QueryResult> {
         self.adapter.execute_query(sql).await
@@ -722,7 +762,7 @@ impl ExecutionResult {
 }
 
 /// Result of executing a single node
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NodeResult {
     pub unique_id: UniqueId,
     pub name: String,
