@@ -31,8 +31,13 @@ impl MySqlAdapter {
             .or_else(|| get("database"))
             .unwrap_or_else(|| "mysql".to_string());
 
-        let url = format!("mysql://{user}:{password}@{host}:{port}/{database}");
-        let pool = mysql_async::Pool::new(url.as_str());
+        let opts = mysql_async::OptsBuilder::default()
+            .ip_or_hostname(host)
+            .tcp_port(port)
+            .user(Some(user))
+            .pass(Some(password))
+            .db_name(Some(database));
+        let pool = mysql_async::Pool::new(opts);
         Ok(Self { pool })
     }
 
@@ -43,8 +48,14 @@ impl MySqlAdapter {
         let user = std::env::var("MYSQL_USER").map_err(|_| anyhow::anyhow!("MYSQL_USER not set"))?;
         let password = std::env::var("MYSQL_PASSWORD").unwrap_or_default();
         let database = std::env::var("MYSQL_DATABASE").unwrap_or_else(|_| "mysql".to_string());
-        let url = format!("mysql://{user}:{password}@{host}:{port}/{database}");
-        Ok(Self { pool: mysql_async::Pool::new(url.as_str()) })
+        let port: u16 = port.parse().unwrap_or(3306);
+        let opts = mysql_async::OptsBuilder::default()
+            .ip_or_hostname(host)
+            .tcp_port(port)
+            .user(Some(user))
+            .pass(Some(password))
+            .db_name(Some(database));
+        Ok(Self { pool: mysql_async::Pool::new(opts) })
     }
 
     async fn get_conn(&self) -> anyhow::Result<mysql_async::Conn> {
@@ -219,7 +230,7 @@ impl WarehouseAdapter for MySqlAdapter {
             let values = parse_csv_line(line);
             let val_list = values.iter()
                 .map(|v| if v.is_empty() || v.eq_ignore_ascii_case("null") { "NULL".to_string() }
-                     else { format!("'{}'", v.replace('\'', "\\'")) })
+                     else { format!("'{}'", v.replace('\\', "\\\\").replace('\'', "\\'")) })
                 .collect::<Vec<_>>().join(", ");
             batch.push(format!("({val_list})"));
             total += 1;

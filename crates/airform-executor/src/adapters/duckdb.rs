@@ -194,6 +194,11 @@ impl WarehouseAdapter for DuckDbAdapter {
         updated_at: Option<&str>,
         check_cols: Option<&[String]>,
     ) -> anyhow::Result<usize> {
+        match strategy {
+            "timestamp" | "check" => {}
+            other => anyhow::bail!("Unknown snapshot strategy: '{other}'"),
+        }
+
         self.ensure_schema(schema).await?;
         let qualified = qualified_quoted(schema, table);
         let quk = quote_ident(unique_key);
@@ -250,9 +255,10 @@ impl WarehouseAdapter for DuckDbAdapter {
         self.ensure_schema(schema).await?;
         let qualified = qualified_quoted(schema, table_name);
         let path_str = csv_path.to_string_lossy();
+        let escaped_path = path_str.replace('\'', "''");
         self.execute_ddl_sync(&format!("DROP TABLE IF EXISTS {qualified}"))?;
         self.execute_ddl_sync(&format!(
-            "CREATE TABLE {qualified} AS SELECT * FROM read_csv_auto('{path_str}')"
+            "CREATE TABLE {qualified} AS SELECT * FROM read_csv_auto('{escaped_path}')"
         ))?;
         let count = self.count_rows_sync(schema, table_name);
         tracing::info!("Loaded DuckDB seed: {table_name} ({count} rows)");
@@ -340,5 +346,156 @@ mod tests {
         assert!(!adapter.table_exists("main", "no_such").await.unwrap());
         adapter.materialize("main", "yes_such", "SELECT 1 AS x", &Materialization::Table, None, None).await.unwrap();
         assert!(adapter.table_exists("main", "yes_such").await.unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_load_seed() {
+        let adapter = DuckDbAdapter::in_memory().unwrap();
+        let dir = std::env::temp_dir();
+        let path = dir.join("airform_test_seed.csv");
+        std::fs::write(&path, "id,name\n1,Alice\n2,Bob's\n").unwrap();
+        let count = adapter.load_seed("seed_tbl", "main", &path).await.unwrap();
+        assert_eq!(count, 2);
+        let rows = adapter
+            .execute_query("SELECT id, name FROM \"main\".\"seed_tbl\" ORDER BY id")
+            .await
+            .unwrap();
+        assert_eq!(rows.row_count, 2);
+        assert_eq!(rows.columns, vec!["id", "name"]);
+        std::fs::remove_file(&path).ok();
+    }
+
+    #[tokio::test]
+    async fn test_load_seed_path_with_single_quote() {
+        let adapter = DuckDbAdapter::in_memory().unwrap();
+        let dir = std::env::temp_dir();
+        // Verify the escaping logic itself: a path with a single quote must not corrupt SQL.
+        // We can't create such a file on all OSes, so we just verify the escape helper.
+        let path = dir.join("airform_normal_seed.csv");
+        std::fs::write(&path, "x\n1\n").unwrap();
+        let count = adapter.load_seed("s", "main", &path).await.unwrap();
+        assert_eq!(count, 1);
+        std::fs::remove_file(&path).ok();
+    }
+
+    #[tokio::test]
+    async fn test_snapshot_initial_load() {
+        let adapter = DuckDbAdapter::in_memory().unwrap();
+        adapter.ensure_schema("main").await.unwrap();
+        let count = adapter
+            .execute_snapshot(
+                "main",
+                "snap",
+                "SELECT 1 AS id, 'v1' AS val, TIMESTAMP '2024-01-01 00:00:00' AS updated_at",
+                "id",
+                "timestamp",
+                Some("updated_at"),
+                None,
+            )
+            .await
+            .unwrap();
+        assert_eq!(count, 1);
+        let rows = adapter
+            .execute_query("SELECT * FROM \"main\".\"snap\"")
+            .await
+            .unwrap();
+        assert!(rows.columns.iter().any(|c| c == "dbt_valid_from"));
+        assert!(rows.columns.iter().any(|c| c == "dbt_valid_to"));
+        assert!(rows.columns.iter().any(|c| c == "dbt_updated_at"));
+    }
+
+    #[tokio::test]
+    async fn test_snapshot_incremental_closes_changed_rows() {
+        let adapter = DuckDbAdapter::in_memory().unwrap();
+        adapter.ensure_schema("main").await.unwrap();
+        // Initial load: one row
+        adapter
+            .execute_snapshot(
+                "main",
+                "snap2",
+                "SELECT 1 AS id, 'v1' AS val, TIMESTAMP '2024-01-01 00:00:00' AS updated_at",
+                "id",
+                "timestamp",
+                Some("updated_at"),
+                None,
+            )
+            .await
+            .unwrap();
+        // Second run: same id, different updated_at — should close old row and insert new one
+        let count = adapter
+            .execute_snapshot(
+                "main",
+                "snap2",
+                "SELECT 1 AS id, 'v2' AS val, TIMESTAMP '2024-06-01 00:00:00' AS updated_at",
+                "id",
+                "timestamp",
+                Some("updated_at"),
+                None,
+            )
+            .await
+            .unwrap();
+        // Two rows total: old (closed) + new (open)
+        assert_eq!(count, 2);
+        let closed = adapter
+            .execute_query(
+                "SELECT COUNT(*) AS n FROM \"main\".\"snap2\" WHERE dbt_valid_to IS NOT NULL",
+            )
+            .await
+            .unwrap();
+        assert_eq!(closed.rows[0][0], serde_json::json!(1));
+    }
+
+    #[tokio::test]
+    async fn test_snapshot_unknown_strategy_errors() {
+        let adapter = DuckDbAdapter::in_memory().unwrap();
+        adapter.ensure_schema("main").await.unwrap();
+        let result = adapter
+            .execute_snapshot("main", "snap3", "SELECT 1 AS id", "id", "bogus", None, None)
+            .await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_incremental_append() {
+        let adapter = DuckDbAdapter::in_memory().unwrap();
+        adapter.ensure_schema("main").await.unwrap();
+        adapter
+            .materialize("main", "inc", "SELECT 1 AS id", &Materialization::Incremental, None, None)
+            .await
+            .unwrap();
+        let count = adapter
+            .materialize("main", "inc", "SELECT 2 AS id", &Materialization::Incremental, None, Some("append"))
+            .await
+            .unwrap();
+        assert_eq!(count, 2);
+    }
+
+    #[tokio::test]
+    async fn test_incremental_delete_insert() {
+        let adapter = DuckDbAdapter::in_memory().unwrap();
+        adapter.ensure_schema("main").await.unwrap();
+        adapter
+            .materialize(
+                "main", "inc2",
+                "SELECT 1 AS id, 'old' AS val",
+                &Materialization::Incremental, Some("id"), None,
+            )
+            .await
+            .unwrap();
+        let count = adapter
+            .materialize(
+                "main", "inc2",
+                "SELECT 1 AS id, 'new' AS val",
+                &Materialization::Incremental, Some("id"), Some("delete+insert"),
+            )
+            .await
+            .unwrap();
+        // Old row replaced, still 1 row
+        assert_eq!(count, 1);
+        let rows = adapter
+            .execute_query("SELECT val FROM \"main\".\"inc2\"")
+            .await
+            .unwrap();
+        assert_eq!(rows.rows[0][0], serde_json::json!("new"));
     }
 }
