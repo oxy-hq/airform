@@ -244,7 +244,7 @@ impl Executor {
         graph: &DbtGraph,
         selected: Option<&[UniqueId]>,
     ) -> anyhow::Result<ExecutionResult> {
-        let (tx, mut rx) = tokio::sync::mpsc::channel(256);
+        let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
         self.execute_streaming(manifest, graph, selected, tx).await?;
         let mut results = Vec::new();
         while let Some(result) = rx.recv().await {
@@ -254,12 +254,14 @@ impl Executor {
     }
 
     /// Streaming variant of [`execute`]: sends each [`NodeResult`] to `tx` as soon as it completes.
+    ///
+    /// Returns `Ok(())` if the receiver is dropped mid-run (treated as cancellation).
     pub async fn execute_streaming(
         &self,
         manifest: &Manifest,
         graph: &DbtGraph,
         selected: Option<&[UniqueId]>,
-        tx: tokio::sync::mpsc::Sender<NodeResult>,
+        tx: tokio::sync::mpsc::UnboundedSender<NodeResult>,
     ) -> anyhow::Result<()> {
         let order = graph.topological_sort()?;
 
@@ -279,38 +281,44 @@ impl Executor {
             match node {
                 ManifestNode::Model(model) => {
                     if model.config.enabled == Some(false) {
-                        tx.send(NodeResult {
+                        if tx.send(NodeResult {
                             unique_id: unique_id.clone(),
                             name: model.name.clone(),
                             status: NodeStatus::Skipped,
                             duration: Duration::ZERO,
                             rows_affected: None,
                             message: Some("disabled".to_string()),
-                        }).await?;
+                        }).is_err() {
+                            return Ok(());
+                        }
                         continue;
                     }
 
                     if model.config.materialized == Materialization::Ephemeral {
-                        tx.send(NodeResult {
+                        if tx.send(NodeResult {
                             unique_id: unique_id.clone(),
                             name: model.name.clone(),
                             status: NodeStatus::Skipped,
                             duration: Duration::ZERO,
                             rows_affected: None,
                             message: Some("ephemeral (CTE only)".to_string()),
-                        }).await?;
+                        }).is_err() {
+                            return Ok(());
+                        }
                         continue;
                     }
 
                     let Some(compiled_sql) = &model.compiled_sql else {
-                        tx.send(NodeResult {
+                        if tx.send(NodeResult {
                             unique_id: unique_id.clone(),
                             name: model.name.clone(),
                             status: NodeStatus::Error,
                             duration: Duration::ZERO,
                             rows_affected: None,
                             message: Some("No compiled SQL".to_string()),
-                        }).await?;
+                        }).is_err() {
+                            return Ok(());
+                        }
                         continue;
                     };
 
@@ -329,14 +337,16 @@ impl Executor {
                         || upper.contains("WITH")
                         || upper.contains("MERGE");
                     if !has_sql_keyword {
-                        tx.send(NodeResult {
+                        if tx.send(NodeResult {
                             unique_id: unique_id.clone(),
                             name: model.name.clone(),
                             status: NodeStatus::Skipped,
                             duration: Duration::ZERO,
                             rows_affected: None,
                             message: Some("empty SQL (disabled model)".to_string()),
-                        }).await?;
+                        }).is_err() {
+                            return Ok(());
+                        }
                         continue;
                     }
 
@@ -407,18 +417,22 @@ impl Executor {
                             message: Some(e.to_string()),
                         },
                     };
-                    tx.send(node_result).await?;
+                    if tx.send(node_result).is_err() {
+                        return Ok(());
+                    }
                 }
                 ManifestNode::Snapshot(snapshot) => {
                     let Some(compiled_sql) = &snapshot.compiled_sql else {
-                        tx.send(NodeResult {
+                        if tx.send(NodeResult {
                             unique_id: unique_id.clone(),
                             name: snapshot.name.clone(),
                             status: NodeStatus::Error,
                             duration: Duration::ZERO,
                             rows_affected: None,
                             message: Some("No compiled SQL".to_string()),
-                        }).await?;
+                        }).is_err() {
+                            return Ok(());
+                        }
                         continue;
                     };
 
@@ -432,7 +446,7 @@ impl Executor {
                         snapshot.config.strategy.as_deref().unwrap_or("timestamp");
 
                     let Some(unique_key) = snapshot.config.unique_key.as_deref() else {
-                        tx.send(NodeResult {
+                        if tx.send(NodeResult {
                             unique_id: unique_id.clone(),
                             name: snapshot.name.clone(),
                             status: NodeStatus::Error,
@@ -442,7 +456,9 @@ impl Executor {
                                 "Snapshot '{}' requires a unique_key config",
                                 snapshot.name
                             )),
-                        }).await?;
+                        }).is_err() {
+                            return Ok(());
+                        }
                         continue;
                     };
 
@@ -478,7 +494,9 @@ impl Executor {
                             message: Some(e.to_string()),
                         },
                     };
-                    tx.send(node_result).await?;
+                    if tx.send(node_result).is_err() {
+                        return Ok(());
+                    }
                 }
                 _ => {}
             }
@@ -822,4 +840,87 @@ fn extract_relationship(val: &serde_yaml::Value) -> (String, String) {
         return (to_model.to_string(), field.to_string());
     }
     (String::new(), String::new())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use airform_core::{DependsOn, ManifestNode, ModelNode, NodeConfig, ResourceType};
+    use airform_graph::build_graph;
+    use std::path::PathBuf;
+
+    fn disabled_model(index: usize) -> ManifestNode {
+        ManifestNode::Model(ModelNode {
+            unique_id: format!("model.test.m{index}"),
+            name: format!("m{index}"),
+            package_name: "test".to_string(),
+            resource_type: ResourceType::Model,
+            path: PathBuf::from(format!("m{index}.sql")),
+            original_file_path: PathBuf::from(format!("models/m{index}.sql")),
+            raw_sql: String::new(),
+            compiled_sql: None,
+            compiled_sql_full_refresh: None,
+            config: NodeConfig {
+                enabled: Some(false),
+                ..NodeConfig::default()
+            },
+            depends_on: DependsOn::default(),
+            description: None,
+            columns: Vec::new(),
+            tags: Vec::new(),
+            extra_ctes: Vec::new(),
+        })
+    }
+
+    #[tokio::test]
+    async fn test_execute_skips_disabled_models() {
+        let mut manifest = Manifest::new();
+        manifest.add_node(disabled_model(0));
+        let graph = build_graph(&manifest).unwrap();
+
+        let result = Executor::new("public")
+            .execute(&manifest, &graph, None)
+            .await
+            .unwrap();
+
+        assert_eq!(result.results.len(), 1);
+        assert_eq!(result.results[0].status, NodeStatus::Skipped);
+    }
+
+    #[tokio::test]
+    async fn test_execute_no_deadlock_with_many_models() {
+        // 300 models exceeds the old bounded-channel capacity of 256.
+        // This test would hang indefinitely before the unbounded-channel fix.
+        let mut manifest = Manifest::new();
+        for i in 0..300 {
+            manifest.add_node(disabled_model(i));
+        }
+        let graph = build_graph(&manifest).unwrap();
+
+        let result = Executor::new("public")
+            .execute(&manifest, &graph, None)
+            .await
+            .unwrap();
+
+        assert_eq!(result.results.len(), 300);
+        assert!(result.results.iter().all(|r| r.status == NodeStatus::Skipped));
+    }
+
+    #[tokio::test]
+    async fn test_execute_streaming_receiver_drop_is_ok() {
+        let mut manifest = Manifest::new();
+        for i in 0..10 {
+            manifest.add_node(disabled_model(i));
+        }
+        let graph = build_graph(&manifest).unwrap();
+
+        let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
+        drop(rx);
+
+        let result = Executor::new("public")
+            .execute_streaming(&manifest, &graph, None, tx)
+            .await;
+
+        assert!(result.is_ok(), "dropping the receiver must not propagate as an error");
+    }
 }
