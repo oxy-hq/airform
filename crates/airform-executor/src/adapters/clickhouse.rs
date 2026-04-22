@@ -149,10 +149,28 @@ impl WarehouseAdapter for ClickHouseAdapter {
         table: &str,
         sql: &str,
         unique_key: &str,
-        _strategy: &str,
+        strategy: &str,
         _updated_at: Option<&str>,
         _check_cols: Option<&[String]>,
     ) -> anyhow::Result<usize> {
+        // ClickHouse lacks transactional UPDATE/DELETE, so full SCD Type 2 is not possible.
+        // We approximate by rebuilding the table; existing history is not preserved across runs.
+        match strategy {
+            "timestamp" | "check" => {
+                tracing::warn!(
+                    "ClickHouse snapshot strategy '{}' is approximated: the table is fully rebuilt \
+                     each run and historical rows are not retained. Use Postgres or DuckDB for \
+                     full SCD Type 2 support.",
+                    strategy
+                );
+            }
+            other => anyhow::bail!(
+                "ClickHouse adapter does not support snapshot strategy '{}'. \
+                 Supported values are 'timestamp' and 'check' (both approximated via full rebuild).",
+                other
+            ),
+        }
+
         self.ensure_schema(schema).await?;
         let qualified = format!("{}.{}", bt(schema), bt(table));
         let exists = self.table_exists(schema, table).await?;
@@ -190,7 +208,7 @@ impl WarehouseAdapter for ClickHouseAdapter {
             let values = parse_csv_line(line);
             let val_list = values.iter()
                 .map(|v| if v.is_empty() || v.eq_ignore_ascii_case("null") { "NULL".to_string() }
-                     else { format!("'{}'", v.replace('\'', "\\'")) })
+                     else { format!("'{}'", v.replace('\\', "\\\\").replace('\'', "\\'")) })
                 .collect::<Vec<_>>().join(", ");
             batch.push(format!("({val_list})"));
             total += 1;
@@ -213,8 +231,8 @@ impl WarehouseAdapter for ClickHouseAdapter {
     async fn table_exists(&self, schema: &str, table: &str) -> anyhow::Result<bool> {
         let sql = format!(
             "SELECT COUNT(*) AS n FROM system.tables WHERE database = '{}' AND name = '{}' FORMAT JSONEachRow",
-            schema.replace('\'', "\\'"),
-            table.replace('\'', "\\'"),
+            schema.replace('\\', "\\\\").replace('\'', "\\'"),
+            table.replace('\\', "\\\\").replace('\'', "\\'"),
         );
         let body = self.send_query(&sql)?;
         let obj: serde_json::Value = serde_json::from_str(body.trim()).unwrap_or(serde_json::json!({"n": 0}));

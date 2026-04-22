@@ -51,7 +51,11 @@ impl PostgresAdapter {
         let (client, connection) = tokio_postgres::connect(&connstr, tokio_postgres::NoTls)
             .await
             .map_err(|e| anyhow::anyhow!("Failed to connect to Postgres at {host}:{port}: {e}"))?;
-        tokio::spawn(async move { let _ = connection.await; });
+        tokio::spawn(async move {
+            if let Err(e) = connection.await {
+                tracing::error!("Postgres connection error: {e}");
+            }
+        });
         Ok(Self { client })
     }
 
