@@ -4,10 +4,11 @@
 //! These tests download repos to a local cache directory and exercise the full
 //! airform pipeline against real SQL models from the dbt ecosystem.
 //!
-//! The test suite covers 42 repositories totaling ~2700 SQL models:
+//! The test suite covers 75+ repositories totaling ~2800 SQL models:
 //!   - dbt-labs official examples (jaffle-shop, mrr-playbook, attribution-playbook)
-//!   - 35+ Fivetran connector packages (shopify, stripe, hubspot, etc.)
+//!   - 55+ Fivetran connector packages (shopify, stripe, hubspot, etc.)
 //!   - Community packages (dbt_artifacts, dbt-project-evaluator, snowplow-web)
+//!   - Postgres / ClickHouse / MySQL projects exercising the new dialect adapters
 //!
 //! Run: cargo test --test compat_tests -- --include-ignored
 //! (ignored by default because they require network access to clone repos)
@@ -385,6 +386,42 @@ compat_test!(
     5
 );
 compat_test!(snowplow_web, "snowplow/dbt-snowplow-web", None, "snowflake", 10);
+
+// ===========================================================================
+// Postgres-dialect projects (exercises the postgres adapter)
+// ===========================================================================
+
+compat_test!(jaffle_shop_classic, "dbt-labs/jaffle_shop", None, "postgres", 5);
+compat_test!(spotify_analytics, "ftupas/dbt-spotify-analytics", Some("dbt"), "postgres", 13);
+compat_test!(data_eng_labs_postgres, "iobruno/data-engineering-labs", Some("module4-analytics-engineering/postgres"), "postgres", 7);
+compat_test!(postgres_tutorial, "luchonaveiro/dbt-postgres-tutorial", Some("jaffle_shop"), "postgres", 13);
+compat_test!(postgres_demo, "florx/dbt-postgres-demo", None, "postgres", 1);
+compat_test!(datnguye_postgres, "datnguye/dbt-postgres", Some("dbt"), "postgres", 7);
+
+// ===========================================================================
+// ClickHouse-dialect projects (exercises the clickhouse adapter)
+// ===========================================================================
+
+compat_test!(clickhouse_taxis, "ClickHouse/dbt-clickhouse", Some("examples/taxis"), "clickhouse", 2);
+compat_test!(data_eng_labs_clickhouse, "iobruno/data-engineering-labs", Some("module4-analytics-engineering/clickhouse"), "clickhouse", 7);
+compat_test!(clickhouse_lab, "kzzzr/dbt_clickhouse_lab", None, "clickhouse", 7);
+
+// ===========================================================================
+// MySQL-dialect projects (exercises the mysql adapter)
+// ===========================================================================
+
+compat_test!(sql_skills_mysql, "LinkedInLearning/advance-your-sql-skills-for-data-engineering-3315012", Some("example"), "mysql", 2);
+compat_test!(sensor_data_mysql, "bereketkibru/Data_engineering_sensor_data", Some("dbt"), "mysql", 6);
+
+// ===========================================================================
+// Redshift-dialect projects (redshift__ -> postgres__ -> default__ dispatch)
+// ===========================================================================
+
+compat_test!(redshift_demo, "garystafford/dbt-redshift-demo", None, "redshift", 13);
+compat_test!(data_eng_labs_redshift, "iobruno/data-engineering-labs", Some("module4-analytics-engineering/redshift"), "redshift", 7);
+compat_test!(redshift_etlpattern, "aws-samples/dbt-redshift-etlpattern", Some("dbt_redshift"), "redshift", 3);
+compat_test!(redshift_banking_dw, "shj37/dbt-redshift-aws-banking-data-warehouse", Some("dbt_redshift_datawarehouse"), "redshift", 20);
+compat_test!(redshift_example, "thedatagata/dbt-redshift-example", None, "redshift", 7);
 
 // ===========================================================================
 // Aggregate test: run all repos and produce a compatibility report
