@@ -16,14 +16,14 @@ pub struct CompileOutput {
 }
 
 /// Create an Executor, using the target adapter if configured.
-pub fn create_executor(
+pub async fn create_executor(
     load_state: &airform_loader::LoadState,
     target_schema: &str,
 ) -> anyhow::Result<airform_executor::Executor> {
     if let Some(target) = &load_state.target {
         let adapter_type = airform_executor::AdapterType::from_str(&target.adapter_type);
         if !adapter_type.is_local() {
-            return airform_executor::Executor::from_target(target);
+            return airform_executor::Executor::from_target(target).await;
         }
     }
     Ok(airform_executor::Executor::new(target_schema))

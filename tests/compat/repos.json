@@ -526,5 +526,133 @@
     "adapter_type": "snowflake",
     "expected_models": 10,
     "notes": "Ecommerce events: products, transactions, carts"
+  },
+  {
+    "name": "jaffle-shop-classic",
+    "repo": "dbt-labs/jaffle_shop",
+    "project_subdir": null,
+    "adapter_type": "postgres",
+    "expected_models": 5,
+    "notes": "Classic jaffle shop: original postgres-targeted dbt demo"
+  },
+  {
+    "name": "spotify-analytics",
+    "repo": "ftupas/dbt-spotify-analytics",
+    "project_subdir": "dbt",
+    "adapter_type": "postgres",
+    "expected_models": 13,
+    "notes": "Spotify analytics on postgres: staging + mart layer"
+  },
+  {
+    "name": "data-eng-labs-postgres",
+    "repo": "iobruno/data-engineering-labs",
+    "project_subdir": "module4-analytics-engineering/postgres",
+    "adapter_type": "postgres",
+    "expected_models": 7,
+    "notes": "Data engineering labs postgres module"
+  },
+  {
+    "name": "postgres-tutorial",
+    "repo": "luchonaveiro/dbt-postgres-tutorial",
+    "project_subdir": "jaffle_shop",
+    "adapter_type": "postgres",
+    "expected_models": 13,
+    "notes": "Jaffle shop tutorial configured for local postgres"
+  },
+  {
+    "name": "postgres-demo",
+    "repo": "florx/dbt-postgres-demo",
+    "project_subdir": null,
+    "adapter_type": "postgres",
+    "expected_models": 1,
+    "notes": "Minimal dbt+postgres demo"
+  },
+  {
+    "name": "datnguye-postgres",
+    "repo": "datnguye/dbt-postgres",
+    "project_subdir": "dbt",
+    "adapter_type": "postgres",
+    "expected_models": 7,
+    "notes": "dbt+postgres starter with staging/marts"
+  },
+  {
+    "name": "clickhouse-taxis",
+    "repo": "ClickHouse/dbt-clickhouse",
+    "project_subdir": "examples/taxis",
+    "adapter_type": "clickhouse",
+    "expected_models": 2,
+    "notes": "Official ClickHouse adapter example: NYC taxis"
+  },
+  {
+    "name": "data-eng-labs-clickhouse",
+    "repo": "iobruno/data-engineering-labs",
+    "project_subdir": "module4-analytics-engineering/clickhouse",
+    "adapter_type": "clickhouse",
+    "expected_models": 7,
+    "notes": "Data engineering labs clickhouse module"
+  },
+  {
+    "name": "clickhouse-lab",
+    "repo": "kzzzr/dbt_clickhouse_lab",
+    "project_subdir": null,
+    "adapter_type": "clickhouse",
+    "expected_models": 7,
+    "notes": "ClickHouse DWH lab: staging + mart models"
+  },
+  {
+    "name": "sql-skills-mysql",
+    "repo": "LinkedInLearning/advance-your-sql-skills-for-data-engineering-3315012",
+    "project_subdir": "example",
+    "adapter_type": "mysql",
+    "expected_models": 2,
+    "notes": "LinkedIn Learning SQL/data-engineering course starter on MySQL"
+  },
+  {
+    "name": "sensor-data-mysql",
+    "repo": "bereketkibru/Data_engineering_sensor_data",
+    "project_subdir": "dbt",
+    "adapter_type": "mysql",
+    "expected_models": 6,
+    "notes": "Sensor/traffic data ELT on MySQL"
+  },
+  {
+    "name": "redshift-demo",
+    "repo": "garystafford/dbt-redshift-demo",
+    "project_subdir": null,
+    "adapter_type": "redshift",
+    "expected_models": 13,
+    "notes": "Redshift demo: staging + mart models on Amazon Redshift"
+  },
+  {
+    "name": "data-eng-labs-redshift",
+    "repo": "iobruno/data-engineering-labs",
+    "project_subdir": "module4-analytics-engineering/redshift",
+    "adapter_type": "redshift",
+    "expected_models": 7,
+    "notes": "Data engineering labs redshift module"
+  },
+  {
+    "name": "redshift-etlpattern",
+    "repo": "aws-samples/dbt-redshift-etlpattern",
+    "project_subdir": "dbt_redshift",
+    "adapter_type": "redshift",
+    "expected_models": 3,
+    "notes": "AWS Samples ETL pattern on Redshift"
+  },
+  {
+    "name": "redshift-banking-dw",
+    "repo": "shj37/dbt-redshift-aws-banking-data-warehouse",
+    "project_subdir": "dbt_redshift_datawarehouse",
+    "adapter_type": "redshift",
+    "expected_models": 20,
+    "notes": "Banking data warehouse on Amazon Redshift"
+  },
+  {
+    "name": "redshift-example",
+    "repo": "thedatagata/dbt-redshift-example",
+    "project_subdir": null,
+    "adapter_type": "redshift",
+    "expected_models": 7,
+    "notes": "Minimal dbt+Redshift example project"
   }
 ]

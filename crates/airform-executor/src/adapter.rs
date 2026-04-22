@@ -1,28 +1,28 @@
-/// Database adapter type
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AdapterType {
-    /// Local DataFusion execution (no warehouse needed)
     DataFusion,
-    /// DuckDB local execution
     DuckDb,
-    /// Remote adapters (not yet implemented)
     Snowflake,
     BigQuery,
     Databricks,
     Redshift,
     Postgres,
+    MySQL,
+    ClickHouse,
 }
 
 impl AdapterType {
     pub fn from_str(s: &str) -> Self {
         match s.to_lowercase().as_str() {
             "datafusion" => AdapterType::DataFusion,
-            "duckdb" => AdapterType::DuckDb,
+            "duckdb" | "motherduck" => AdapterType::DuckDb,
             "snowflake" => AdapterType::Snowflake,
             "bigquery" => AdapterType::BigQuery,
             "databricks" => AdapterType::Databricks,
             "redshift" => AdapterType::Redshift,
             "postgres" | "postgresql" => AdapterType::Postgres,
+            "mysql" => AdapterType::MySQL,
+            "clickhouse" => AdapterType::ClickHouse,
             _ => AdapterType::DataFusion,
         }
     }
@@ -42,6 +42,20 @@ impl std::fmt::Display for AdapterType {
             AdapterType::Databricks => write!(f, "databricks"),
             AdapterType::Redshift => write!(f, "redshift"),
             AdapterType::Postgres => write!(f, "postgres"),
+            AdapterType::MySQL => write!(f, "mysql"),
+            AdapterType::ClickHouse => write!(f, "clickhouse"),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_adapter_type_from_str_new_variants() {
+        assert!(matches!(AdapterType::from_str("mysql"), AdapterType::MySQL));
+        assert!(matches!(AdapterType::from_str("clickhouse"), AdapterType::ClickHouse));
+        assert!(matches!(AdapterType::from_str("motherduck"), AdapterType::DuckDb));
     }
 }

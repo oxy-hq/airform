@@ -17,3 +17,7 @@ serde_json.workspace = true
 async-trait.workspace = true
 ureq.workspace = true
 dotenvy.workspace = true
+chrono.workspace = true
+duckdb = { workspace = true }
+tokio-postgres = { workspace = true }
+mysql_async = { workspace = true }

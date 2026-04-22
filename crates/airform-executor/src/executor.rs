@@ -28,13 +28,13 @@ impl Executor {
     }
 
     /// Create an Executor from a DbtTarget, dispatching on adapter_type.
-    pub fn from_target(target: &DbtTarget) -> anyhow::Result<Self> {
+    pub async fn from_target(target: &DbtTarget) -> anyhow::Result<Self> {
         let target_schema = target
             .schema
             .clone()
             .unwrap_or_else(|| "public".to_string());
         let adapter_type = AdapterType::from_str(&target.adapter_type);
-        let adapter = adapters::create_adapter(&adapter_type, Some(target))?;
+        let adapter = adapters::create_adapter(&adapter_type, Some(target)).await?;
         Ok(Self {
             adapter,
             target_schema,
@@ -733,7 +733,7 @@ impl ExecutionResult {
 }
 
 /// Result of executing a single node
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NodeResult {
     pub unique_id: UniqueId,
     pub name: String,
