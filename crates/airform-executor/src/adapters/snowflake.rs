@@ -22,7 +22,7 @@ pub struct SnowflakeAdapter {
 }
 
 impl SnowflakeAdapter {
-    pub fn from_target(target: &airform_core::DbtTarget) -> anyhow::Result<Self> {
+    pub async fn from_target(target: &airform_core::DbtTarget) -> anyhow::Result<Self> {
         let get = |key: &str| -> anyhow::Result<String> {
             target
                 .extra
@@ -44,25 +44,12 @@ impl SnowflakeAdapter {
             .clone()
             .unwrap_or_else(|| "AIRFORM_TEST".to_string());
 
-        let api = SnowflakeApi::with_password_auth(
-            &account,
-            Some(&warehouse),
-            Some(&database),
-            None,
-            &user,
-            None,
-            &password,
-        )
-        .map_err(|e| anyhow::anyhow!("Failed to create Snowflake client: {e}"))?;
-
-        Ok(Self {
-            database,
-            api,
-            ensured_schemas: Mutex::new(std::collections::HashSet::new()),
-        })
+        let adapter = Self::build(account, user, password, warehouse, database)?;
+        adapter.init_session().await?;
+        Ok(adapter)
     }
 
-    pub fn from_env() -> anyhow::Result<Self> {
+    pub async fn from_env() -> anyhow::Result<Self> {
         dotenvy::dotenv().ok();
 
         let account =
@@ -76,6 +63,18 @@ impl SnowflakeAdapter {
         let database =
             std::env::var("SNOWFLAKE_DATABASE").unwrap_or_else(|_| "AIRFORM_TEST".to_string());
 
+        let adapter = Self::build(account, user, password, warehouse, database)?;
+        adapter.init_session().await?;
+        Ok(adapter)
+    }
+
+    fn build(
+        account: String,
+        user: String,
+        password: String,
+        warehouse: String,
+        database: String,
+    ) -> anyhow::Result<Self> {
         let api = SnowflakeApi::with_password_auth(
             &account,
             Some(&warehouse),
@@ -94,6 +93,18 @@ impl SnowflakeAdapter {
         })
     }
 
+    /// Set session parameters that normalize timestamp parsing and output to
+    /// match what the Python bridge configured. Without TIMESTAMP_INPUT_FORMAT =
+    /// 'AUTO', seed inserts with mixed timestamp formats can fail.
+    async fn init_session(&self) -> anyhow::Result<()> {
+        self.execute_sql("ALTER SESSION SET TIMESTAMP_INPUT_FORMAT = 'AUTO'").await?;
+        self.execute_sql(
+            "ALTER SESSION SET TIMESTAMP_TZ_OUTPUT_FORMAT = 'YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM'",
+        )
+        .await?;
+        Ok(())
+    }
+
     async fn execute_sql(&self, sql: &str) -> anyhow::Result<QueryResult> {
         let result = self
             .api
@@ -102,7 +113,7 @@ impl SnowflakeAdapter {
             .map_err(|e| anyhow::anyhow!("Snowflake query error: {e}\nSQL:\n{}", &sql[..sql.len().min(200)]))?;
 
         match result {
-            SfQueryResult::Arrow(batches) => Ok(arrow_batches_to_query_result(&batches)),
+            SfQueryResult::Arrow(batches) => arrow_batches_to_query_result(&batches),
             SfQueryResult::Json(value) => json_to_query_result(value),
             SfQueryResult::Empty => Ok(QueryResult { row_count: 0, columns: vec![], rows: vec![] }),
         }
@@ -128,9 +139,9 @@ impl SnowflakeAdapter {
     }
 }
 
-fn arrow_batches_to_query_result(batches: &[RecordBatch]) -> QueryResult {
+fn arrow_batches_to_query_result(batches: &[RecordBatch]) -> anyhow::Result<QueryResult> {
     if batches.is_empty() {
-        return QueryResult { row_count: 0, columns: vec![], rows: vec![] };
+        return Ok(QueryResult { row_count: 0, columns: vec![], rows: vec![] });
     }
 
     let schema = batches[0].schema();
@@ -142,14 +153,13 @@ fn arrow_batches_to_query_result(batches: &[RecordBatch]) -> QueryResult {
         let num_rows = batch.num_rows();
         let num_cols = batch.num_columns();
 
-        // Cast each column to Utf8 for uniform stringification
         let string_cols: Vec<Vec<Option<String>>> = (0..num_cols)
-            .map(|col_idx| {
+            .map(|col_idx| -> anyhow::Result<Vec<Option<String>>> {
                 let array = batch.column(col_idx);
                 let utf8 = cast(array.as_ref(), &DataType::Utf8)
-                    .unwrap_or_else(|_| array.clone());
+                    .map_err(|e| anyhow::anyhow!("Failed to cast column {col_idx} to Utf8: {e}"))?;
                 let str_array = utf8.as_string::<i32>();
-                (0..num_rows)
+                Ok((0..num_rows)
                     .map(|row_idx| {
                         if str_array.is_null(row_idx) {
                             None
@@ -157,9 +167,9 @@ fn arrow_batches_to_query_result(batches: &[RecordBatch]) -> QueryResult {
                             Some(str_array.value(row_idx).to_string())
                         }
                     })
-                    .collect()
+                    .collect())
             })
-            .collect();
+            .collect::<anyhow::Result<_>>()?;
 
         for row_idx in 0..num_rows {
             let row: Vec<serde_json::Value> = (0..num_cols)
@@ -173,7 +183,7 @@ fn arrow_batches_to_query_result(batches: &[RecordBatch]) -> QueryResult {
     }
 
     let row_count = rows.len();
-    QueryResult { row_count, columns, rows }
+    Ok(QueryResult { row_count, columns, rows })
 }
 
 fn json_to_query_result(result: JsonResult) -> anyhow::Result<QueryResult> {
@@ -397,6 +407,10 @@ impl WarehouseAdapter for SnowflakeAdapter {
             })
             .collect();
 
+        // Infer types only for BOOLEAN and TIMESTAMP — everything else stays VARCHAR.
+        // Numeric types are left as VARCHAR intentionally: seeds may contain mixed
+        // values or models may expect string types, and coercing to NUMBER causes
+        // type mismatch errors.
         let col_types: Vec<&str> = (0..columns.len())
             .map(|i| infer_sf_type(&data_rows, i))
             .collect();
