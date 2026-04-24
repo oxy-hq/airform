@@ -1,36 +1,27 @@
 use airform_core::Materialization;
+use arrow_array::{Array, RecordBatch};
+use arrow_array::cast::AsArray;
+use arrow_cast::cast;
+use arrow_schema::DataType;
 use async_trait::async_trait;
+use snowflake_api::{JsonResult, QueryResult as SfQueryResult, SnowflakeApi};
 use std::path::Path;
 use std::sync::Mutex;
 
 use crate::warehouse::{QueryResult, WarehouseAdapter};
 
-/// Quote an identifier for Snowflake, uppercasing it first to match
-/// Snowflake's default behavior with unquoted identifiers.
 fn sf_ident(ident: &str) -> String {
     let upper = ident.to_uppercase();
     format!("\"{}\"", upper.replace('"', "\"\""))
 }
 
-/// Snowflake adapter using the Python Snowflake connector for execution.
-///
-/// Uses a persistent Python child process running the Snowflake connector,
-/// which handles authentication, connection pooling, and OCSP correctly.
-/// This avoids the Snowflake REST API v1 rate limits that affect raw HTTP clients.
 pub struct SnowflakeAdapter {
-    #[allow(dead_code)]
-    account: String,
-    #[allow(dead_code)]
-    warehouse: String,
     database: String,
-    /// Schemas already ensured (CREATE SCHEMA IF NOT EXISTS), to avoid repeating.
+    api: SnowflakeApi,
     ensured_schemas: Mutex<std::collections::HashSet<String>>,
-    /// Persistent Python subprocess for Snowflake queries.
-    child: Mutex<std::process::Child>,
 }
 
 impl SnowflakeAdapter {
-    /// Create a SnowflakeAdapter from a DbtTarget's extra fields.
     pub fn from_target(target: &airform_core::DbtTarget) -> anyhow::Result<Self> {
         let get = |key: &str| -> anyhow::Result<String> {
             target
@@ -53,19 +44,24 @@ impl SnowflakeAdapter {
             .clone()
             .unwrap_or_else(|| "AIRFORM_TEST".to_string());
 
-        let mut child = Self::start_bridge(&account, &user, &password, &warehouse, &database)?;
-        Self::wait_ready(&mut child)?;
+        let api = SnowflakeApi::with_password_auth(
+            &account,
+            Some(&warehouse),
+            Some(&database),
+            None,
+            &user,
+            None,
+            &password,
+        )
+        .map_err(|e| anyhow::anyhow!("Failed to create Snowflake client: {e}"))?;
 
         Ok(Self {
-            account,
-            warehouse,
             database,
+            api,
             ensured_schemas: Mutex::new(std::collections::HashSet::new()),
-            child: Mutex::new(child),
         })
     }
 
-    /// Create from environment variables (for testing).
     pub fn from_env() -> anyhow::Result<Self> {
         dotenvy::dotenv().ok();
 
@@ -80,166 +76,38 @@ impl SnowflakeAdapter {
         let database =
             std::env::var("SNOWFLAKE_DATABASE").unwrap_or_else(|_| "AIRFORM_TEST".to_string());
 
-        let mut child = Self::start_bridge(&account, &user, &password, &warehouse, &database)?;
-        Self::wait_ready(&mut child)?;
+        let api = SnowflakeApi::with_password_auth(
+            &account,
+            Some(&warehouse),
+            Some(&database),
+            None,
+            &user,
+            None,
+            &password,
+        )
+        .map_err(|e| anyhow::anyhow!("Failed to create Snowflake client: {e}"))?;
 
         Ok(Self {
-            account,
-            warehouse,
             database,
+            api,
             ensured_schemas: Mutex::new(std::collections::HashSet::new()),
-            child: Mutex::new(child),
         })
     }
 
-    /// Start the persistent Python bridge process.
-    fn start_bridge(
-        account: &str,
-        user: &str,
-        password: &str,
-        warehouse: &str,
-        database: &str,
-    ) -> anyhow::Result<std::process::Child> {
-        use std::process::{Command, Stdio};
+    async fn execute_sql(&self, sql: &str) -> anyhow::Result<QueryResult> {
+        let result = self
+            .api
+            .exec(sql)
+            .await
+            .map_err(|e| anyhow::anyhow!("Snowflake query error: {e}\nSQL:\n{}", &sql[..sql.len().min(200)]))?;
 
-        let python_code = r#"
-import json, os, sys, traceback
-
-try:
-    import snowflake.connector
-except ImportError:
-    print(json.dumps({"error": "snowflake-connector-python not installed. Run: pip install snowflake-connector-python"}), flush=True)
-    sys.exit(1)
-
-conn = snowflake.connector.connect(
-    account=os.environ['SNOWFLAKE_ACCOUNT'],
-    user=os.environ['SNOWFLAKE_USER'],
-    password=os.environ['SNOWFLAKE_PASSWORD'],
-    warehouse=os.environ.get('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH'),
-    database=os.environ.get('SNOWFLAKE_DATABASE', 'AIRFORM_TEST'),
-)
-
-# Enable AUTO format so Snowflake can parse various timestamp formats
-cur = conn.cursor()
-cur.execute("ALTER SESSION SET TIMESTAMP_INPUT_FORMAT = 'AUTO'")
-cur.execute("ALTER SESSION SET TIMESTAMP_TZ_OUTPUT_FORMAT = 'YYYY-MM-DD HH24:MI:SS.FF3 TZHTZM'")
-cur.close()
-
-# Signal ready
-print(json.dumps({"ready": True}), flush=True)
-
-# Read SQL commands from stdin, one JSON line per command
-for line in sys.stdin:
-    line = line.strip()
-    if not line:
-        continue
-    try:
-        cmd = json.loads(line)
-        sql = cmd.get("sql", "")
-        cur = conn.cursor()
-        cur.execute(sql)
-
-        columns = [desc[0] for desc in cur.description] if cur.description else []
-        rows = []
-        if cur.description:
-            for row in cur.fetchall():
-                rows.append([str(v) if v is not None else None for v in row])
-
-        print(json.dumps({
-            "success": True,
-            "columns": columns,
-            "rows": rows,
-            "rowcount": len(rows),
-        }), flush=True)
-    except Exception as e:
-        print(json.dumps({
-            "success": False,
-            "message": str(e),
-        }), flush=True)
-
-conn.close()
-"#;
-
-        let child = Command::new("python3")
-            .args(["-c", python_code])
-            .env("SNOWFLAKE_ACCOUNT", account)
-            .env("SNOWFLAKE_USER", user)
-            .env("SNOWFLAKE_PASSWORD", password)
-            .env("SNOWFLAKE_WAREHOUSE", warehouse)
-            .env("SNOWFLAKE_DATABASE", database)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
-            .spawn()
-            .map_err(|e| anyhow::anyhow!("Failed to start Python Snowflake bridge: {e}"))?;
-
-        Ok(child)
-    }
-
-    /// Send a SQL command to the Python bridge and get the response.
-    fn execute_sql(&self, sql: &str) -> anyhow::Result<serde_json::Value> {
-        use std::io::{BufRead, Write};
-
-        let mut child = self.child.lock().unwrap();
-
-        let stdin = child
-            .stdin
-            .as_mut()
-            .ok_or_else(|| anyhow::anyhow!("Python bridge stdin closed"))?;
-
-        let cmd = serde_json::json!({"sql": sql});
-        writeln!(stdin, "{}", cmd.to_string())
-            .map_err(|e| anyhow::anyhow!("Failed to write to Python bridge: {e}"))?;
-
-        let stdout = child
-            .stdout
-            .as_mut()
-            .ok_or_else(|| anyhow::anyhow!("Python bridge stdout closed"))?;
-
-        let mut reader = std::io::BufReader::new(stdout);
-        let mut line = String::new();
-        reader
-            .read_line(&mut line)
-            .map_err(|e| anyhow::anyhow!("Failed to read from Python bridge: {e}"))?;
-
-        let resp: serde_json::Value = serde_json::from_str(&line)
-            .map_err(|e| anyhow::anyhow!("Failed to parse Python bridge response: {e}\nLine: {line}"))?;
-
-        if !resp["success"].as_bool().unwrap_or(false) {
-            anyhow::bail!(
-                "Snowflake query error: {}\nSQL:\n{}",
-                resp["message"].as_str().unwrap_or("unknown"),
-                &sql[..sql.len().min(200)]
-            );
+        match result {
+            SfQueryResult::Arrow(batches) => Ok(arrow_batches_to_query_result(&batches)),
+            SfQueryResult::Json(value) => json_to_query_result(value),
+            SfQueryResult::Empty => Ok(QueryResult { row_count: 0, columns: vec![], rows: vec![] }),
         }
-
-        Ok(resp)
     }
 
-    /// Wait for the bridge to signal ready.
-    fn wait_ready(child: &mut std::process::Child) -> anyhow::Result<()> {
-        use std::io::BufRead;
-
-        let stdout = child
-            .stdout
-            .as_mut()
-            .ok_or_else(|| anyhow::anyhow!("Python bridge stdout closed"))?;
-
-        let mut reader = std::io::BufReader::new(stdout);
-        let mut line = String::new();
-        reader.read_line(&mut line)?;
-
-        let resp: serde_json::Value = serde_json::from_str(&line)
-            .map_err(|e| anyhow::anyhow!("Bridge startup failed: {e}\nOutput: {line}"))?;
-
-        if resp.get("error").is_some() {
-            anyhow::bail!("Bridge error: {}", resp["error"].as_str().unwrap_or("unknown"));
-        }
-
-        Ok(())
-    }
-
-    /// Returns a fully-qualified `"DATABASE"."SCHEMA"."TABLE"` identifier.
     fn fully_qualified(&self, schema: &str, table: &str) -> String {
         format!(
             "{}.{}.{}",
@@ -249,58 +117,95 @@ conn.close()
         )
     }
 
-    /// Parse response into QueryResult.
-    fn parse_response(&self, resp: &serde_json::Value) -> QueryResult {
-        let columns: Vec<String> = resp["columns"]
-            .as_array()
-            .map(|arr| {
-                arr.iter()
-                    .map(|c| c.as_str().unwrap_or("?").to_string())
-                    .collect()
-            })
-            .unwrap_or_default();
-
-        let rows: Vec<Vec<serde_json::Value>> = resp["rows"]
-            .as_array()
-            .map(|arr| {
-                arr.iter()
-                    .map(|row| row.as_array().cloned().unwrap_or_default())
-                    .collect()
-            })
-            .unwrap_or_default();
-
-        let row_count = rows.len();
-        QueryResult {
-            row_count,
-            columns,
-            rows,
-        }
-    }
-
-    /// Helper: parse COUNT(*) from a response.
-    fn parse_count(&self, resp: &serde_json::Value) -> usize {
-        resp["rows"][0][0]
-            .as_str()
+    fn parse_count(result: &QueryResult) -> usize {
+        result
+            .rows
+            .first()
+            .and_then(|r| r.first())
+            .and_then(|v| v.as_str())
             .and_then(|s| s.parse::<usize>().ok())
             .unwrap_or(0)
     }
 }
 
-impl Drop for SnowflakeAdapter {
-    fn drop(&mut self) {
-        if let Ok(mut child) = self.child.lock() {
-            // Close stdin to signal the Python process to exit
-            drop(child.stdin.take());
-            let _ = child.wait();
+fn arrow_batches_to_query_result(batches: &[RecordBatch]) -> QueryResult {
+    if batches.is_empty() {
+        return QueryResult { row_count: 0, columns: vec![], rows: vec![] };
+    }
+
+    let schema = batches[0].schema();
+    let columns: Vec<String> = schema.fields().iter().map(|f| f.name().clone()).collect();
+
+    let mut rows: Vec<Vec<serde_json::Value>> = Vec::new();
+
+    for batch in batches {
+        let num_rows = batch.num_rows();
+        let num_cols = batch.num_columns();
+
+        // Cast each column to Utf8 for uniform stringification
+        let string_cols: Vec<Vec<Option<String>>> = (0..num_cols)
+            .map(|col_idx| {
+                let array = batch.column(col_idx);
+                let utf8 = cast(array.as_ref(), &DataType::Utf8)
+                    .unwrap_or_else(|_| array.clone());
+                let str_array = utf8.as_string::<i32>();
+                (0..num_rows)
+                    .map(|row_idx| {
+                        if str_array.is_null(row_idx) {
+                            None
+                        } else {
+                            Some(str_array.value(row_idx).to_string())
+                        }
+                    })
+                    .collect()
+            })
+            .collect();
+
+        for row_idx in 0..num_rows {
+            let row: Vec<serde_json::Value> = (0..num_cols)
+                .map(|col_idx| match &string_cols[col_idx][row_idx] {
+                    Some(s) => serde_json::Value::String(s.clone()),
+                    None => serde_json::Value::Null,
+                })
+                .collect();
+            rows.push(row);
         }
     }
+
+    let row_count = rows.len();
+    QueryResult { row_count, columns, rows }
+}
+
+fn json_to_query_result(result: JsonResult) -> anyhow::Result<QueryResult> {
+    let columns: Vec<String> = result.schema.iter().map(|f| f.name.clone()).collect();
+
+    let rows_arr = result
+        .value
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("Unexpected JSON result shape"))?;
+
+    let rows: Vec<Vec<serde_json::Value>> = rows_arr
+        .iter()
+        .map(|row| {
+            if let Some(arr) = row.as_array() {
+                arr.clone()
+            } else {
+                columns
+                    .iter()
+                    .map(|col| row.get(col).cloned().unwrap_or(serde_json::Value::Null))
+                    .collect()
+            }
+        })
+        .collect();
+
+    let row_count = rows.len();
+    Ok(QueryResult { row_count, columns, rows })
 }
 
 #[async_trait]
 impl WarehouseAdapter for SnowflakeAdapter {
     async fn execute_query(&self, sql: &str) -> anyhow::Result<QueryResult> {
-        let resp = self.execute_sql(sql)?;
-        Ok(self.parse_response(&resp))
+        self.execute_sql(sql).await
     }
 
     async fn materialize(
@@ -317,21 +222,16 @@ impl WarehouseAdapter for SnowflakeAdapter {
 
         match materialization {
             Materialization::View => {
-                // Drop TABLE if it exists (Snowflake can't replace TABLE with VIEW)
-                let _ = self.execute_sql(&format!("DROP TABLE IF EXISTS {qualified}"));
-                let ddl = format!("CREATE OR REPLACE VIEW {qualified} AS {sql}");
-                self.execute_sql(&ddl)?;
+                let _ = self.execute_sql(&format!("DROP TABLE IF EXISTS {qualified}")).await;
+                self.execute_sql(&format!("CREATE OR REPLACE VIEW {qualified} AS {sql}")).await?;
                 tracing::info!("Created Snowflake view: {table}");
                 Ok(0)
             }
             Materialization::Table => {
-                // Drop VIEW if it exists (Snowflake can't replace VIEW with TABLE)
-                let _ = self.execute_sql(&format!("DROP VIEW IF EXISTS {qualified}"));
-                let ddl = format!("CREATE OR REPLACE TABLE {qualified} AS {sql}");
-                self.execute_sql(&ddl)?;
-                let count_resp =
-                    self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}"))?;
-                let count = self.parse_count(&count_resp);
+                let _ = self.execute_sql(&format!("DROP VIEW IF EXISTS {qualified}")).await;
+                self.execute_sql(&format!("CREATE OR REPLACE TABLE {qualified} AS {sql}")).await?;
+                let count_result = self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}")).await?;
+                let count = Self::parse_count(&count_result);
                 tracing::info!("Created Snowflake table: {table} ({count} rows)");
                 Ok(count)
             }
@@ -339,50 +239,38 @@ impl WarehouseAdapter for SnowflakeAdapter {
                 let exists = self.table_exists(schema, table).await?;
 
                 if !exists {
-                    let ddl = format!("CREATE TABLE {qualified} AS {sql}");
-                    self.execute_sql(&ddl)?;
-                    let count_resp =
-                        self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}"))?;
-                    let count = self.parse_count(&count_resp);
-                    tracing::info!(
-                        "Created Snowflake incremental table: {table} ({count} rows, initial)"
-                    );
+                    self.execute_sql(&format!("CREATE TABLE {qualified} AS {sql}")).await?;
+                    let count_result = self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}")).await?;
+                    let count = Self::parse_count(&count_result);
+                    tracing::info!("Created Snowflake incremental table: {table} ({count} rows, initial)");
                     return Ok(count);
                 }
 
-                let strategy = strategy.unwrap_or(
-                    if unique_key.is_some() {
-                        "delete+insert"
-                    } else {
-                        "append"
-                    },
-                );
+                let strategy = strategy.unwrap_or(if unique_key.is_some() { "delete+insert" } else { "append" });
 
                 match strategy {
                     "append" => {
-                        self.execute_sql(&format!("INSERT INTO {qualified} {sql}"))?;
+                        self.execute_sql(&format!("INSERT INTO {qualified} {sql}")).await?;
                     }
                     "delete+insert" | "merge" => {
                         if let Some(key) = unique_key {
                             let qk = sf_ident(key);
                             self.execute_sql(&format!(
                                 "DELETE FROM {qualified} WHERE {qk} IN (SELECT {qk} FROM ({sql}))"
-                            ))?;
+                            ))
+                            .await?;
                         }
-                        self.execute_sql(&format!("INSERT INTO {qualified} {sql}"))?;
+                        self.execute_sql(&format!("INSERT INTO {qualified} {sql}")).await?;
                     }
                     _ => {
                         tracing::warn!("Unknown strategy '{strategy}', falling back to append");
-                        self.execute_sql(&format!("INSERT INTO {qualified} {sql}"))?;
+                        self.execute_sql(&format!("INSERT INTO {qualified} {sql}")).await?;
                     }
                 }
 
-                let count_resp =
-                    self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}"))?;
-                let count = self.parse_count(&count_resp);
-                tracing::info!(
-                    "Updated Snowflake incremental table: {table} ({count} rows, strategy={strategy})"
-                );
+                let count_result = self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}")).await?;
+                let count = Self::parse_count(&count_result);
+                tracing::info!("Updated Snowflake incremental table: {table} ({count} rows, strategy={strategy})");
                 Ok(count)
             }
             Materialization::Ephemeral => Ok(0),
@@ -415,23 +303,19 @@ impl WarehouseAdapter for SnowflakeAdapter {
                  MD5({quk}::VARCHAR || CURRENT_TIMESTAMP()::VARCHAR) AS dbt_scd_id \
                  FROM ({sql})"
             );
-            self.execute_sql(&ddl)?;
+            self.execute_sql(&ddl).await?;
         } else {
             let change_condition = match strategy {
                 "timestamp" => {
                     let updated_at_col = updated_at.ok_or_else(|| {
-                        anyhow::anyhow!(
-                            "Snapshot '{table}' with timestamp strategy requires updated_at"
-                        )
+                        anyhow::anyhow!("Snapshot '{table}' with timestamp strategy requires updated_at")
                     })?;
                     let qua = sf_ident(updated_at_col);
                     format!("tgt.{qua} != src.{qua}")
                 }
                 "check" => {
                     let cols = check_cols.ok_or_else(|| {
-                        anyhow::anyhow!(
-                            "Snapshot '{table}' with check strategy requires check_cols"
-                        )
+                        anyhow::anyhow!("Snapshot '{table}' with check strategy requires check_cols")
                     })?;
                     cols.iter()
                         .map(|c| {
@@ -448,7 +332,8 @@ impl WarehouseAdapter for SnowflakeAdapter {
                 "UPDATE {qualified} tgt SET dbt_valid_to = CURRENT_TIMESTAMP(), dbt_updated_at = CURRENT_TIMESTAMP() \
                  FROM ({sql}) src \
                  WHERE tgt.{quk} = src.{quk} AND tgt.dbt_valid_to IS NULL AND ({change_condition})"
-            ))?;
+            ))
+            .await?;
 
             self.execute_sql(&format!(
                 "INSERT INTO {qualified} \
@@ -460,12 +345,12 @@ impl WarehouseAdapter for SnowflakeAdapter {
                  FROM ({sql}) src \
                  LEFT JOIN {qualified} tgt ON tgt.{quk} = src.{quk} AND tgt.dbt_valid_to IS NULL \
                  WHERE tgt.{quk} IS NULL OR ({change_condition})"
-            ))?;
+            ))
+            .await?;
         }
 
-        let count_resp =
-            self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}"))?;
-        let count = self.parse_count(&count_resp);
+        let count_result = self.execute_sql(&format!("SELECT COUNT(*) FROM {qualified}")).await?;
+        let count = Self::parse_count(&count_result);
         tracing::info!("Snapshot table (Snowflake): {table} ({count} rows)");
         Ok(count)
     }
@@ -479,7 +364,6 @@ impl WarehouseAdapter for SnowflakeAdapter {
         self.ensure_schema(schema).await?;
         let qualified = self.fully_qualified(schema, table_name);
 
-        // Read CSV
         let content = std::fs::read_to_string(csv_path)?;
         let mut lines = content.lines();
 
@@ -490,22 +374,17 @@ impl WarehouseAdapter for SnowflakeAdapter {
             .split(',')
             .map(|c| c.trim().trim_matches('"'))
             .collect();
-        // Deduplicate column names by appending _2, _3, etc. for duplicates
+
         let mut seen = std::collections::HashMap::new();
         let columns: Vec<String> = raw_columns
             .iter()
             .map(|c| {
                 let count = seen.entry(c.to_lowercase()).or_insert(0usize);
                 *count += 1;
-                if *count > 1 {
-                    format!("{}_{}", c, count)
-                } else {
-                    c.to_string()
-                }
+                if *count > 1 { format!("{}_{}", c, count) } else { c.to_string() }
             })
             .collect();
 
-        // Collect all data rows for type inference, padding short rows to match header
         let num_cols = columns.len();
         let data_rows: Vec<Vec<String>> = lines
             .filter(|l| !l.trim().is_empty())
@@ -518,7 +397,6 @@ impl WarehouseAdapter for SnowflakeAdapter {
             })
             .collect();
 
-        // Infer column types
         let col_types: Vec<&str> = (0..columns.len())
             .map(|i| infer_sf_type(&data_rows, i))
             .collect();
@@ -530,16 +408,9 @@ impl WarehouseAdapter for SnowflakeAdapter {
             .collect::<Vec<_>>()
             .join(", ");
 
-        self.execute_sql(&format!(
-            "CREATE OR REPLACE TABLE {qualified} ({col_defs})"
-        ))?;
+        self.execute_sql(&format!("CREATE OR REPLACE TABLE {qualified} ({col_defs})")).await?;
 
-        // Batch insert rows (500 rows per batch)
-        let col_list = columns
-            .iter()
-            .map(|c| sf_ident(c))
-            .collect::<Vec<_>>()
-            .join(", ");
+        let col_list = columns.iter().map(|c| sf_ident(c)).collect::<Vec<_>>().join(", ");
         let mut batch: Vec<String> = Vec::new();
         let total_rows = data_rows.len();
 
@@ -553,7 +424,6 @@ impl WarehouseAdapter for SnowflakeAdapter {
                     } else if col_types[i] == "BOOLEAN" {
                         v.to_uppercase()
                     } else if col_types[i] == "TIMESTAMP_TZ" || col_types[i] == "TIMESTAMP" {
-                        // Normalize timestamp format for Snowflake (T separator, TZ suffixes)
                         let normalized = normalize_tz(v);
                         format!("'{}'", normalized.replace('\'', "''"))
                     } else {
@@ -568,7 +438,8 @@ impl WarehouseAdapter for SnowflakeAdapter {
                 self.execute_sql(&format!(
                     "INSERT INTO {qualified} ({col_list}) VALUES {}",
                     batch.join(", ")
-                ))?;
+                ))
+                .await?;
                 batch.clear();
             }
         }
@@ -577,7 +448,8 @@ impl WarehouseAdapter for SnowflakeAdapter {
             self.execute_sql(&format!(
                 "INSERT INTO {qualified} ({col_list}) VALUES {}",
                 batch.join(", ")
-            ))?;
+            ))
+            .await?;
         }
 
         tracing::info!("Loaded Snowflake seed: {table_name} ({total_rows} rows)");
@@ -592,10 +464,7 @@ impl WarehouseAdapter for SnowflakeAdapter {
                 return Ok(());
             }
         }
-        self.execute_sql(&format!(
-            "CREATE SCHEMA IF NOT EXISTS {}",
-            sf_ident(schema)
-        ))?;
+        self.execute_sql(&format!("CREATE SCHEMA IF NOT EXISTS {}", sf_ident(schema))).await?;
         self.ensured_schemas.lock().unwrap().insert(key);
         Ok(())
     }
@@ -607,22 +476,18 @@ impl WarehouseAdapter for SnowflakeAdapter {
             schema.replace('\'', "''").to_uppercase(),
             table.replace('\'', "''").to_uppercase(),
         );
-        let resp = self.execute_sql(&sql)?;
-        let count = self.parse_count(&resp);
-        Ok(count > 0)
+        let result = self.execute_sql(&sql).await?;
+        Ok(Self::parse_count(&result) > 0)
     }
 
     async fn run_test_query(&self, sql: &str) -> anyhow::Result<usize> {
-        let resp = self.execute_sql(sql)?;
-        let result = self.parse_response(&resp);
+        let result = self.execute_sql(sql).await?;
 
         if result.rows.is_empty() {
             return Ok(0);
         }
 
-        if result.columns.len() == 1
-            && result.columns[0].to_lowercase() == "failures"
-        {
+        if result.columns.len() == 1 && result.columns[0].to_lowercase() == "failures" {
             if let Some(val) = result.rows[0].first() {
                 if let Some(s) = val.as_str() {
                     return Ok(s.parse::<usize>().unwrap_or(0));
@@ -653,11 +518,7 @@ impl WarehouseAdapter for SnowflakeAdapter {
                 continue;
             }
 
-            if self
-                .table_exists(&schema_name, &table_name)
-                .await
-                .unwrap_or(false)
-            {
+            if self.table_exists(&schema_name, &table_name).await.unwrap_or(false) {
                 continue;
             }
 
@@ -672,14 +533,8 @@ impl WarehouseAdapter for SnowflakeAdapter {
                     .iter()
                     .map(|c| {
                         let dt = match c.data_type.as_deref() {
-                            Some("integer") | Some("int") | Some("bigint") | Some("INT64") => {
-                                "NUMBER"
-                            }
-                            Some("float")
-                            | Some("double")
-                            | Some("numeric")
-                            | Some("FLOAT64")
-                            | Some("NUMERIC") => "FLOAT",
+                            Some("integer") | Some("int") | Some("bigint") | Some("INT64") => "NUMBER",
+                            Some("float") | Some("double") | Some("numeric") | Some("FLOAT64") | Some("NUMERIC") => "FLOAT",
                             Some("boolean") | Some("bool") => "BOOLEAN",
                             Some("date") => "DATE",
                             Some("timestamp") | Some("datetime") => "TIMESTAMP",
@@ -692,7 +547,7 @@ impl WarehouseAdapter for SnowflakeAdapter {
             };
 
             let sql = format!("CREATE TABLE IF NOT EXISTS {qualified} ({col_defs})");
-            if let Err(e) = self.execute_sql(&sql) {
+            if let Err(e) = self.execute_sql(&sql).await {
                 tracing::warn!("register_sources: failed to create {}: {}", table_name, e);
             } else {
                 registered += 1;
@@ -704,14 +559,11 @@ impl WarehouseAdapter for SnowflakeAdapter {
     }
 }
 
-/// Check if a string looks like a date (YYYY-MM-DD) or timestamp (YYYY-MM-DDTHH:MM:SS...).
 fn looks_like_timestamp(s: &str) -> bool {
-    // Must start with a 4-digit year
     if s.len() < 10 {
         return false;
     }
     let b = s.as_bytes();
-    // YYYY-MM-DD
     b[0].is_ascii_digit()
         && b[1].is_ascii_digit()
         && b[2].is_ascii_digit()
@@ -724,7 +576,6 @@ fn looks_like_timestamp(s: &str) -> bool {
         && b[9].is_ascii_digit()
 }
 
-/// Check if a timestamp string includes timezone info (e.g., "2020-11-09 14:20:56.976 UTC").
 fn has_timezone(s: &str) -> bool {
     s.ends_with(" UTC")
         || s.ends_with(" GMT")
@@ -732,7 +583,6 @@ fn has_timezone(s: &str) -> bool {
         || s.ends_with("+00")
         || s.ends_with("Z")
         || {
-            // Match numeric offset like " +0000", " -0500", "+0000"
             let bytes = s.as_bytes();
             let len = bytes.len();
             len >= 5
@@ -741,18 +591,13 @@ fn has_timezone(s: &str) -> bool {
         }
 }
 
-/// Normalize timestamp values for Snowflake compatibility.
-/// Handles: T separators, UTC/GMT suffixes, Z suffix, numeric offsets.
-/// e.g., "2022-03-30T10:46:11.937 +0000" → "2022-03-30 10:46:11.937 +00:00"
 fn normalize_tz(s: &str) -> String {
     let mut result = s.to_string();
 
-    // Replace ISO 8601 'T' separator with space
     if result.len() > 10 && result.as_bytes()[10] == b'T' {
         result.replace_range(10..11, " ");
     }
 
-    // Normalize timezone suffix
     if result.ends_with(" UTC") {
         result.truncate(result.len() - 4);
         result.push_str(" +00:00");
@@ -763,18 +608,15 @@ fn normalize_tz(s: &str) -> String {
         result.truncate(result.len() - 1);
         result.push_str(" +00:00");
     } else {
-        // Normalize numeric offset: " +0000" or "+0000" → " +00:00"
         let bytes = result.as_bytes();
         let len = bytes.len();
         if len >= 5 {
-            // Check for pattern like +HHMM or -HHMM at end
             let sign_pos = if bytes[len - 5] == b'+' || bytes[len - 5] == b'-' {
                 Some(len - 5)
             } else if len >= 6
                 && bytes[len - 5].is_ascii_digit()
                 && (bytes[len - 6] == b'+' || bytes[len - 6] == b'-')
             {
-                // +HH:MM already has colon — leave it
                 None
             } else {
                 None
@@ -784,12 +626,7 @@ fn normalize_tz(s: &str) -> String {
                     let sign = result.as_bytes()[pos] as char;
                     let hh = &result[pos + 1..pos + 3];
                     let mm = &result[pos + 3..pos + 5];
-                    // Strip optional space before sign
-                    let base_end = if pos > 0 && bytes[pos - 1] == b' ' {
-                        pos - 1
-                    } else {
-                        pos
-                    };
+                    let base_end = if pos > 0 && bytes[pos - 1] == b' ' { pos - 1 } else { pos };
                     let base = &result[..base_end];
                     result = format!("{base} {sign}{hh}:{mm}");
                 }
@@ -800,13 +637,6 @@ fn normalize_tz(s: &str) -> String {
     result
 }
 
-/// Infer a Snowflake column type from the data in a column.
-///
-/// Matches dbt behavior: seeds default to VARCHAR. We only detect
-/// BOOLEAN and TIMESTAMP types since those require special handling
-/// during INSERT (boolean literals, timestamp format normalization).
-/// Numeric types are left as VARCHAR to avoid type mismatch errors
-/// when seed data contains mixed values or when models expect string types.
 fn infer_sf_type(rows: &[Vec<String>], col_idx: usize) -> &'static str {
     let mut all_timestamp = true;
     let mut all_bool = true;
@@ -847,7 +677,6 @@ fn infer_sf_type(rows: &[Vec<String>], col_idx: usize) -> &'static str {
     "VARCHAR"
 }
 
-/// Simple CSV line parser that handles quoted fields.
 fn parse_csv_line(line: &str) -> Vec<String> {
     let mut fields = Vec::new();
     let mut current = String::new();
