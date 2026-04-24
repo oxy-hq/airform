@@ -21,3 +21,7 @@ chrono.workspace = true
 duckdb = { workspace = true }
 tokio-postgres = { workspace = true }
 mysql_async = { workspace = true }
+snowflake-api = { workspace = true }
+arrow-array = { workspace = true }
+arrow-schema = { workspace = true }
+arrow-cast = { workspace = true }

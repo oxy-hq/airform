@@ -23,7 +23,7 @@ pub async fn create_adapter(
 ) -> anyhow::Result<Box<dyn WarehouseAdapter>> {
     match adapter_type {
         AdapterType::Snowflake => {
-            let adapter = if let Some(t) = target { SnowflakeAdapter::from_target(t)? } else { SnowflakeAdapter::from_env()? };
+            let adapter = if let Some(t) = target { SnowflakeAdapter::from_target(t).await? } else { SnowflakeAdapter::from_env().await? };
             Ok(Box::new(adapter))
         }
         AdapterType::BigQuery => {
