@@ -63,7 +63,13 @@ impl PostgresAdapter {
         self.client
             .batch_execute(sql)
             .await
-            .map_err(|e| anyhow::anyhow!("Postgres DDL failed: {e}\nSQL: {sql}"))
+            .map_err(|e| {
+                let detail = e
+                    .as_db_error()
+                    .map(|db| format!(": {db}"))
+                    .unwrap_or_else(|| format!(": {e}"));
+                anyhow::anyhow!("Postgres DDL failed{detail}\nSQL: {sql}")
+            })
     }
 
     async fn count_rows(&self, schema: &str, table: &str) -> usize {
@@ -126,7 +132,10 @@ impl WarehouseAdapter for PostgresAdapter {
         let rows = self.client
             .query(sql, &[])
             .await
-            .map_err(|e| anyhow::anyhow!("Postgres query failed: {e}\nSQL: {sql}"))?;
+            .map_err(|e| {
+                let detail = e.as_db_error().map(|db| format!(": {db}")).unwrap_or_else(|| format!(": {e}"));
+                anyhow::anyhow!("Postgres query failed{detail}\nSQL: {sql}")
+            })?;
         Ok(pg_rows_to_result(rows))
     }
 
@@ -289,13 +298,19 @@ impl WarehouseAdapter for PostgresAdapter {
                 &[&schema, &table],
             )
             .await
-            .map_err(|e| anyhow::anyhow!("table_exists query failed: {e}"))?;
+            .map_err(|e| {
+                let detail = e.as_db_error().map(|db| format!(": {db}")).unwrap_or_else(|| format!(": {e}"));
+                anyhow::anyhow!("table_exists query failed{detail}")
+            })?;
         Ok(row.try_get::<_, i64>(0).unwrap_or(0) > 0)
     }
 
     async fn run_test_query(&self, sql: &str) -> anyhow::Result<usize> {
         let rows = self.client.query(sql, &[]).await
-            .map_err(|e| anyhow::anyhow!("Postgres test query failed: {e}"))?;
+            .map_err(|e| {
+                let detail = e.as_db_error().map(|db| format!(": {db}")).unwrap_or_else(|| format!(": {e}"));
+                anyhow::anyhow!("Postgres test query failed{detail}")
+            })?;
         if rows.is_empty() { return Ok(0); }
         if rows[0].columns().len() == 1 && rows[0].columns()[0].name().to_lowercase() == "failures" {
             return Ok(rows[0].try_get::<_, i64>(0).unwrap_or(0) as usize);
