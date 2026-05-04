@@ -24,6 +24,20 @@ impl DuckDbAdapter {
         Self::open_path(":memory:".to_string())
     }
 
+    /// Build an adapter from an existing connection.
+    ///
+    /// Use this when the caller already holds a connection to the target
+    /// database (e.g. from a shared pool) so that a second independent
+    /// `duckdb_open_ext` call on the same file is avoided. Opening the same
+    /// DuckDB file twice in the same process bypasses OS advisory locking and
+    /// causes memory corruption / SIGSEGV in DuckDB's native code.
+    pub fn from_connection(conn: duckdb::Connection, path: impl Into<String>) -> Self {
+        Self {
+            path: path.into(),
+            conn: Mutex::new(conn),
+        }
+    }
+
     fn open_path(path: String) -> anyhow::Result<Self> {
         let conn = duckdb::Connection::open(&path)
             .map_err(|e| anyhow::anyhow!("Failed to open DuckDB at '{path}': {e}"))?;
