@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/airform.svg" alt="airform" width="60%">
-</p>
+<p align="center"><img src="assets/readme-banner.png" alt="Airform"/></p>
 
 <p align="center">
   <a href="https://github.com/oxy-hq/airform/actions/workflows/golden-sql.yaml"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/oxy-hq/airform/main/.github/badges/golden-sql.json" alt="dbt parity"></a>
